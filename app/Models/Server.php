@@ -229,6 +229,20 @@ class Server extends Model
     }
 
     /**
+     * Returns the file_rules limiting the given user on this server, or null if the user is not limited.
+     */
+    public function fileRulesFor(User $user): ?array
+    {
+        if ($user->root_admin || $this->owner_id === $user->id) {
+            return null;
+        }
+
+        $rules = $this->subusers->firstWhere('user_id', $user->id)?->file_rules;
+
+        return empty($rules) ? null : $rules;
+    }
+
+    /**
      * Gets the user who owns the server.
      */
     public function user(): BelongsTo

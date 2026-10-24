@@ -153,13 +153,6 @@ class SftpAuthenticationController extends Controller
 
                 throw new HttpForbiddenException('You do not have permission to access SFTP for this server.');
             }
-
-            // Wings doesn't know about file rules, so SFTP would expose the whole server.
-            if (!is_null($server->fileRulesFor($user))) {
-                Activity::event('server:sftp.denied')->actor($user)->subject($server)->log();
-
-                throw new HttpForbiddenException('SFTP is not available to users with directory restrictions.');
-            }
         }
 
         $server->validateCurrentState();
@@ -172,6 +165,6 @@ class SftpAuthenticationController extends Controller
     {
         $username = explode('.', strrev($request->input('username', '')));
 
-        return strtolower(strrev($username[0] ?? '') . '|' . $request->ip());
+        return strtolower(strrev($username[0] ?? '') . '|' . $request->ip()); // @phpstan-ignore nullCoalesce.offset
     }
 }

@@ -7,13 +7,12 @@ use Pterodactyl\Models\Server;
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Facades\Activity;
 use Pterodactyl\Models\Permission;
-use Illuminate\Support\Facades\Log;
+use Pterodactyl\Jobs\RevokeSftpAccessJob;
 use Pterodactyl\Repositories\Eloquent\SubuserRepository;
 use Pterodactyl\Services\Subusers\SubuserCreationService;
-use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 use Pterodactyl\Transformers\Api\Client\SubuserTransformer;
+use Pterodactyl\Repositories\Wings\DaemonRevocationRepository;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
-use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Subusers\GetSubuserRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Subusers\StoreSubuserRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Subusers\DeleteSubuserRequest;
@@ -27,7 +26,7 @@ class SubuserController extends ClientApiController
     public function __construct(
         private SubuserRepository $repository,
         private SubuserCreationService $creationService,
-        private DaemonServerRepository $serverRepository
+        private DaemonRevocationRepository $revocationRepository,
     ) {
         parent::__construct();
     }
@@ -67,8 +66,7 @@ class SubuserController extends ClientApiController
         $response = $this->creationService->handle(
             $server,
             $request->input('email'),
-            $this->getDefaultPermissions($request),
-            $this->getFileRules($request, $server)
+            $this->getDefaultPermissions($request)
         );
 
         Activity::event('server:subuser.create')
@@ -110,21 +108,12 @@ class SubuserController extends ClientApiController
         // Only update the database and hit up the Wings instance to invalidate JTI's if the permissions
         // have actually changed for the user.
         if ($permissions !== $current) {
-            $log->transaction(function ($instance) use ($request, $subuser, $server) {
+            $log->transaction(function () use ($request, $subuser, $server) {
                 $this->repository->update($subuser->id, [
                     'permissions' => $this->getDefaultPermissions($request),
-                    'file_rules' => $this->getFileRules($request, $server, $subuser->file_rules),
                 ]);
 
-                try {
-                    $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-                } catch (DaemonConnectionException $exception) {
-                    // Don't block this request if we can't connect to the Wings instance. Chances are it is
-                    // offline and the token will be invalid once Wings boots back.
-                    Log::warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
-
-                    $instance->property('revoked', false);
-                }
+                RevokeSftpAccessJob::dispatch($subuser->user->uuid, $server);
             });
         }
 
@@ -148,50 +137,13 @@ class SubuserController extends ClientApiController
             ->property('email', $subuser->user->email)
             ->property('revoked', true);
 
-        $log->transaction(function ($instance) use ($server, $subuser) {
+        $log->transaction(function () use ($server, $subuser) {
             $subuser->delete();
 
-            try {
-                $this->serverRepository->setServer($server)->revokeUserJTI($subuser->user_id);
-            } catch (DaemonConnectionException $exception) {
-                // Don't block this request if we can't connect to the Wings instance.
-                Log::warning($exception, ['user_id' => $subuser->user_id, 'server_id' => $server->id]);
-
-                $instance->property('revoked', false);
-            }
+            RevokeSftpAccessJob::dispatch($subuser->user->uuid, $server);
         });
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Returns the sanitized file_rules from the request, or null if none/empty.
-     * Only the server owner and root admins are permitted to change file_rules.
-     * When called by a subuser, $existing is returned unchanged.
-     */
-    protected function getFileRules(Request $request, Server $server, ?array $existing = null): ?array
-    {
-        $user = $request->user();
-
-        // Only owner or root admin may set directory restrictions.
-        if (!$user->root_admin && $server->owner_id !== $user->id) {
-            return $existing;
-        }
-
-        $rules = $request->input('file_rules');
-        if (empty($rules)) {
-            return null;
-        }
-
-        // Normalize: each rule must start with / and must not contain ..
-        return array_values(
-            array_filter(
-                array_map(function (string $rule): ?string {
-                    $rule = '/' . ltrim(str_replace('\\', '/', $rule), '/');
-                    return str_contains($rule, '..') ? null : rtrim($rule, '/');
-                }, $rules)
-            )
-        ) ?: null;
     }
 
     /**
