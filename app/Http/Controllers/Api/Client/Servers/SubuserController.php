@@ -66,7 +66,8 @@ class SubuserController extends ClientApiController
         $response = $this->creationService->handle(
             $server,
             $request->input('email'),
-            $this->getDefaultPermissions($request)
+            $this->getDefaultPermissions($request),
+            $this->getFileRules($request, $server)
         );
 
         Activity::event('server:subuser.create')
@@ -111,6 +112,7 @@ class SubuserController extends ClientApiController
             $log->transaction(function () use ($request, $subuser, $server) {
                 $this->repository->update($subuser->id, [
                     'permissions' => $this->getDefaultPermissions($request),
+                    'file_rules' => $this->getFileRules($request, $server, $subuser->file_rules),
                 ]);
 
                 RevokeSftpAccessJob::dispatch($subuser->user->uuid, $server);
@@ -144,6 +146,35 @@ class SubuserController extends ClientApiController
         });
 
         return new JsonResponse([], JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Returns the sanitized file_rules from the request, or null if none/empty.
+     * Only the server owner and root admins are permitted to change file_rules.
+     * When called by a subuser, $existing is returned unchanged.
+     */
+    protected function getFileRules(Request $request, Server $server, ?array $existing = null): ?array
+    {
+        $user = $request->user();
+
+        if (!$user->root_admin && $server->owner_id !== $user->id) {
+            return $existing;
+        }
+
+        $rules = $request->input('file_rules');
+        if (empty($rules)) {
+            return null;
+        }
+
+        return array_values(
+            array_filter(
+                array_map(function (string $rule): ?string {
+                    $rule = '/' . ltrim(str_replace('\\', '/', $rule), '/');
+
+                    return str_contains($rule, '..') ? null : rtrim($rule, '/');
+                }, $rules)
+            )
+        ) ?: null;
     }
 
     /**

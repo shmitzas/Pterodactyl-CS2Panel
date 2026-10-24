@@ -1,25 +1,23 @@
-const path = require('path');
+const path = require('node:path');
 const webpack = require('webpack');
-const AssetsManifestPlugin = require('webpack-assets-manifest');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { WebpackAssetsManifest } = require('webpack-assets-manifest');
 const TerserPlugin = require('terser-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
     cache: true,
     target: 'web',
-    mode: process.env.NODE_ENV,
-    devtool: isProduction ? false : process.env.DEVTOOL || 'eval-source-map',
+    mode: isProduction ? 'production' : 'development',
+    devtool: process.env.DEVTOOL || (isProduction ? false : 'eval-source-map'),
     performance: {
         hints: false,
     },
     entry: ['react-hot-loader/patch', './resources/scripts/index.tsx'],
     output: {
         path: path.join(__dirname, '/public/assets'),
-        filename: isProduction ? 'bundle.[chunkhash:8].js' : 'bundle.[hash:8].js',
-        chunkFilename: isProduction ? '[name].[chunkhash:8].js' : '[name].[hash:8].js',
+        filename: isProduction ? 'bundle.[chunkhash:8].js' : 'bundle.[fullhash:8].js',
+        chunkFilename: isProduction ? '[name].[chunkhash:8].js' : '[name].[fullhash:8].js',
         publicPath: process.env.WEBPACK_PUBLIC_PATH || '/assets/',
         crossOriginLoading: 'anonymous',
     },
@@ -44,6 +42,9 @@ module.exports = {
                         options: {
                             modules: {
                                 auto: true,
+                                // https://github.com/webpack/css-loader/blob/main/CHANGELOG.md#700-2024-04-04
+                                namedExport: false,
+                                exportLocalsConvention: 'as-is',
                                 localIdentName: isProduction ? '[name]_[hash:base64:8]' : '[path][name]__[local]',
                                 localIdentContext: path.join(__dirname, 'resources/scripts/components'),
                             },
@@ -63,6 +64,10 @@ module.exports = {
                 options: {
                     name: 'images/[name].[hash:8].[ext]',
                 },
+            },
+            {
+                test: /\.(woff|woff2)$/i,
+                type: 'asset/resource',
             },
             {
                 test: /\.svg$/,
@@ -96,32 +101,18 @@ module.exports = {
     },
     plugins: [
         new webpack.EnvironmentPlugin({
-            NODE_ENV: 'development',
+            NODE_ENV: process.env.NODE_ENV || 'development',
             DEBUG: process.env.NODE_ENV !== 'production',
             WEBPACK_BUILD_HASH: Date.now().toString(16),
         }),
-        new AssetsManifestPlugin({ writeToDisk: true, publicPath: true, integrity: true, integrityHashes: ['sha384'] }),
-        new ForkTsCheckerWebpackPlugin({
-            typescript: {
-                mode: 'write-references',
-                diagnosticOptions: {
-                    semantic: true,
-                    syntactic: true,
-                },
-            },
-            eslint: isProduction
-                ? undefined
-                : {
-                      files: `${path.join(__dirname, '/resources/scripts')}/**/*.{ts,tsx}`,
-                  },
+        new WebpackAssetsManifest({
+            output: 'manifest.json',
+            writeToDisk: true,
+            publicPath: true,
+            integrity: true,
+            integrityHashes: ['sha384'],
         }),
-        process.env.ANALYZE_BUNDLE
-            ? new BundleAnalyzerPlugin({
-                  analyzerHost: '0.0.0.0',
-                  analyzerPort: 8081,
-              })
-            : null,
-    ].filter((p) => p),
+    ],
     optimization: {
         usedExports: true,
         sideEffects: false,
@@ -130,7 +121,6 @@ module.exports = {
         minimize: isProduction,
         minimizer: [
             new TerserPlugin({
-                cache: isProduction,
                 parallel: true,
                 extractComments: false,
                 terserOptions: {
@@ -147,19 +137,25 @@ module.exports = {
         ignored: /node_modules/,
     },
     devServer: {
-        compress: true, 
-        contentBase: path.join(__dirname, '/public'),
-        publicPath: process.env.WEBPACK_PUBLIC_PATH || '/assets/',
-        writeToDisk: true,
-        disableHostCheck: true,
+        compress: true,
+        port: 5173,
+        server: {
+            type: 'https',
+            options: process.env.USE_LOCAL_CERTS
+                ? {
+                      ca: path.join(__dirname, '../../docker/certificates/root_ca.pem'),
+                      cert: path.join(__dirname, '../../docker/certificates/pterodactyl.test.pem'),
+                      key: path.join(__dirname, '../../docker/certificates/pterodactyl.test-key.pem'),
+                  }
+                : undefined,
+        },
+        static: {
+            directory: path.join(__dirname, '/public'),
+            publicPath: process.env.WEBPACK_PUBLIC_PATH || '/assets/',
+        },
+        allowedHosts: ['.pterodactyl.test'],
         headers: {
             'Access-Control-Allow-Origin': '*',
-        },
-        proxy: {
-            '*': {
-                target: 'http://localhost:8000/',
-                changeOrigin: true,
-            },
         },
     },
 };

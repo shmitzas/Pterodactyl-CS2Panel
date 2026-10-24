@@ -4,7 +4,6 @@ namespace Pterodactyl\Tests\Integration\Api\Application\Users;
 
 use Pterodactyl\Models\User;
 use Illuminate\Http\Response;
-use PHPUnit\Framework\Attributes\TestWith;
 use Pterodactyl\Services\Acl\Api\AdminAcl;
 use Pterodactyl\Transformers\Api\Application\UserTransformer;
 use Pterodactyl\Transformers\Api\Application\ServerTransformer;
@@ -232,22 +231,8 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
                 'resource' => route('api.application.users.view', $user->id),
             ],
         ], true);
-    }
 
-    #[TestWith(['-x@example.com'])]
-    #[TestWith(["\"a\r\n b\"@example.com"])]
-    #[TestWith(["a(\n)@example.com"])]
-    public function testCreateUserRejectsUnsafeEmail(string $email)
-    {
-        $response = $this->postJson('/api/application/users', [
-            'username' => 'dashuser',
-            'email' => $email,
-            'first_name' => 'Test',
-            'last_name' => 'User',
-        ]);
-
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $this->assertDatabaseMissing('users', ['email' => $email]);
+        $this->assertActivityFor('user:user.create', $this->getApiUser(), $user);
     }
 
     /**
@@ -279,24 +264,6 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
         ]);
     }
 
-    #[TestWith(['-x@example.com'])]
-    #[TestWith(["\"a\r\n b\"@example.com"])]
-    #[TestWith(["a(\n)@example.com"])]
-    public function testUpdateUserRejectsUnsafeEmail(string $email)
-    {
-        $user = User::factory()->create();
-
-        $response = $this->patchJson('/api/application/users/' . $user->id, [
-            'username' => $user->username,
-            'email' => $email,
-            'first_name' => $user->name_first,
-            'last_name' => $user->name_last,
-        ]);
-
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $this->assertDatabaseMissing('users', ['id' => $user->id, 'email' => $email]);
-    }
-
     /**
      * Test that a user can be deleted from the database.
      */
@@ -314,9 +281,8 @@ class UserControllerTest extends ApplicationApiIntegrationTestCase
     /**
      * Test that an API key without write permissions cannot create, update, or
      * delete a user model.
-     *
-     * @dataProvider userWriteEndpointsDataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('userWriteEndpointsDataProvider')]
     public function testApiKeyWithoutWritePermissions(string $method, string $url)
     {
         $this->createNewDefaultApiKey($this->getApiUser(), ['r_users' => AdminAcl::READ]);

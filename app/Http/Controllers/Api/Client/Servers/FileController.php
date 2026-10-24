@@ -6,12 +6,14 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\Response;
 use Pterodactyl\Enum\JwtScope;
 use Pterodactyl\Models\Server;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Facades\Activity;
 use Pterodactyl\Services\Nodes\NodeJWTService;
 use Pterodactyl\Repositories\Wings\DaemonFileRepository;
 use Pterodactyl\Transformers\Api\Client\FileObjectTransformer;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Files\CopyFileRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Files\PullFileRequest;
 use Pterodactyl\Http\Requests\Api\Client\Servers\Files\ListFilesRequest;
@@ -37,12 +39,58 @@ class FileController extends ClientApiController
     }
 
     /**
+     * Returns the file_rules for the authenticated subuser on this server, or null if unrestricted.
+     */
+    private function getSubuserFileRules(Server $server, Request $request): ?array
+    {
+        return $server->fileRulesFor($request->user());
+    }
+
+    /**
+     * Throws a 403 if any of the given paths is not covered by the subuser's file_rules.
+     *
+     * @throws AccessDeniedHttpException
+     */
+    private function assertPathsAllowed(?array $rules, string ...$paths): void
+    {
+        if (empty($rules)) {
+            return;
+        }
+
+        foreach ($paths as $raw) {
+            $path = '/' . ltrim(str_replace('\\', '/', $raw), '/');
+
+            if (str_contains($path, '..')) {
+                throw new AccessDeniedHttpException('Path traversal is not allowed.');
+            }
+
+            $allowed = false;
+            foreach ($rules as $rule) {
+                $rule = '/' . rtrim(ltrim(str_replace('\\', '/', (string) $rule), '/'), '/');
+                if ($path === $rule || str_starts_with($path, $rule . '/')) {
+                    $allowed = true;
+                    break;
+                }
+            }
+
+            if (!$allowed) {
+                throw new AccessDeniedHttpException('You do not have permission to access this path.');
+            }
+        }
+    }
+
+    /**
      * Returns a listing of files in a given directory.
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
     public function directory(ListFilesRequest $request, Server $server): array
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->get('directory') ?? '/'
+        );
+
         $contents = $this->fileRepository
             ->setServer($server)
             ->getDirectory($request->get('directory') ?? '/');
@@ -59,6 +107,11 @@ class FileController extends ClientApiController
      */
     public function contents(GetFileContentsRequest $request, Server $server): Response
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->get('file')
+        );
+
         $response = $this->fileRepository->setServer($server)->getContent(
             $request->get('file'),
             config('pterodactyl.files.max_edit_size')
@@ -77,6 +130,11 @@ class FileController extends ClientApiController
      */
     public function download(GetFileContentsRequest $request, Server $server): array
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->get('file')
+        );
+
         $token = $this->jwtService
             ->setExpiresAt(CarbonImmutable::now()->addMinutes(15))
             ->setUser($request->user())
@@ -108,6 +166,11 @@ class FileController extends ClientApiController
      */
     public function write(WriteFileContentRequest $request, Server $server): JsonResponse
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->get('file')
+        );
+
         $this->fileRepository->setServer($server)->putContent($request->get('file'), $request->getContent());
 
         Activity::event('server:file.write')->property('file', $request->get('file'))->log();
@@ -122,6 +185,12 @@ class FileController extends ClientApiController
      */
     public function create(CreateFolderRequest $request, Server $server): JsonResponse
     {
+        $root = $request->input('root', '/');
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            rtrim($root, '/') . '/' . ltrim($request->input('name'), '/')
+        );
+
         $this->fileRepository
             ->setServer($server)
             ->createDirectory($request->input('name'), $request->input('root', '/'));
@@ -141,6 +210,16 @@ class FileController extends ClientApiController
      */
     public function rename(RenameFileRequest $request, Server $server): JsonResponse
     {
+        $root = $request->input('root', '/');
+        $rules = $this->getSubuserFileRules($server, $request);
+        foreach ($request->input('files', []) as $file) {
+            $this->assertPathsAllowed(
+                $rules,
+                rtrim($root, '/') . '/' . ltrim($file['from'], '/'),
+                rtrim($root, '/') . '/' . ltrim($file['to'], '/')
+            );
+        }
+
         $this->fileRepository
             ->setServer($server)
             ->renameFiles($request->input('root'), $request->input('files'));
@@ -160,6 +239,11 @@ class FileController extends ClientApiController
      */
     public function copy(CopyFileRequest $request, Server $server): JsonResponse
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->input('location')
+        );
+
         $this->fileRepository
             ->setServer($server)
             ->copyFile($request->input('location'));
@@ -174,6 +258,11 @@ class FileController extends ClientApiController
      */
     public function compress(CompressFilesRequest $request, Server $server): array
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->input('root') ?? '/'
+        );
+
         $file = $this->fileRepository->setServer($server)->compressFiles(
             $request->input('root'),
             $request->input('files')
@@ -194,6 +283,11 @@ class FileController extends ClientApiController
      */
     public function decompress(DecompressFilesRequest $request, Server $server): JsonResponse
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->input('root') ?? '/'
+        );
+
         set_time_limit(300);
 
         $this->fileRepository->setServer($server)->decompressFile(
@@ -216,6 +310,14 @@ class FileController extends ClientApiController
      */
     public function delete(DeleteFileRequest $request, Server $server): JsonResponse
     {
+        $root = $request->input('root', '/');
+        $rules = $this->getSubuserFileRules($server, $request);
+        $paths = array_map(
+            fn ($f) => rtrim($root, '/') . '/' . ltrim((string) $f, '/'),
+            $request->input('files', [])
+        );
+        $this->assertPathsAllowed($rules, ...$paths);
+
         $this->fileRepository->setServer($server)->deleteFiles(
             $request->input('root'),
             $request->input('files')
@@ -236,6 +338,11 @@ class FileController extends ClientApiController
      */
     public function chmod(ChmodFilesRequest $request, Server $server): JsonResponse
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->input('root') ?? '/'
+        );
+
         $this->fileRepository->setServer($server)->chmodFiles(
             $request->input('root'),
             $request->input('files')
@@ -251,6 +358,11 @@ class FileController extends ClientApiController
      */
     public function pull(PullFileRequest $request, Server $server): JsonResponse
     {
+        $this->assertPathsAllowed(
+            $this->getSubuserFileRules($server, $request),
+            $request->input('directory') ?? '/'
+        );
+
         $this->fileRepository->setServer($server)->pull(
             $request->input('url'),
             $request->input('directory'),
