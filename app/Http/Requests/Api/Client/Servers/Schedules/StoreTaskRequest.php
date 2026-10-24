@@ -17,20 +17,13 @@ class StoreTaskRequest extends ViewScheduleRequest
         return Permission::ACTION_SCHEDULE_UPDATE;
     }
 
-    /**
-     * On top of editing the schedule, the user must be allowed to perform the task's
-     * action directly, otherwise a schedule could run commands they cannot.
-     */
     public function authorize(): bool
     {
         if (!parent::authorize()) {
             return false;
         }
 
-        // Authorization runs before validation, so guard against non-string input here.
-        $action = $this->input('action');
-        $payload = $this->input('payload');
-        $permission = Task::permissionForAction(is_string($action) ? $action : '', is_string($payload) ? $payload : null);
+        $permission = Task::permissionForAction((string) $this->input('action'), $this->input('payload'));
         if (is_null($permission)) {
             return true;
         }

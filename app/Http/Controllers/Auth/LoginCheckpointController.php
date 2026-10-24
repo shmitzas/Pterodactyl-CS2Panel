@@ -25,7 +25,7 @@ class LoginCheckpointController extends AbstractLoginController
     public function __construct(
         private Encrypter $encrypter,
         private Google2FA $google2FA,
-        private ValidationFactory $validation
+        private ValidationFactory $validation,
     ) {
         parent::__construct();
     }
@@ -57,7 +57,6 @@ class LoginCheckpointController extends AbstractLoginController
         }
 
         try {
-            /** @var \Pterodactyl\Models\User $user */
             $user = User::query()->findOrFail($details['user_id']);
         } catch (ModelNotFoundException) {
             $this->sendFailedLoginResponse($request, null, self::TOKEN_EXPIRED_MESSAGE);
@@ -72,15 +71,13 @@ class LoginCheckpointController extends AbstractLoginController
             }
         } else {
             $decrypted = $this->encrypter->decrypt($user->totp_secret);
-            // Only accept codes from a time step after the last one used to sign in, so an
-            // observed code cannot be replayed within its validity window.
             $oldTimestamp = $user->totp_authenticated_at
                 ? (int) floor($user->totp_authenticated_at->unix() / $this->google2FA->getKeyRegeneration())
                 : null;
 
             $verified = $this->google2FA->verifyKeyNewer(
                 $decrypted,
-                (string) ($request->input('authentication_code') ?? ''),
+                $request->input('authentication_code') ?? '',
                 $oldTimestamp,
                 config('pterodactyl.auth.2fa.window') ?? 1,
             );

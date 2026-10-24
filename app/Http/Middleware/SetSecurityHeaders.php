@@ -33,7 +33,7 @@ class SetSecurityHeaders
         $response = $next($request);
 
         foreach (static::$headers as $key => $value) {
-            if (!$response->headers->has($key)) {
+            if (! $response->headers->has($key)) {
                 $response->headers->set($key, $value);
             }
         }

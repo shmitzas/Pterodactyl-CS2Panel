@@ -12,9 +12,7 @@ class SendPowerRequest extends ClientApiRequest
      */
     public function permission(): string
     {
-        $signal = $this->input('signal');
-
-        return Task::permissionForAction(Task::ACTION_POWER, is_string($signal) ? $signal : null) ?? '__invalid';
+        return Task::permissionForAction(Task::ACTION_POWER, $this->input('signal')) ?? '__invalid';
     }
 
     /**

@@ -25,7 +25,7 @@ class ServerDetailsController extends Controller
         protected ConnectionInterface $connection,
         private ServerRepository $repository,
         private ServerConfigurationStructureService $configurationStructureService,
-        private EggConfigurationService $eggConfigurationService
+        private EggConfigurationService $eggConfigurationService,
     ) {
     }
 
@@ -49,7 +49,7 @@ class ServerDetailsController extends Controller
             ? $node->id === $transfer->old_node || $node->id === $transfer->new_node
             : $node->id === $server->node_id;
 
-        if (!$valid) {
+        if (! $valid) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
@@ -107,7 +107,7 @@ class ServerDetailsController extends Controller
             ->get();
 
         $this->connection->transaction(function () use ($node, $servers) {
-            /** @var \Pterodactyl\Models\Server $server */
+            /** @var Server $server */
             foreach ($servers as $server) {
                 /** @var \Pterodactyl\Models\ActivityLog|null $activity */
                 $activity = $server->activity->first();
@@ -117,7 +117,7 @@ class ServerDetailsController extends Controller
                         // so that power actions, file management, and backups can resume as normal.
                         Activity::event('server:backup.restore-failed')
                             ->subject($server, $subject->subject)
-                            ->property('name', $subject->subject->name)
+                            ->property('name', $subject->subject->name) // @phpstan-ignore property.notFound
                             ->log();
                     }
                 }

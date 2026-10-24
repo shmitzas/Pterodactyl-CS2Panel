@@ -14,8 +14,6 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
  * to existing rate limits and allows the code to slow down speedy users that might
  * be creating resources a little too quickly for comfort. This throttle generally
  * only applies to creation flows, and not general view/edit/delete flows.
- *
- * Backported from upstream Pterodactyl 1.12.0.
  */
 enum ResourceLimit
 {
@@ -44,7 +42,7 @@ enum ResourceLimit
 
     public function limit(): Limit
     {
-        return match ($this) {
+        return match($this) {
             self::Backup => Limit::perMinutes(15, 3),
             self::Database => Limit::perMinute(2),
             self::FilePull => Limit::perMinutes(10, 5),
@@ -58,7 +56,6 @@ enum ResourceLimit
     {
         foreach (self::cases() as $case) {
             RateLimiter::for($case->throttleKey(), function (Request $request) use ($case) {
-                // Relies on the Kernel's middleware priority running the client bindings first.
                 Assert::isInstanceOf($server = $request->route()->parameter('server'), Server::class);
 
                 return $case->limit()->by($server->uuid);

@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Database;
 use Pterodactyl\Facades\Activity;
+use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Services\Databases\DatabasePasswordService;
 use Pterodactyl\Transformers\Api\Client\DatabaseTransformer;
 use Pterodactyl\Services\Databases\DatabaseManagementService;
@@ -24,7 +25,7 @@ class DatabaseController extends ClientApiController
     public function __construct(
         private DeployServerDatabaseService $deployDatabaseService,
         private DatabaseManagementService $managementService,
-        private DatabasePasswordService $passwordService
+        private DatabasePasswordService $passwordService,
     ) {
         parent::__construct();
     }
@@ -49,9 +50,9 @@ class DatabaseController extends ClientApiController
     public function store(StoreDatabaseRequest $request, Server $server): array
     {
         $database = Activity::event('server:database.create')->transaction(function ($log) use ($request, $server) {
-            // Serializes concurrent requests so the database limit check in the deploy
-            // service can't be raced. That check also keeps a null limit meaning unlimited.
-            $server->databases()->lockForUpdate()->count();
+            if ($server->databases()->lockForUpdate()->count() >= $server->database_limit) {
+                throw new DisplayException('Cannot create additional databases on this server: limit has been reached.');
+            }
 
             $database = $this->deployDatabaseService->handle($server, $request->validated());
 

@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 use Pterodactyl\Http\Controllers\Controller;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Pterodactyl\Services\Api\KeyCreationService;
-use Pterodactyl\Repositories\Eloquent\ApiKeyRepository;
 
 class NodeAutoDeployController extends Controller
 {
@@ -17,32 +16,23 @@ class NodeAutoDeployController extends Controller
      * NodeAutoDeployController constructor.
      */
     public function __construct(
-        private ApiKeyRepository $repository,
         private Encrypter $encrypter,
-        private KeyCreationService $keyCreationService
+        private KeyCreationService $keyCreationService,
     ) {
     }
 
     /**
      * Generates a new API key for the logged-in user with read and write permission
-     * to nodes, and returns that as the deployment key for a node. Write access is
-     * needed because the node configuration endpoint returns the daemon token.
+     * to nodes, and returns that as the deployment key for a node.
      *
      * @throws \Pterodactyl\Exceptions\Model\DataValidationException
      */
     public function __invoke(Request $request, Node $node): JsonResponse
     {
-        /** @var \Pterodactyl\Models\ApiKey|null $key */
-        $key = $this->repository->getApplicationKeys($request->user())
-            ->filter(function (ApiKey $key) {
-                foreach ($key->getAttributes() as $permission => $value) {
-                    if ($permission === 'r_nodes' && $value === 3) {
-                        return true;
-                    }
-                }
-
-                return false;
-            })
+        $key = ApiKey::query()
+            ->where('user_id', $request->user()->id)
+            ->where('key_type', ApiKey::TYPE_APPLICATION)
+            ->where('r_nodes', 3)
             ->first();
 
         // We couldn't find a key that exists for this user with read and write

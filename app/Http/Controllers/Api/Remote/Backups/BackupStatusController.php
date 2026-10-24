@@ -35,7 +35,7 @@ class BackupStatusController extends Controller
         /** @var \Pterodactyl\Models\Node $node */
         $node = $request->attributes->get('node');
 
-        /** @var \Pterodactyl\Models\Backup $model */
+        /** @var Backup $model */
         $model = Backup::query()
             ->where('uuid', $backup)
             ->firstOrFail();
@@ -92,10 +92,11 @@ class BackupStatusController extends Controller
      */
     public function restore(Request $request, string $backup): JsonResponse
     {
-        /** @var \Pterodactyl\Models\Backup $model */
+        /** @var Backup $model */
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
 
-        if (!$model->server->node->is($request->attributes->get('node'))) {
+        $node = $request->attributes->get('node');
+        if (! $model->server->node->is($node)) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
@@ -114,7 +115,7 @@ class BackupStatusController extends Controller
      * the given backup.
      *
      * @throws \Exception
-     * @throws \Pterodactyl\Exceptions\DisplayException
+     * @throws DisplayException
      */
     protected function completeMultipartUpload(Backup $backup, S3Filesystem $adapter, bool $successful, ?array $parts): void
     {

@@ -26,7 +26,7 @@ class ServerTransferController extends Controller
     public function __construct(
         private ConnectionInterface $connection,
         private ServerRepository $repository,
-        private DaemonServerRepository $daemonServerRepository
+        private DaemonServerRepository $daemonServerRepository,
     ) {
     }
 
@@ -43,11 +43,12 @@ class ServerTransferController extends Controller
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
+        /* @var Node $node */
         Assert::isInstanceOf($node = $request->attributes->get('node'), Node::class);
 
         // Either node can tell the panel that the transfer has failed. Only the new node
         // can tell the panel that it was successful.
-        if (!$node->is($transfer->newNode) && !$node->is($transfer->oldNode)) {
+        if (! $node->is($transfer->newNode) && ! $node->is($transfer->oldNode)) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
@@ -67,11 +68,12 @@ class ServerTransferController extends Controller
             throw new ConflictHttpException('Server is not being transferred.');
         }
 
+        /* @var Node $node */
         Assert::isInstanceOf($node = $request->attributes->get('node'), Node::class);
 
         // Only the new node communicates a successful state to the panel, so we should
         // not allow the old node to hit this endpoint.
-        if (!$node->is($transfer->newNode)) {
+        if (! $node->is($transfer->newNode)) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 

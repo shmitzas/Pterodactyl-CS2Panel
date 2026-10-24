@@ -27,15 +27,11 @@ use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Pterodactyl\Http\Middleware\Api\AuthenticateIPAccess;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
 use Pterodactyl\Http\Middleware\Api\Daemon\DaemonAuthenticate;
-use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Pterodactyl\Http\Middleware\Api\Client\RequireClientApiKey;
 use Pterodactyl\Http\Middleware\RequireTwoFactorAuthentication;
-use Illuminate\Contracts\Session\Middleware\AuthenticatesSessions;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Pterodactyl\Http\Middleware\Api\Client\SubstituteClientBindings;
-use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
 use Pterodactyl\Http\Middleware\Api\Application\AuthenticateApplicationUser;
 
@@ -54,25 +50,8 @@ class Kernel extends HttpKernel
         SetSecurityHeaders::class,
     ];
 
-    /**
-     * Laravel's default priority with the client bindings moved ahead of the throttles,
-     * so the per-server resource limits (Pterodactyl\Enum\ResourceLimit) can key on the
-     * bound server. Upstream replaced the whole list with only SubstituteClientBindings,
-     * which would also let web route bindings resolve before authentication.
-     */
     protected $middlewarePriority = [
-        HandlePrecognitiveRequests::class,
-        EncryptCookies::class,
-        AddQueuedCookiesToResponse::class,
-        StartSession::class,
-        ShareErrorsFromSession::class,
-        AuthenticatesRequests::class,
         SubstituteClientBindings::class,
-        ThrottleRequests::class,
-        ThrottleRequestsWithRedis::class,
-        AuthenticatesSessions::class,
-        SubstituteBindings::class,
-        Authorize::class,
     ];
 
     /**
