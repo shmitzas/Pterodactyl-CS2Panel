@@ -1,0 +1,86 @@
+/* Tinted outline buttons; `--tone` is an "r, g, b" triplet. */
+.button {
+    --tone: var(--cs2-accent);
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-base font-semibold;
+    border: 1px solid rgba(var(--tone), 0.5);
+    border-radius: 0.5rem;
+    background: rgba(var(--tone), 0.1);
+    color: rgb(var(--tone));
+    letter-spacing: 0.025em;
+    transition: all 0.2s var(--cs2-ease);
+
+    &:hover:not(:disabled) {
+        border-color: rgb(var(--tone));
+        background: rgba(var(--tone), 0.2);
+        color: #fff;
+    }
+
+    &:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--tone), 0.3);
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    /* Sizing Controls */
+    &.small {
+        @apply h-8 px-3 py-0 text-sm font-medium;
+    }
+
+    &.large {
+        @apply px-5 py-3;
+    }
+
+    &.square {
+        @apply h-10 w-10 p-0;
+
+        &.small {
+            @apply h-8 w-8;
+        }
+    }
+
+    &.secondary {
+        border-color: transparent;
+        background: transparent;
+
+        &:hover:not(:disabled) {
+            border-color: rgba(var(--tone), 0.3);
+            background: rgba(var(--tone), 0.1);
+        }
+    }
+}
+
+.primary {
+    --tone: var(--cs2-accent);
+}
+
+.text {
+    --tone: 255, 255, 255;
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.85);
+
+    &:hover:not(:disabled) {
+        border-color: rgba(var(--cs2-accent), 0.35);
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.success {
+    --tone: var(--cs2-success);
+}
+
+.warning {
+    --tone: var(--cs2-warning);
+}
+
+.danger {
+    --tone: var(--cs2-danger);
+}

@@ -1,0 +1,138 @@
+/*
+This file is part of NookTheme.
+
+NookTheme is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+NookTheme is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with NookTheme. If not, see <https://www.gnu.org/licenses/>.
+*/
+
+:root {
+    --sidebar-size: 15rem;
+}
+
+/* Kept under the dialog layers (z-40+); the original 9999 drew the bars over every modal backdrop. */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 36;
+    width: 100%;
+    height: 3.5rem;
+    margin-top: 0 !important;
+    overflow-y: hidden;
+}
+
+/* Above page content (in-page overlays and file checkboxes top out at z-30) so the mobile drawer covers it. */
+.sidebar {
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
+    z-index: 35;
+    width: var(--sidebar-size);
+    height: calc(100vh - 3.5rem);
+    overflow-y: auto;
+    padding: 1rem 0.75rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--cs2-surface), 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.125rem;
+    padding: 0.3125rem 0.5rem;
+    border-radius: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.sidebar a.active {
+    background: rgba(var(--cs2-accent), 0.1);
+    color: rgb(var(--cs2-accent));
+}
+
+.sidebar a:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+}
+
+.sidebar .icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.625rem;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    transition: all 0.2s var(--cs2-ease);
+}
+
+.sidebar a:hover .icon {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.sidebar a.active .icon {
+    border-color: rgba(var(--cs2-accent), 0.5);
+    background: rgba(var(--cs2-accent), 0.2);
+    color: rgb(var(--cs2-accent));
+    box-shadow: 0 0 12px rgba(var(--cs2-accent), 0.25);
+}
+
+/* Divider before every group that follows a non-empty one; Can renders nothing for denied links. */
+.sidebar-group:not(:empty) ~ .sidebar-group:not(:empty) {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.content-container {
+    margin-left: calc(var(--sidebar-size) + 2rem);
+    margin-right: 2rem;
+}
+
+.content-dashboard {
+    max-width: 1200px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* Off-canvas drawer; visibility keeps its links out of the tab order while closed. */
+    .sidebar {
+        visibility: hidden;
+        transform: translateX(-100%);
+        transition: transform 0.3s var(--cs2-ease), visibility 0s 0.3s;
+    }
+
+    .sidebar.active-nav {
+        visibility: visible;
+        transform: none;
+        box-shadow: 12px 0 32px rgba(0, 0, 0, 0.45);
+        transition: transform 0.3s var(--cs2-ease);
+    }
+
+    .content-container {
+        margin-left: 2rem;
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .content-container {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}

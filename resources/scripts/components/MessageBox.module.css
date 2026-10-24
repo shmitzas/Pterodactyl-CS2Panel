@@ -1,0 +1,38 @@
+/* Info / warning banner, one tone per flash type. */
+.box {
+    --tone: var(--cs2-info);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(var(--tone), 0.3);
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, rgba(var(--tone), 0.15) 0%, rgba(var(--tone), 0.05) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.success {
+    --tone: var(--cs2-success);
+}
+
+.warning {
+    --tone: var(--cs2-warning);
+}
+
+.error {
+    --tone: var(--cs2-danger);
+}
+
+.icon {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    background: rgba(var(--tone), 0.2);
+    color: rgb(var(--tone));
+}

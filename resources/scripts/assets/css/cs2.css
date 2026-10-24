@@ -1,0 +1,129 @@
+/*
+ * CS2 panel theme. Glass surfaces float over the full-bleed background; orange is the
+ * interactive accent, the other colours are semantic only.
+ */
+:root {
+    /* Drives links, focus, hover and active chrome. Deliberately clear of the gold --cs2-warning. */
+    --cs2-accent: 240, 130, 30;
+    --cs2-info: 13, 202, 240;
+    --cs2-success: 25, 238, 25;
+    --cs2-danger: 255, 19, 19;
+    --cs2-warning: 255, 203, 49;
+    --cs2-surface: 15, 22, 33;
+    --cs2-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+    min-height: 100%;
+    background-color: rgb(11, 15, 22);
+    /* 17px instead of 16px, so every rem-based size grows with it; mirrored in cs2-admin.css. */
+    font-size: 106.25%;
+}
+
+.glass-card {
+    background: rgba(var(--cs2-surface), 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s var(--cs2-ease);
+}
+
+.glass-card:hover {
+    border-color: rgba(var(--cs2-accent), 0.3);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(var(--cs2-accent), 0.1);
+}
+
+/*
+ * Static glass for page sections. The blur sits on ::before because backdrop-filter on the box
+ * itself would become the containing block of the fixed-position tooltips rendered inside it.
+ */
+.glass-panel {
+    position: relative;
+    isolation: isolate;
+    background: rgba(var(--cs2-surface), 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+}
+
+/* List rows can number in the hundreds (file manager), so they skip the blur entirely. */
+.glass-row {
+    background: rgba(var(--cs2-surface), 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-row:hover {
+    background: rgba(var(--cs2-surface), 0.8);
+    border-color: rgba(var(--cs2-accent), 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 12px rgba(var(--cs2-accent), 0.08);
+}
+
+/* Tinted icon tile and status pill; pick the colour with an cs2-tone-* class. */
+.cs2-tile {
+    --tone: var(--cs2-accent);
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(var(--tone), 0.4);
+    border-radius: 0.75rem;
+    background: rgba(var(--tone), 0.12);
+    color: rgb(var(--tone));
+    transition: all 0.2s var(--cs2-ease);
+}
+
+.cs2-badge {
+    --tone: var(--cs2-accent);
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0 0.625rem;
+    border: 1px solid rgba(var(--tone), 0.4);
+    border-radius: 9999px;
+    background: rgba(var(--tone), 0.12);
+    color: rgb(var(--tone));
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.375rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Declared after the components so they override the default --tone. */
+.cs2-tone-info {
+    --tone: var(--cs2-info);
+}
+
+.cs2-tone-success {
+    --tone: var(--cs2-success);
+}
+
+.cs2-tone-warning {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-tone-danger {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-tone-muted {
+    --tone: 148, 163, 184;
+}
