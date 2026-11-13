@@ -7,9 +7,11 @@ use Illuminate\Support\Arr;
 use Pterodactyl\Models\Egg;
 use Pterodactyl\Models\User;
 use Webmozart\Assert\Assert;
+use Pterodactyl\Models\Mount;
 use Pterodactyl\Models\Server;
 use Illuminate\Support\Collection;
 use Pterodactyl\Models\Allocation;
+use Pterodactyl\Models\MountServer;
 use Illuminate\Database\ConnectionInterface;
 use Pterodactyl\Models\Objects\DeploymentObject;
 use Pterodactyl\Repositories\Eloquent\ServerRepository;
@@ -89,6 +91,7 @@ class ServerCreationService
 
             $this->storeAssignedAllocations($server, $data);
             $this->storeEggVariables($server, $eggVariableData);
+            $this->storeAutoMounts($server);
 
             return $server;
         }, 5);
@@ -197,6 +200,24 @@ class ServerCreationService
 
         if (!empty($records)) {
             $this->serverVariableRepository->insert($records);
+        }
+    }
+
+    /**
+     * Attach every Auto Mount mount that the server's egg and node are allowed to use.
+     */
+    private function storeAutoMounts(Server $server): void
+    {
+        $records = Mount::query()
+            ->where('auto_mount', true)
+            ->whereHas('eggs', fn ($query) => $query->where('id', $server->egg_id))
+            ->whereHas('nodes', fn ($query) => $query->where('id', $server->node_id))
+            ->pluck('id')
+            ->map(fn ($id) => ['mount_id' => $id, 'server_id' => $server->id])
+            ->all();
+
+        if (!empty($records)) {
+            MountServer::query()->insert($records);
         }
     }
 

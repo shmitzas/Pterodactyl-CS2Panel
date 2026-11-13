@@ -87,22 +87,6 @@
 
                          <div class="row">
                             <div class="form-group col-md-6">
-                                <label class="form-label">Mount on Install</label>
-
-                                <div>
-                                    <div class="radio radio-success radio-inline">
-                                        <input type="radio" id="pMountOnInstallFalse" name="mount_on_install" value="0" @if(!$mount->mount_on_install) checked @endif>
-                                        <label for="pMountOnInstallFalse">False</label>
-                                    </div>
-
-                                    <div class="radio radio-warning radio-inline">
-                                        <input type="radio" id="pMountOnInstall" name="mount_on_install" value="1" @if($mount->mount_on_install) checked @endif>
-                                        <label for="pMountOnInstall">True</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group col-md-6">
                                 <label class="form-label">Auto Mount</label>
 
                                 <div>
@@ -116,6 +100,7 @@
                                         <label for="pAutoMount">True</label>
                                     </div>
                                 </div>
+                                <p class="text-muted small">Attaches this mount to every server created afterwards whose egg and node it allows.</p>
                             </div>
                         </div>
                     </div>

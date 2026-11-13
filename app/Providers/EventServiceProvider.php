@@ -12,7 +12,6 @@ use Pterodactyl\Observers\SubuserObserver;
 use Pterodactyl\Listeners\TwoFactorListener;
 use Pterodactyl\Listeners\RevocationListener;
 use Pterodactyl\Observers\EggVariableObserver;
-use Pterodactyl\Listeners\RemoveMountsAfterInstall;
 use Pterodactyl\Listeners\AuthenticationListener;
 use Pterodactyl\Events\Server\Installed as ServerInstalledEvent;
 use Pterodactyl\Notifications\ServerInstalled as ServerInstalledNotification;
@@ -25,7 +24,6 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
-        RemoveMountsAfterInstall::class => [RemoveMountsAfterInstall::class],
     ];
 
     protected $subscribe = [
