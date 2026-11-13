@@ -43,7 +43,7 @@ const FileUploadList = () => {
             {uploads.map(([name, file]) => (
                 <div
                     key={name}
-                    className={'flex items-center space-x-3 rounded-xl border border-white/10 bg-black/20 p-3'}
+                    className={'flex items-center space-x-3 rounded-xl border border-rule bg-paper-3 p-3'}
                 >
                     <Tooltip content={`${Math.floor((file.loaded / file.total) * 100)}%`} placement={'left'}>
                         <div className={'flex-shrink-0'}>
@@ -53,7 +53,7 @@ const FileUploadList = () => {
                     <Code className={'flex-1 truncate'}>{name}</Code>
                     <button
                         onClick={cancelFileUpload.bind(this, name)}
-                        className={'text-white/40 hover:text-cs2-danger transition-colors duration-150'}
+                        className={'text-muted hover:text-bad transition-colors duration-150'}
                     >
                         <XIcon className={'w-5 h-5'} />
                     </button>

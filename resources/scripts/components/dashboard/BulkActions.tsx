@@ -33,7 +33,7 @@ const PRERELEASE_VARIABLE = 'PRERELEASE';
 
 const prereleaseVariable = (server: Server) => server.variables.find((v) => v.envVariable === PRERELEASE_VARIABLE);
 
-const isPrereleaseOn = (server: Server) => {
+export const isPrereleaseOn = (server: Server) => {
     const variable = prereleaseVariable(server);
     const value = (variable?.serverValue ?? variable?.defaultValue ?? '').toLowerCase();
 
@@ -87,45 +87,51 @@ const useReport = () => {
 
 interface PanelProps {
     icon: IconProp;
-    tone: 'info' | 'warning';
     title: string;
     summary: string;
     busy: boolean;
     selected: Server[];
     onEdit: () => void;
-    renderChip?: (server: Server) => React.ReactNode;
+    renderTag?: (server: Server) => React.ReactNode;
     children: React.ReactNode;
 }
 
-const defaultChip = (server: Server) => <span className={classNames(styles.chip, 'text-xs')}>{server.name}</span>;
-
-const Panel = ({ icon, tone, title, summary, busy, selected, onEdit, renderChip, children }: PanelProps) => (
-    <div className={classNames('cs2-card', styles.panel)}>
-        <div className={'flex items-center gap-3'}>
-            <span className={classNames(styles.tile, styles[`tone_${tone}`])}>
+const Panel = ({ icon, title, summary, busy, selected, onEdit, renderTag, children }: PanelProps) => (
+    <article className={classNames('cs2-card cs2-tone-accent', styles.group)}>
+        <div className={'cs2-card-head'}>
+            <span className={'cs2-tile'} aria-hidden={'true'}>
                 <FontAwesomeIcon icon={icon} />
             </span>
-            <div className={'min-w-0 flex-1'}>
-                <p className={classNames(styles.panel_title, 'text-sm text-white')}>{title}</p>
-                <p className={'text-xs text-white/50'}>{summary}</p>
+            <div className={'cs2-card-titles'}>
+                <h2 className={'cs2-card-title'}>{title}</h2>
+                <p className={'cs2-card-sub'}>{summary}</p>
             </div>
             {busy && <Spinner size={'small'} />}
-            <Button.Text size={Button.Sizes.Small} onClick={onEdit}>
+            <Button.Text size={Button.Sizes.Small} variant={Button.Variants.Secondary} onClick={onEdit}>
                 <FontAwesomeIcon icon={faPen} />
                 Edit
             </Button.Text>
         </div>
-        <div className={'flex flex-wrap gap-1.5'}>
+        <div className={classNames('cs2-card-body', styles.group_body)}>
             {selected.length ? (
-                selected.map((server) => (
-                    <React.Fragment key={server.uuid}>{(renderChip || defaultChip)(server)}</React.Fragment>
-                ))
+                <ul className={styles.members}>
+                    {selected.map((server) => {
+                        const tag = renderTag?.(server);
+
+                        return (
+                            <li key={server.uuid} className={classNames(styles.member, tag && styles.member_tagged)}>
+                                {server.name}
+                                {tag}
+                            </li>
+                        );
+                    })}
+                </ul>
             ) : (
-                <p className={'text-sm text-white/40'}>No servers selected yet. Use Edit to pick some.</p>
+                <p className={styles.empty_members}>No servers selected yet. Use Edit to pick some.</p>
             )}
+            <div className={styles.actions}>{children}</div>
         </div>
-        <div className={styles.actions}>{children}</div>
-    </div>
+    </article>
 );
 
 const confirmations: Record<Exclude<PowerAction, 'start'>, string> = {
@@ -166,7 +172,6 @@ const PowerPanel = ({ pool }: { pool: Server[] }) => {
         <>
             <Panel
                 icon={faPowerOff}
-                tone={'info'}
                 title={'Power Actions'}
                 summary={countServers(selected.length)}
                 busy={busy}
@@ -177,22 +182,22 @@ const PowerPanel = ({ pool }: { pool: Server[] }) => {
                     <FontAwesomeIcon icon={faPlay} />
                     Start
                 </Button.Success>
-                <Button
+                <Button.Accent
                     size={Button.Sizes.Small}
                     disabled={disabled}
                     onClick={() => setPending({ open: true, action: 'restart' })}
                 >
                     <FontAwesomeIcon icon={faRedoAlt} />
                     Restart
-                </Button>
-                <Button.Warning
+                </Button.Accent>
+                <Button.Text
                     size={Button.Sizes.Small}
                     disabled={disabled}
                     onClick={() => setPending({ open: true, action: 'stop' })}
                 >
                     <FontAwesomeIcon icon={faStop} />
                     Stop
-                </Button.Warning>
+                </Button.Text>
                 <Button.Danger
                     size={Button.Sizes.Small}
                     disabled={disabled}
@@ -226,26 +231,6 @@ const PowerPanel = ({ pool }: { pool: Server[] }) => {
     );
 };
 
-const Badge = ({ on }: { on: boolean }) => (
-    <span className={classNames(styles.badge, on ? styles.tone_warning : styles.tone_muted, 'text-2xs')}>
-        {on ? 'On' : 'Off'}
-    </span>
-);
-
-const PrereleaseChip = ({ server }: { server: Server }) => {
-    const on = isPrereleaseOn(server);
-
-    return (
-        <span
-            className={classNames(styles.chip, on && styles.on, 'text-xs')}
-            title={on ? 'Pre-release on' : 'Pre-release off'}
-        >
-            <span className={classNames(styles.dot, on ? styles.tone_warning : styles.tone_muted)} />
-            {server.name}
-        </span>
-    );
-};
-
 const PrereleasePanel = ({ cs2, onChange }: { cs2: Server[]; onChange: () => Promise<unknown> }) => {
     const { preferences, save } = useDashboardPreferences();
     const { clear, report } = useReport();
@@ -273,29 +258,37 @@ const PrereleasePanel = ({ cs2, onChange }: { cs2: Server[]; onChange: () => Pro
         setBusy(false);
     };
 
-    const badge = (server: Server) => <Badge on={isPrereleaseOn(server)} />;
+    const tag = (server: Server) => (
+        <span className={classNames('cs2-tag', isPrereleaseOn(server) ? 'cs2-tone-accent' : 'cs2-tone-off')}>
+            {isPrereleaseOn(server) ? 'On' : 'Off'}
+        </span>
+    );
 
     return (
         <>
             <Panel
                 icon={faFlask}
-                tone={'warning'}
                 title={'SwiftlyS2 Pre-release'}
-                summary={`${countServers(selected.length)} · ${enabledCount} enabled`}
+                summary={`${countServers(selected.length)}, ${enabledCount} enabled`}
                 busy={busy}
                 selected={selected}
                 onEdit={() => setEditing(true)}
-                renderChip={(server) => <PrereleaseChip server={server} />}
+                renderTag={tag}
             >
-                <Button.Warning
+                <Button.Accent
                     size={Button.Sizes.Small}
                     disabled={busy || !selected.length}
                     onClick={() => apply(true)}
                 >
                     <FontAwesomeIcon icon={faFlask} />
                     Enable pre-release
-                </Button.Warning>
-                <Button.Text size={Button.Sizes.Small} disabled={busy || !selected.length} onClick={() => apply(false)}>
+                </Button.Accent>
+                <Button.Text
+                    size={Button.Sizes.Small}
+                    variant={Button.Variants.Secondary}
+                    disabled={busy || !selected.length}
+                    onClick={() => apply(false)}
+                >
                     <FontAwesomeIcon icon={faBan} />
                     Disable pre-release
                 </Button.Text>
@@ -310,7 +303,7 @@ const PrereleasePanel = ({ cs2, onChange }: { cs2: Server[]; onChange: () => Pro
                     save({ prerelease: uuids });
                     setEditing(false);
                 }}
-                renderBadge={badge}
+                renderBadge={tag}
             />
         </>
     );
@@ -325,12 +318,12 @@ export default ({ pool, onChange }: { pool: Server[]; onChange: () => Promise<un
     if (pool.length < 2 && !cs2.length) return null;
 
     return (
-        <div className={'mb-6'}>
+        <>
             <FlashMessageRender byKey={FLASH_KEY} className={'mb-4'} />
-            <div className={'grid gap-4 md:grid-cols-2'}>
+            <section className={styles.groups} aria-label={'Saved groups'}>
                 {pool.length > 1 && <PowerPanel pool={pool} />}
                 {cs2.length > 0 && <PrereleasePanel cs2={cs2} onChange={onChange} />}
-            </div>
-        </div>
+            </section>
+        </>
     );
 };

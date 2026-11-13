@@ -89,7 +89,7 @@ const AllocationRow = ({ allocation }: Props) => {
             <div className={'mt-4 w-full md:mt-0 md:flex-1 md:w-auto'}>
                 <InputSpinner visible={loading}>
                     <Textarea
-                        className={'!bg-black/20'}
+                        className={'!bg-paper-3'}
                         placeholder={'Notes'}
                         defaultValue={allocation.notes || undefined}
                         onChange={(e) => setAllocationNotes(e.currentTarget.value)}

@@ -29,6 +29,8 @@ class ServerController extends ClientApiController
             ->addMeta([
                 'is_server_owner' => $request->user()->id === $server->owner_id,
                 'user_permissions' => $this->permissionsService->handle($server, $request->user()),
+                // The caller's own directory restrictions; empty when unrestricted.
+                'file_rules' => $server->fileRulesFor($request->user()) ?? [],
             ])
             ->toArray();
     }

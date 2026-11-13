@@ -39,8 +39,8 @@ const StyledRow = styled.div<{ $danger?: boolean }>`
     ${tw`flex items-center rounded-lg px-3 py-2 text-sm text-ink-2 cursor-pointer transition-colors duration-150`};
     ${(props) =>
         props.$danger
-            ? tw`hover:bg-cs2-danger/10 hover:text-cs2-danger`
-            : tw`hover:bg-cs2-accent/10 hover:text-cs2-accent`};
+            ? tw`hover:bg-bad/10 hover:text-bad`
+            : tw`hover:bg-accent/10 hover:text-accent-text`};
 `;
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -145,7 +145,7 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
                 ref={onClickRef}
                 renderToggle={(onClick) => (
                     <div
-                        className={'px-4 py-2 text-white/50 transition-colors duration-150 hover:text-cs2-accent'}
+                        className={'px-4 py-2 text-muted transition-colors duration-150 hover:text-accent-text'}
                         onClick={onClick}
                     >
                         <FontAwesomeIcon icon={faEllipsisH} />

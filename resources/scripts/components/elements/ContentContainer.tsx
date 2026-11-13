@@ -1,14 +1,8 @@
 import styled from 'styled-components/macro';
-import { breakpoint } from '@/theme';
-import tw from 'twin.macro';
 
+// Spacing comes from the page frame (.cs2-page / .cs2-main), so the block itself adds none.
 const ContentContainer = styled.div`
-    ${tw`mt-4`}
-    ${tw`mx-4`};
-
-    ${breakpoint('xl')`
-        ${tw`mx-auto`};
-    `};
+    min-width: 0;
 `;
 ContentContainer.displayName = 'ContentContainer';
 ContentContainer.defaultProps = {

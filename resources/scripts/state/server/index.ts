@@ -15,15 +15,19 @@ interface ServerDataStore {
     inConflictState: Computed<ServerDataStore, boolean>;
     isInstalling: Computed<ServerDataStore, boolean>;
     permissions: string[];
+    // Directories the current user is limited to; empty when unrestricted.
+    fileRules: string[];
 
     getServer: Thunk<ServerDataStore, string, Record<string, unknown>, ServerStore, Promise<void>>;
     setServer: Action<ServerDataStore, Server>;
     setServerFromState: Action<ServerDataStore, (s: Server) => Server>;
     setPermissions: Action<ServerDataStore, string[]>;
+    setFileRules: Action<ServerDataStore, string[]>;
 }
 
 const server: ServerDataStore = {
     permissions: [],
+    fileRules: [],
 
     inConflictState: computed((state) => {
         if (!state.data) {
@@ -38,10 +42,11 @@ const server: ServerDataStore = {
     }),
 
     getServer: thunk(async (actions, payload) => {
-        const [server, permissions] = await getServer(payload);
+        const [server, permissions, fileRules] = await getServer(payload);
 
         actions.setServer(server);
         actions.setPermissions(permissions);
+        actions.setFileRules(fileRules);
     }),
 
     setServer: action((state, payload) => {
@@ -60,6 +65,12 @@ const server: ServerDataStore = {
     setPermissions: action((state, payload) => {
         if (!isEqual(payload, state.permissions)) {
             state.permissions = payload;
+        }
+    }),
+
+    setFileRules: action((state, payload) => {
+        if (!isEqual(payload, state.fileRules)) {
+            state.fileRules = payload;
         }
     }),
 };
@@ -99,6 +110,7 @@ export const ServerContext = createContextStore<ServerStore>(
         clearServerState: action((state) => {
             state.server.data = undefined;
             state.server.permissions = [];
+            state.server.fileRules = [];
             state.databases.data = [];
             state.subusers.data = [];
             state.files.directory = '/';

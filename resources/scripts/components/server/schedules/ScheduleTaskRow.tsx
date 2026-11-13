@@ -90,7 +90,7 @@ export default ({ schedule, task }: Props) => {
                 </span>
             </div>
             <div css={tw`flex-none sm:flex-1 w-full sm:w-auto overflow-x-auto`}>
-                <p css={tw`md:ml-6 text-white font-semibold uppercase tracking-wider text-sm`}>{title}</p>
+                <p css={tw`md:ml-6 text-ink font-semibold uppercase tracking-wider text-sm`}>{title}</p>
                 {task.payload && (
                     <div css={tw`md:ml-6 mt-2`}>
                         {task.action === 'backup' && (
@@ -127,7 +127,7 @@ export default ({ schedule, task }: Props) => {
                     <button
                         type={'button'}
                         aria-label={'Edit scheduled task'}
-                        css={tw`block text-sm p-2 text-muted hover:text-cs2-accent transition-colors duration-150 mr-4 ml-auto sm:ml-0`}
+                        css={tw`block text-sm p-2 text-muted hover:text-accent-text transition-colors duration-150 mr-4 ml-auto sm:ml-0`}
                         onClick={() => setIsEditing(true)}
                     >
                         <FontAwesomeIcon icon={faPencilAlt} />
@@ -137,7 +137,7 @@ export default ({ schedule, task }: Props) => {
                     <button
                         type={'button'}
                         aria-label={'Delete scheduled task'}
-                        css={tw`block text-sm p-2 text-muted hover:text-cs2-danger transition-colors duration-150`}
+                        css={tw`block text-sm p-2 text-muted hover:text-bad transition-colors duration-150`}
                         onClick={() => setVisible(true)}
                     >
                         <FontAwesomeIcon icon={faTrashAlt} />

@@ -7,7 +7,6 @@ import getServers from '@/api/getServers';
 import ServerRow, { ServerUsage } from '@/components/dashboard/ServerRow';
 import ServerTotals from '@/components/dashboard/ServerTotals';
 import BulkActions from '@/components/dashboard/BulkActions';
-import Spinner from '@/components/elements/Spinner';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import useFlash from '@/plugins/useFlash';
 import useDashboardPreferences from '@/plugins/useDashboardPreferences';
@@ -118,45 +117,24 @@ export default () => {
     const showingOthers = showOnlyAdmin && rootAdmin;
 
     return (
-        <PageContentBlock className='content-dashboard' title={'Dashboard'} showFlashKey={'dashboard'}>
-            <div className={'mb-6 flex flex-wrap items-center justify-between gap-4'}>
-                <div className={'min-w-0'}>
-                    <h1 className={'flex items-center gap-3 text-2xl font-bold text-white'}>
-                        <span className={styles.tile}>
-                            <FontAwesomeIcon icon={faServer} />
-                        </span>
+        <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+            <div className={'cs2-page-head'}>
+                <div className={'cs2-page-head-text'}>
+                    <h1 className={'cs2-page-title'}>
                         {showingOthers ? "Others' servers" : 'Your servers'}
-                        {servers && (
-                            <span
-                                className={
-                                    'rounded-full bg-cs2-accent/20 px-2.5 py-0.5 text-sm font-semibold text-cs2-accent'
-                                }
-                            >
-                                {servers.pagination.total}
-                            </span>
-                        )}
+                        {servers && <span className={'cs2-count'}>{servers.pagination.total}</span>}
                     </h1>
-                    <p className={'mt-1.5 text-sm text-white/50'}>
+                    <p className={'cs2-page-sub'}>
                         Open a server to manage it
                         <span className={'hidden sm:inline'}>, or drag the grip on its left to change the order</span>.
                     </p>
                 </div>
                 {rootAdmin && (
-                    <div className={styles.segmented} role={'group'} aria-label={'Server list'}>
-                        <button
-                            type={'button'}
-                            className={classNames(styles.segment, !showOnlyAdmin && styles.active)}
-                            aria-pressed={!showOnlyAdmin}
-                            onClick={() => setShowOnlyAdmin(false)}
-                        >
+                    <div className={'cs2-seg'} role={'group'} aria-label={'Servers to show'}>
+                        <button type={'button'} aria-pressed={!showOnlyAdmin} onClick={() => setShowOnlyAdmin(false)}>
                             Mine
                         </button>
-                        <button
-                            type={'button'}
-                            className={classNames(styles.segment, showOnlyAdmin && styles.active)}
-                            aria-pressed={showOnlyAdmin}
-                            onClick={() => setShowOnlyAdmin(true)}
-                        >
+                        <button type={'button'} aria-pressed={showOnlyAdmin} onClick={() => setShowOnlyAdmin(true)}>
                             Others
                         </button>
                     </div>
@@ -164,9 +142,13 @@ export default () => {
             </div>
             {pool && <BulkActions pool={sortByOrder(pool.items, preferences.order)} onChange={revalidatePool} />}
             {!servers ? (
-                <div className={'flex flex-col items-center gap-4 py-16'}>
-                    <Spinner size={'large'} />
-                    <p className={'text-sm text-white/50'}>Loading servers…</p>
+                <div className={styles.list} aria-busy={'true'} aria-label={'Loading servers'}>
+                    {[0, 1, 2].map((key) => (
+                        <div key={key} className={'cs2-card grid gap-3 px-6 py-5'}>
+                            <span className={'cs2-skel cs2-skel--tall'} style={{ '--w': '30%' } as React.CSSProperties} />
+                            <span className={'cs2-skel'} style={{ '--w': '65%' } as React.CSSProperties} />
+                        </div>
+                    ))}
                 </div>
             ) : (
                 <Pagination data={{ ...servers, items: visible }} onPageSelect={setPage}>
@@ -175,7 +157,7 @@ export default () => {
                             <>
                                 {items.length > 1 && <ServerTotals servers={items} usage={usage} />}
                                 <div
-                                    className={classNames('space-y-3', items.length > 1 && 'mt-3')}
+                                    className={styles.list}
                                     onDragOver={(e) => {
                                         if (dragging) e.preventDefault();
                                     }}
@@ -188,20 +170,17 @@ export default () => {
                                         <div
                                             key={server.uuid}
                                             data-server-row
-                                            className={classNames(
-                                                'transition-opacity',
-                                                dragging === server.uuid && 'opacity-50'
-                                            )}
                                             onDragEnter={() => onDragEnter(server.uuid)}
                                         >
                                             <ServerRow
                                                 server={server}
                                                 onUsage={onUsage}
+                                                className={classNames(dragging === server.uuid && styles.dragging)}
                                                 handle={
                                                     <div
                                                         draggable
                                                         title={'Drag to reorder'}
-                                                        className={styles.handle}
+                                                        className={styles.grip}
                                                         onDragStart={(e) => onDragStart(e, server.uuid)}
                                                         onDragEnd={onDragEnd}
                                                     >
@@ -214,11 +193,11 @@ export default () => {
                                 </div>
                             </>
                         ) : (
-                            <div className={'cs2-card flex flex-col items-center gap-3 px-6 py-10 text-center'}>
-                                <span className={styles.tile}>
+                            <div className={'cs2-card cs2-empty'}>
+                                <span className={'cs2-tile'} aria-hidden={'true'}>
                                     <FontAwesomeIcon icon={faServer} />
                                 </span>
-                                <p className={'text-sm text-white/50'}>
+                                <p>
                                     {showOnlyAdmin
                                         ? 'There are no other servers to display.'
                                         : 'There are no servers associated with your account.'}

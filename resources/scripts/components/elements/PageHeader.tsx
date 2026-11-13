@@ -11,14 +11,14 @@ interface Props {
 
 // Title row shared by the server pages; children render as right-aligned actions.
 export default ({ icon, title, description, children }: Props) => (
-    <div className={'mb-6 flex flex-wrap items-center justify-between gap-4'}>
+    <div className={'cs2-page-head is-centered'}>
         <div className={'flex min-w-0 items-center gap-3'}>
-            <span className={'cs2-tile'}>
+            <span className={'cs2-tile cs2-tone-accent'} aria-hidden={'true'}>
                 <FontAwesomeIcon icon={icon} />
             </span>
-            <div className={'min-w-0'}>
-                <h1 className={'truncate text-2xl font-bold text-white'}>{title}</h1>
-                {description && <p className={'mt-0.5 text-sm text-white/50'}>{description}</p>}
+            <div className={'cs2-page-head-text'}>
+                <h1 className={'cs2-page-title'}>{title}</h1>
+                {description && <p className={'cs2-page-sub text-sm'}>{description}</p>}
             </div>
         </div>
         {children && <div className={'flex w-full flex-wrap items-center gap-2 sm:w-auto'}>{children}</div>}

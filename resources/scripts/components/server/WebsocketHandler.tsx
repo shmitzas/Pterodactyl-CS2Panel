@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Websocket } from '@/plugins/Websocket';
 import { ServerContext } from '@/state/server';
 import getWebsocketToken from '@/api/server/getWebsocketToken';
-import ContentContainer from '@/components/elements/ContentContainer';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
-import tw from 'twin.macro';
 
 const reconnectErrors = ['jwt: exp claim is invalid', 'jwt: created too far in past (denylist)'];
 
@@ -109,19 +107,18 @@ export default () => {
 
     return error ? (
         <CSSTransition timeout={150} in appear classNames={'fade'}>
-            <div css={tw`border-b border-cs2-danger/40 bg-cs2-danger/10 py-2`}>
-                <ContentContainer css={tw`flex items-center justify-center`}>
-                    {error === 'connecting' ? (
-                        <>
-                            <Spinner size={'small'} />
-                            <p css={tw`ml-2 text-sm text-ink-2`}>
-                                We&apos;re having some trouble connecting to your server, please wait...
-                            </p>
-                        </>
-                    ) : (
-                        <p css={tw`ml-2 text-sm text-white`}>{error}</p>
-                    )}
-                </ContentContainer>
+            <div className={'cs2-notice cs2-tone-bad mb-6'} role={'alert'}>
+                {error === 'connecting' ? (
+                    <>
+                        <Spinner size={'small'} />
+                        <span className={'cs2-notice-title'}>Connection lost</span>
+                        <span className={'text-ink-2'}>
+                            We&apos;re having some trouble connecting to your server, please wait…
+                        </span>
+                    </>
+                ) : (
+                    <span>{error}</span>
+                )}
             </div>
         </CSSTransition>
     ) : null;

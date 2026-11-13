@@ -46,7 +46,7 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
         <SelectFileCheckbox name={file.name} />
         <Clickable file={file}>
             <div
-                className={file.isFile ? 'text-white/50' : 'text-cs2-accent'}
+                className={file.isFile ? 'text-muted' : 'text-accent-text'}
                 css={tw`flex-none ml-6 mr-4 text-lg pl-3`}
             >
                 {file.isFile ? (
@@ -59,12 +59,12 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
             </div>
             <div css={tw`flex-1 truncate`}>{file.name}</div>
             {file.isFile && (
-                <div className={'text-white/50'} css={tw`w-1/6 text-right mr-4 hidden sm:block`}>
+                <div className={'text-muted'} css={tw`w-1/6 text-right mr-4 hidden sm:block`}>
                     {bytesToString(file.size)}
                 </div>
             )}
             <div
-                className={'text-white/50'}
+                className={'text-muted'}
                 css={tw`w-1/5 text-right mr-4 hidden md:block`}
                 title={file.modifiedAt.toString()}
             >

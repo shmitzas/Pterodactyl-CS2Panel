@@ -24,9 +24,9 @@ interface Params {
 }
 
 const CronBox = ({ title, value }: { title: string; value: string }) => (
-    <div css={tw`rounded-xl border border-rule bg-cs2-surface/60 p-4`}>
+    <div css={tw`rounded-xl border border-rule bg-paper-2 p-4`}>
         <p css={tw`text-2xs font-semibold uppercase tracking-wider text-muted`}>{title}</p>
-        <p css={tw`mt-1 font-mono text-xl font-semibold text-white`}>{value}</p>
+        <p css={tw`mt-1 font-mono text-xl font-semibold text-ink`}>{value}</p>
     </div>
 );
 
@@ -82,12 +82,12 @@ export default () => {
                 <>
                     <ScheduleCronRow
                         cron={schedule.cron}
-                        css={tw`sm:hidden rounded-xl border border-rule bg-cs2-surface/60 mb-4 p-3`}
+                        css={tw`sm:hidden rounded-xl border border-rule bg-paper-2 mb-4 p-3`}
                     />
                     <div>
                         <div className={'cs2-card p-4 sm:flex sm:items-center sm:p-6'}>
                             <div css={tw`flex-1`}>
-                                <h3 css={tw`flex items-center text-white font-bold text-2xl`}>
+                                <h3 css={tw`flex items-center text-ink font-bold text-2xl`}>
                                     {schedule.name}
                                     {schedule.isProcessing ? (
                                         <span className={'cs2-pill cs2-tone-off ml-4'}>

@@ -12,18 +12,22 @@ interface Props {
 }
 
 const TitledGreyBox = ({ icon, title, children, className }: Props) => (
-    <div className={classNames('cs2-card', className)}>
-        <div className={'border-b border-white/10 px-5 py-3.5'}>
+    <div className={classNames('cs2-card cs2-tone-accent', className)}>
+        <div className={'cs2-card-head'}>
             {typeof title === 'string' ? (
-                <h2 className={'flex items-center gap-2.5 text-sm font-semibold uppercase tracking-wider text-white'}>
-                    {icon && <FontAwesomeIcon icon={icon} className={'text-cs2-accent'} fixedWidth />}
-                    {title}
-                </h2>
+                <>
+                    {icon && (
+                        <span className={'cs2-tile cs2-tile--sm'} aria-hidden={'true'}>
+                            <FontAwesomeIcon icon={icon} />
+                        </span>
+                    )}
+                    <h2 className={'cs2-card-title'}>{title}</h2>
+                </>
             ) : (
                 title
             )}
         </div>
-        <div className={'p-5'}>{children}</div>
+        <div className={'cs2-card-body'}>{children}</div>
     </div>
 );
 

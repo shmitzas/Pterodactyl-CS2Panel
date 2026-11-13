@@ -9,8 +9,8 @@ interface Props {
 
 const Part = ({ value, label, first }: { value: string; label: string; first?: boolean }) => (
     <div className={classNames('w-1/5 sm:w-auto text-center', !first && 'ml-4')}>
-        <p className={'font-mono font-medium text-white'}>{value}</p>
-        <p className={'text-2xs text-white/40 uppercase tracking-wider'}>{label}</p>
+        <p className={'font-mono font-medium text-ink'}>{value}</p>
+        <p className={'text-2xs text-muted uppercase tracking-wider'}>{label}</p>
     </div>
 );
 

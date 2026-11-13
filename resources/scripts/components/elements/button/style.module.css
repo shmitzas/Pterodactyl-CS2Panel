@@ -1,5 +1,5 @@
 /*
- * Buttons in the v2 theme: primary is solid accent, Danger/Success/Warning are soft tone buttons,
+ * Buttons in the v2 theme: primary is solid accent, Accent/Danger/Success/Warning are soft tone buttons,
  * Text is a neutral outline and the Secondary variant is a ghost that keeps its tone's colour.
  */
 .button {
@@ -74,6 +74,10 @@
 .primary:not(.secondary):hover:not(:disabled) {
     border-color: var(--color-accent-hover);
     background: var(--color-accent-hover);
+}
+
+.accent {
+    --tone: var(--color-accent-text);
 }
 
 .success {

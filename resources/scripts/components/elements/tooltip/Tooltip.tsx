@@ -90,7 +90,7 @@ export default ({ children, ...props }: Props) => {
                         {...getFloatingProps({
                             ref: floating,
                             className:
-                                'bg-cs2-surface/95 border border-white/10 shadow-lg shadow-black/40 text-sm text-white px-3 py-1.5 rounded-lg pointer-events-none max-w-[24rem]',
+                                'bg-raise border border-rule-2 shadow-lg shadow-black/40 text-sm text-ink px-3 py-1.5 rounded-lg pointer-events-none max-w-[24rem]',
                             style: {
                                 position: strategy,
                                 top: `${y || 0}px`,
@@ -107,7 +107,7 @@ export default ({ children, ...props }: Props) => {
                                         ay || 0
                                     )}px) rotate(45deg)`,
                                 }}
-                                className={classNames('absolute bg-cs2-surface w-3 h-3', side)}
+                                className={classNames('absolute bg-raise w-3 h-3', side)}
                             />
                         )}
                     </motion.div>

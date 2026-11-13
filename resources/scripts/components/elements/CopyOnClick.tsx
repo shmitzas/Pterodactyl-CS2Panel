@@ -53,10 +53,10 @@ const CopyOnClick = ({ text, showInNotification = true, children }: CopyOnClickP
                         <div className={'fixed z-50 bottom-0 right-0 m-4'}>
                             <div
                                 className={
-                                    'flex items-center gap-3 rounded-xl border border-cs2-success/40 bg-cs2-surface/95 px-4 py-3 text-sm text-white shadow-lg shadow-black/40'
+                                    'flex items-center gap-3 rounded-xl border border-ok/40 bg-paper-2 px-4 py-3 text-sm text-ink shadow-lg shadow-black/40'
                                 }
                             >
-                                <FontAwesomeIcon icon={faCheckCircle} className={'text-cs2-success'} />
+                                <FontAwesomeIcon icon={faCheckCircle} className={'text-ok'} />
                                 <p>
                                     {showInNotification
                                         ? `Copied "${String(text)}" to clipboard.`

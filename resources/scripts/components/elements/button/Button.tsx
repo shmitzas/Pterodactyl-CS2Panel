@@ -3,11 +3,12 @@ import classNames from 'classnames';
 import { ButtonProps, Options } from '@/components/elements/button/types';
 import styles from './style.module.css';
 
-type Kind = 'primary' | 'text' | 'danger' | 'success' | 'warning';
+type Kind = 'primary' | 'text' | 'accent' | 'danger' | 'success' | 'warning';
 
 const kinds: Record<Kind, string | undefined> = {
     primary: styles.primary,
     text: undefined,
+    accent: classNames(styles.soft, styles.accent),
     danger: classNames(styles.soft, styles.danger),
     success: classNames(styles.soft, styles.success),
     warning: classNames(styles.soft, styles.warning),
@@ -47,6 +48,7 @@ const _Button = Object.assign(Button, {
     Shapes: Options.Shape,
     Variants: Options.Variant,
     Text: make('text'),
+    Accent: make('accent'),
     Danger: make('danger'),
     Success: make('success'),
     Warning: make('warning'),

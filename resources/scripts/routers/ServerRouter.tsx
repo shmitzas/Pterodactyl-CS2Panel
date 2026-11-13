@@ -4,9 +4,8 @@ import { NavLink, NavLinkProps, Route, Switch, useRouteMatch } from 'react-route
 import NavigationBar from '@/components/NavigationBar';
 import TransitionRouter from '@/TransitionRouter';
 import WebsocketHandler from '@/components/server/WebsocketHandler';
-import { ServerContext } from '@/state/server';
+import { ServerContext, ServerStatus } from '@/state/server';
 import { CSSTransition } from 'react-transition-group';
-import Can from '@/components/elements/Can';
 import Spinner from '@/components/elements/Spinner';
 import { NotFound, ServerError } from '@/components/elements/ScreenBlock';
 import { httpErrorToHuman } from '@/api/http';
@@ -15,52 +14,54 @@ import InstallListener from '@/components/server/InstallListener';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
+    faCubes,
     faExternalLinkAlt,
+    faFeatherAlt,
+    faHashtag,
     faPuzzlePiece,
     faServer,
+    faShieldAlt,
     faSlidersH,
+    faToolbox,
     faTools,
     faWrench,
 } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router';
 import classNames from 'classnames';
+import useSWR from 'swr';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
 import PermissionRoute from '@/components/elements/PermissionRoute';
 import routes from '@/routers/routes';
-import Sidebar from '@/components/Sidebar';
+import Sidebar, { SidebarSection } from '@/components/Sidebar';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { hashToPath } from '@/helpers';
+import { encodePathSegments, hashToPath } from '@/helpers';
+import loadDirectory, { FileObject } from '@/api/server/files/loadDirectory';
+import { getDirectorySwrKey } from '@/plugins/useFileManagerSwr';
+import { usePermissions } from '@/plugins/usePermissions';
+import { deepestMatch, detectFrameworks, Framework, isPathAllowed } from '@/lib/frameworks';
 
-const powerStates: Record<string, { label: string; dot: string }> = {
-    running: { label: 'Running', dot: 'bg-cs2-success shadow-[0_0_8px_rgba(25,238,25,0.6)]' },
-    starting: { label: 'Starting', dot: 'bg-cs2-warning' },
-    stopping: { label: 'Stopping', dot: 'bg-cs2-warning' },
-    offline: { label: 'Offline', dot: 'bg-cs2-danger' },
+const powerStates: Record<NonNullable<ServerStatus>, { label: string; tone: string }> = {
+    running: { label: 'Running', tone: 'cs2-tone-ok' },
+    starting: { label: 'Starting', tone: 'cs2-tone-warn' },
+    stopping: { label: 'Stopping', tone: 'cs2-tone-warn' },
+    offline: { label: 'Offline', tone: 'cs2-tone-bad' },
 };
 
 const SidebarServer = () => {
     const name = ServerContext.useStoreState((state) => state.server.data!.name);
     const status = ServerContext.useStoreState((state) => state.status.value);
-    const power = (status && powerStates[status]) || { label: 'Connecting…', dot: 'bg-white/30' };
+    const power = (status && powerStates[status]) || { label: 'Connecting…', tone: 'cs2-tone-off' };
 
     return (
-        <div className={'mb-4 flex items-center gap-3 border-b border-white/10 px-2 pb-4'}>
-            <span
-                className={
-                    'flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.625rem] border border-cs2-accent/50 bg-cs2-accent/20 text-cs2-accent'
-                }
-            >
+        <div className={'sidebar-server'}>
+            <span className={'cs2-tile cs2-tile--sm'} aria-hidden={'true'}>
                 <FontAwesomeIcon icon={faServer} />
             </span>
-            <div className={'min-w-0'}>
-                <p className={'truncate font-semibold text-white'} title={name}>
-                    {name}
-                </p>
-                <p className={'flex items-center gap-1.5 text-xs text-white/50'}>
-                    <span className={classNames('h-2 w-2 shrink-0 rounded-full', power.dot)} />
-                    {power.label}
-                </p>
-            </div>
+            <span className={'sidebar-server-name'}>{name}</span>
+            <span className={classNames('cs2-pill', power.tone)}>
+                <span className={'cs2-pill-dot'} />
+                {power.label}
+            </span>
         </div>
     );
 };
@@ -71,99 +72,153 @@ interface Shortcut {
     directory: string;
 }
 
-// File manager shortcuts into the CS2 + SwiftlyS2 tree.
-const shortcuts: Shortcut[] = [
-    { name: 'CS2 Configs', icon: faSlidersH, directory: '/game/csgo/cfg' },
-    { name: 'SW2 Configs', icon: faWrench, directory: '/game/csgo/addons/swiftlys2/configs' },
-    { name: 'Plugins Configs', icon: faTools, directory: '/game/csgo/addons/swiftlys2/configs/plugins' },
-    { name: 'Plugins', icon: faPuzzlePiece, directory: '/game/csgo/addons/swiftlys2/plugins' },
-];
+const frameworkIcons: Record<Framework['key'], IconProp> = {
+    metamod: faCubes,
+    swiftlys2: faFeatherAlt,
+    counterstrikesharp: faHashtag,
+    modsharp: faToolbox,
+};
 
-const topRoutes = ['/', '/startup', '/settings'];
+const folderIcons: Record<string, IconProp> = {
+    configs: faWrench,
+    'configs/plugins': faTools,
+    plugins: faPuzzlePiece,
+    modules: faPuzzlePiece,
+};
+
+// Folder names in a directory: undefined while loading, null when it is not listed or the listing failed.
+const useFolderNames = (directory: string, enabled: boolean): string[] | null | undefined => {
+    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    // Shares the file manager's cache key, so creating or deleting a framework folder there updates this.
+    const { data, error } = useSWR<FileObject[]>(
+        enabled ? getDirectorySwrKey(uuid, directory) : null,
+        () => loadDirectory(uuid, directory),
+        { revalidateOnFocus: false, shouldRetryOnError: false }
+    );
+
+    if (!enabled || error) return null;
+
+    return data?.filter((file) => !file.isFile).map((file) => file.name);
+};
+
+const topRoutes = ['/', '/files', '/startup', '/settings'];
 const listedRoutes = ['/schedules', '/users', '/network', '/activity', '/backups', '/databases'];
 // Named routes missing from this layout are appended, so a newly added page can't drop out of the nav.
-const bottomRoutes = listedRoutes.concat(
+const otherRoutes = listedRoutes.concat(
     routes.server
-        .filter((route) => route.name && ![...topRoutes, '/files', ...listedRoutes].includes(route.path))
+        .filter((route) => route.name && ![...topRoutes, ...listedRoutes].includes(route.path))
         .map((route) => route.path)
 );
+const routePermissions = routes.server.flatMap((route) => (route.permission ? ([] as string[]).concat(route.permission) : []));
 
 const ServerSidebar = () => {
     const { url } = useRouteMatch();
     const { hash } = useLocation();
     const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const name = ServerContext.useStoreState((state) => state.server.data!.name);
     const serverId = ServerContext.useStoreState((state) => state.server.data!.internalId);
     const invocation = ServerContext.useStoreState((state) => state.server.data!.invocation);
+    const rules = ServerContext.useStoreState((state) => state.server.fileRules);
+    const granted = usePermissions(routePermissions);
+    const [canRead] = usePermissions('file.read');
 
     // The shortcuts point into the CS2 game directory, so other eggs (TeamSpeak, ...) don't get them.
-    const isCs2 = /\bcs(2|go)\b/i.test(invocation);
-    const directory = hashToPath(hash);
-    // The deepest shortcut containing the open directory is highlighted instead of Files.
-    const activeShortcut = isCs2
-        ? shortcuts
-              .filter((s) => directory === s.directory || directory.startsWith(`${s.directory}/`))
-              .sort((a, b) => b.directory.length - a.directory.length)[0]
-        : undefined;
+    const browse = /\bcs(2|go)\b/i.test(invocation) && canRead;
+    const addons = useFolderNames('/game/csgo/addons', browse && isPathAllowed('/game/csgo/addons', rules));
+    const game = useFolderNames('/game', browse && isPathAllowed('/game', rules));
+    const detected = browse ? detectFrameworks({ '/game/csgo/addons': addons, '/game': game }, rules) : [];
+
+    const allowed = (shortcut: Shortcut) => isPathAllowed(shortcut.directory, rules);
+    const configs = browse ? [{ name: 'CS2 configs', icon: faSlidersH, directory: '/game/csgo/cfg' }].filter(allowed) : [];
+    const roots = detected
+        .map((framework) => ({ name: framework.name, icon: frameworkIcons[framework.key], directory: framework.root }))
+        .filter(allowed);
+    const groups = detected
+        .map((framework) => ({
+            framework,
+            shortcuts: framework.folders
+                .map((folder) => ({
+                    name: folder.name,
+                    icon: folderIcons[folder.path],
+                    directory: `${framework.root}/${folder.path}`,
+                }))
+                .filter(allowed),
+        }))
+        .filter((group) => group.shortcuts.length > 0);
+
+    // The deepest shortcut holding the open directory is highlighted; elsewhere in the tree it is Files.
+    const active = deepestMatch([...configs, ...roots, ...groups.flatMap((group) => group.shortcuts)], hashToPath(hash));
 
     const to = (path: string) => (path === '/' ? url : `${url.replace(/\/*$/, '')}${path}`);
 
-    const routeLink = (path: string, isActive?: NavLinkProps['isActive']) => {
+    const canSee = (path: string) => {
         const route = routes.server.find((route) => route.path === path);
-        if (!route?.name) return null;
+        if (!route?.name) return false;
 
-        const link = (
-            <NavLink key={path} to={to(path)} exact={route.exact} isActive={isActive}>
-                <div className='icon'>
-                    <FontAwesomeIcon icon={route.iconProp as IconProp} />
-                </div>
-                {route.name}
-            </NavLink>
-        );
-
-        return route.permission ? (
-            <Can key={path} action={route.permission} matchAny>
-                {link}
-            </Can>
-        ) : (
-            link
+        return (
+            !route.permission ||
+            ([] as string[]).concat(route.permission).some((permission) => granted[routePermissions.indexOf(permission)])
         );
     };
 
+    const routeLink = (path: string, isActive?: NavLinkProps['isActive']) => {
+        const route = routes.server.find((route) => route.path === path);
+        if (!route || !canSee(path)) return null;
+
+        return (
+            <NavLink key={path} to={to(path)} exact={route.exact} isActive={isActive}>
+                <span className={'icon'}>
+                    <FontAwesomeIcon icon={route.iconProp as IconProp} />
+                </span>
+                {route.name}
+            </NavLink>
+        );
+    };
+
+    const shortcutLink = (shortcut: Shortcut) => (
+        <NavLink
+            key={shortcut.directory}
+            to={`${to('/files')}#${encodePathSegments(shortcut.directory)}`}
+            isActive={(match) => !!match && active === shortcut}
+        >
+            <span className={'icon'}>
+                <FontAwesomeIcon icon={shortcut.icon} />
+            </span>
+            {shortcut.name}
+        </NavLink>
+    );
+
+    const others = otherRoutes.filter(canSee);
+
     return (
-        <Sidebar>
+        <Sidebar label={name}>
             <SidebarServer />
-            <div className={'sidebar-group'}>
-                {topRoutes.map((path) => routeLink(path))}
+            <SidebarSection label={'Server controls'}>
+                {routeLink('/')}
+                {routeLink('/files', (match) => !!match && !active)}
+                {configs.map(shortcutLink)}
+                {routeLink('/startup')}
+                {routeLink('/settings')}
                 {rootAdmin && (
-                    // eslint-disable-next-line react/jsx-no-target-blank
-                    <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
-                        <div className='icon'>
-                            <FontAwesomeIcon icon={faExternalLinkAlt} />
-                        </div>
+                    <a href={`/admin/servers/view/${serverId}`} target={'_blank'} rel={'noreferrer'}>
+                        <span className={'icon'}>
+                            <FontAwesomeIcon icon={faShieldAlt} />
+                        </span>
                         Admin
+                        <FontAwesomeIcon icon={faExternalLinkAlt} className={'end'} />
+                        <span className={'sr-only'}> (opens in a new tab)</span>
                     </a>
                 )}
-            </div>
-            <div className={'sidebar-group'}>
-                {isCs2 && (
-                    <Can action={'file.*'} matchAny>
-                        {shortcuts.map((shortcut) => (
-                            <NavLink
-                                key={shortcut.directory}
-                                to={`${to('/files')}#${shortcut.directory}`}
-                                isActive={(match) => !!match && activeShortcut === shortcut}
-                            >
-                                <div className='icon'>
-                                    <FontAwesomeIcon icon={shortcut.icon} />
-                                </div>
-                                {shortcut.name}
-                            </NavLink>
-                        ))}
-                    </Can>
-                )}
-                {routeLink('/files', (match) => !!match && !activeShortcut)}
-            </div>
-            <div className={'sidebar-group'}>{bottomRoutes.map((path) => routeLink(path))}</div>
+            </SidebarSection>
+            {roots.length > 0 && <SidebarSection label={'Plugin frameworks'}>{roots.map(shortcutLink)}</SidebarSection>}
+            {groups.map(({ framework, shortcuts }) => (
+                <SidebarSection key={framework.key} label={`${framework.name} files`}>
+                    {shortcuts.map(shortcutLink)}
+                </SidebarSection>
+            ))}
+            {others.length > 0 && (
+                <SidebarSection label={'Other settings'}>{others.map((path) => routeLink(path))}</SidebarSection>
+            )}
         </Sidebar>
     );
 };
@@ -218,32 +273,35 @@ export default () => {
                     <Spinner size={'large'} centered />
                 )
             ) : (
-                <>
+                <div className={'cs2-shell'}>
                     <CSSTransition timeout={150} classNames={'fade'} appear in>
                         <ServerSidebar />
                     </CSSTransition>
-                    <InstallListener />
-                    <TransferListener />
-                    <WebsocketHandler />
-                    {inConflictState && (!rootAdmin || (rootAdmin && !location.pathname.endsWith(`/server/${id}`))) ? (
-                        <ConflictStateRenderer />
-                    ) : (
-                        <ErrorBoundary>
-                            <TransitionRouter>
-                                <Switch location={location}>
-                                    {routes.server.map(({ path, permission, component: Component }) => (
-                                        <PermissionRoute key={path} permission={permission} path={to(path)} exact>
-                                            <Spinner.Suspense>
-                                                <Component />
-                                            </Spinner.Suspense>
-                                        </PermissionRoute>
-                                    ))}
-                                    <Route path={'*'} component={NotFound} />
-                                </Switch>
-                            </TransitionRouter>
-                        </ErrorBoundary>
-                    )}
-                </>
+                    <main className={'cs2-main'}>
+                        <InstallListener />
+                        <TransferListener />
+                        <WebsocketHandler />
+                        {inConflictState &&
+                        (!rootAdmin || (rootAdmin && !location.pathname.endsWith(`/server/${id}`))) ? (
+                            <ConflictStateRenderer />
+                        ) : (
+                            <ErrorBoundary>
+                                <TransitionRouter>
+                                    <Switch location={location}>
+                                        {routes.server.map(({ path, permission, component: Component }) => (
+                                            <PermissionRoute key={path} permission={permission} path={to(path)} exact>
+                                                <Spinner.Suspense>
+                                                    <Component />
+                                                </Spinner.Suspense>
+                                            </PermissionRoute>
+                                        ))}
+                                        <Route path={'*'} component={NotFound} />
+                                    </Switch>
+                                </TransitionRouter>
+                            </ErrorBoundary>
+                        )}
+                    </main>
+                </div>
             )}
         </React.Fragment>
     );

@@ -160,7 +160,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                                     {(form.values.fileRules as string[]).map((rule, index) => (
                                         <div key={index} css={tw`flex items-center mb-2`}>
                                             <input
-                                                css={tw`flex-1 bg-paper-3 border border-rule rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cs2-accent`}
+                                                css={tw`flex-1 bg-paper-3 border border-rule rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-accent-text`}
                                                 type={'text'}
                                                 placeholder={'/plugins'}
                                                 value={rule}

@@ -38,7 +38,7 @@ export default ({ className }: PowerButtonProps) => {
         }
     }, [status]);
 
-    const StopButton = killable ? Button.Danger : Button.Warning;
+    const StopButton = killable ? Button.Danger : Button.Text;
 
     return (
         <div className={className}>
@@ -54,7 +54,7 @@ export default ({ className }: PowerButtonProps) => {
             </Dialog.Confirm>
             <Can action={'control.start'}>
                 <Button.Success
-                    className={'flex-1 gap-2'}
+                    className={'flex-1 sm:flex-none'}
                     disabled={status !== 'offline'}
                     onClick={onButtonClick.bind(this, 'start')}
                 >
@@ -63,14 +63,18 @@ export default ({ className }: PowerButtonProps) => {
                 </Button.Success>
             </Can>
             <Can action={'control.restart'}>
-                <Button className={'flex-1 gap-2'} disabled={!status} onClick={onButtonClick.bind(this, 'restart')}>
+                <Button.Accent
+                    className={'flex-1 sm:flex-none'}
+                    disabled={!status}
+                    onClick={onButtonClick.bind(this, 'restart')}
+                >
                     <FontAwesomeIcon icon={faRedoAlt} />
                     Restart
-                </Button>
+                </Button.Accent>
             </Can>
             <Can action={'control.stop'}>
                 <StopButton
-                    className={'flex-1 gap-2'}
+                    className={'flex-1 sm:flex-none'}
                     disabled={status === 'offline'}
                     onClick={onButtonClick.bind(this, killable ? 'kill' : 'stop')}
                 >

@@ -20,11 +20,11 @@ export default ({ subuser }: Props) => {
     return (
         <GreyRowBox css={tw`mb-2`}>
             <EditSubuserModal subuser={subuser} visible={visible} onModalDismissed={() => setVisible(false)} />
-            <div css={tw`w-10 h-10 rounded-full overflow-hidden hidden md:block`} className={'ring-2 ring-white/10'}>
+            <div css={tw`w-10 h-10 rounded-full overflow-hidden hidden md:block`} className={'ring-2 ring-rule'}>
                 <img css={tw`w-full h-full`} src={`${subuser.image}?s=400`} />
             </div>
             <div css={tw`ml-4 flex-1 overflow-hidden`}>
-                <p css={tw`text-sm font-semibold text-white truncate`}>{subuser.email}</p>
+                <p css={tw`text-sm font-semibold text-ink truncate`}>{subuser.email}</p>
             </div>
             <div css={tw`ml-4`}>
                 <p css={tw`font-medium text-center`}>
@@ -32,14 +32,14 @@ export default ({ subuser }: Props) => {
                     <FontAwesomeIcon
                         icon={subuser.twoFactorEnabled ? faUserLock : faUnlockAlt}
                         fixedWidth
-                        className={subuser.twoFactorEnabled ? 'text-cs2-success' : 'text-cs2-danger'}
+                        className={subuser.twoFactorEnabled ? 'text-ok' : 'text-bad'}
                     />
                     &nbsp;
                 </p>
                 <p css={tw`text-2xs text-muted uppercase tracking-wider hidden md:block`}>2FA Enabled</p>
             </div>
             <div css={tw`ml-4 hidden md:block`}>
-                <p css={tw`font-medium text-center text-white`}>
+                <p css={tw`font-medium text-center text-ink`}>
                     {subuser.permissions.filter((permission) => permission !== 'websocket.connect').length}
                 </p>
                 <p css={tw`text-2xs text-muted uppercase tracking-wider`}>Permissions</p>
@@ -50,7 +50,7 @@ export default ({ subuser }: Props) => {
                         <button
                             type={'button'}
                             aria-label={'Edit subuser'}
-                            css={tw`block text-sm p-1 md:p-2 text-muted hover:text-cs2-accent transition-colors duration-150 mx-4`}
+                            css={tw`block text-sm p-1 md:p-2 text-muted hover:text-accent-text transition-colors duration-150 mx-4`}
                             onClick={() => setVisible(true)}
                         >
                             <FontAwesomeIcon icon={faPencilAlt} />

@@ -1,20 +1,21 @@
 import styled from 'styled-components/macro';
 import tw from 'twin.macro';
 
-// Same look as the global .glass-row; hover is opt-out for rows that are not interactive.
+// A floating list row (the .cs2-row look); hover is opt-out for rows that are not interactive.
 export default styled.div<{ $hoverable?: boolean }>`
-    ${tw`flex items-center rounded-xl p-4 no-underline text-neutral-200 overflow-hidden`};
-    background: rgba(var(--cs2-surface), 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    ${tw`flex items-center p-4 no-underline overflow-hidden`};
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-inner);
+    background: var(--color-paper-2);
+    color: var(--color-ink-2);
+    box-shadow: var(--shadow-card);
+    transition: border-color var(--dur-short) var(--ease-out);
 
     ${(props) =>
         props.$hoverable !== false &&
         `
         &:hover {
-            background: rgba(var(--cs2-surface), 0.8);
-            border-color: rgba(var(--cs2-accent), 0.3);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 12px rgba(var(--cs2-accent), 0.08);
+            border-color: color-mix(in oklab, var(--color-accent-text) 55%, var(--color-rule));
         }
     `};
 `;

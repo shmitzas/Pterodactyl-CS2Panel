@@ -147,7 +147,7 @@ export default ({ database, className }: Props) => {
                 </div>
                 <div css={tw`flex-1 ml-4`}>
                     <CopyOnClick text={database.name}>
-                        <p css={tw`text-lg font-semibold text-white`}>{database.name}</p>
+                        <p css={tw`text-lg font-semibold text-ink`}>{database.name}</p>
                     </CopyOnClick>
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>

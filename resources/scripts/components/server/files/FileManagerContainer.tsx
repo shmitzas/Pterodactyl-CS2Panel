@@ -77,7 +77,7 @@ export default () => {
                         </NavLink>
                     </Can>
                 </PageHeader>
-                <div className={'mb-3 rounded-xl border border-white/10 bg-cs2-surface/60 py-2.5'}>
+                <div className={'mb-3 rounded-xl border border-rule bg-paper-2 py-2.5'}>
                     <FileManagerBreadcrumbs
                         renderLeft={
                             <FileActionCheckbox

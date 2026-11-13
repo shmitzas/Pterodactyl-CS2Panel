@@ -168,7 +168,7 @@ export default ({ backup }: Props) => {
                         <button
                             onClick={onClick}
                             aria-label={'Backup actions'}
-                            css={tw`text-muted transition-colors duration-150 hover:text-cs2-accent p-2`}
+                            css={tw`text-muted transition-colors duration-150 hover:text-accent-text p-2`}
                         >
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </button>
@@ -211,7 +211,7 @@ export default ({ backup }: Props) => {
                 <button
                     onClick={() => setModal('delete')}
                     aria-label={'Delete backup'}
-                    css={tw`text-muted transition-colors duration-150 hover:text-cs2-danger p-2`}
+                    css={tw`text-muted transition-colors duration-150 hover:text-bad p-2`}
                 >
                     <FontAwesomeIcon icon={faTrashAlt} />
                 </button>

@@ -38,7 +38,7 @@ export default ({ open, title, servers, selected, onClose, onSave, renderBadge }
     return (
         <Dialog open={open} onClose={onClose} title={title}>
             <div className={'mt-4 flex items-center justify-between gap-2'}>
-                <p className={'text-sm text-white/50'}>
+                <p className={'text-sm text-muted'}>
                     {count} of {servers.length} selected
                 </p>
                 <div className={'flex gap-2'}>
@@ -60,17 +60,17 @@ export default ({ open, title, servers, selected, onClose, onSave, renderBadge }
                         className={classNames(styles.option, checked.has(server.uuid) && styles.selected)}
                     >
                         <Checkbox checked={checked.has(server.uuid)} onChange={() => toggle(server.uuid)} />
-                        <span className={'min-w-0 flex-1 truncate text-white'}>{server.name}</span>
+                        <span className={'min-w-0 flex-1 truncate text-ink'}>{server.name}</span>
                         {renderBadge?.(server)}
                     </label>
                 ))}
             </div>
             <Dialog.Footer>
-                <Button.Danger onClick={onClose}>Cancel</Button.Danger>
-                <Button.Success onClick={() => onSave(servers.map((s) => s.uuid).filter((uuid) => checked.has(uuid)))}>
+                <Button.Text onClick={onClose}>Cancel</Button.Text>
+                <Button onClick={() => onSave(servers.map((s) => s.uuid).filter((uuid) => checked.has(uuid)))}>
                     <FontAwesomeIcon icon={faSave} />
                     Save
-                </Button.Success>
+                </Button>
             </Dialog.Footer>
         </Dialog>
     );

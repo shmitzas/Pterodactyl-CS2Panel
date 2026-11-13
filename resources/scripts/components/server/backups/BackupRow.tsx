@@ -72,7 +72,7 @@ export default ({ backup, className }: Props) => {
                         {backup.completedAt !== null && !backup.isSuccessful && (
                             <span className={'cs2-pill cs2-tone-bad mr-2'}>Failed</span>
                         )}
-                        <p css={tw`break-words truncate font-semibold text-white`}>{backup.name}</p>
+                        <p css={tw`break-words truncate font-semibold text-ink`}>{backup.name}</p>
                         {backup.completedAt !== null && backup.isSuccessful && (
                             <span css={tw`ml-3 text-muted text-xs hidden sm:inline`}>
                                 {bytesToString(backup.bytes)}

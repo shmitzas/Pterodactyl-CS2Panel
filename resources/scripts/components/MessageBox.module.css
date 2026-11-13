@@ -1,38 +1,36 @@
-/* Info / warning banner, one tone per flash type. */
+/* Flash banner, one tone per flash type. */
 .box {
-    --tone: var(--cs2-info);
+    --tone: var(--color-accent-text);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: var(--space-sm);
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid rgba(var(--tone), 0.3);
-    border-radius: 0.75rem;
-    background: linear-gradient(135deg, rgba(var(--tone), 0.15) 0%, rgba(var(--tone), 0.05) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid color-mix(in oklab, var(--tone) 45%, var(--color-paper-2));
+    border-radius: var(--radius-card);
+    background: color-mix(in oklab, var(--tone) 14%, var(--color-paper-2));
+    box-shadow: var(--shadow-card);
 }
 
 .success {
-    --tone: var(--cs2-success);
+    --tone: var(--color-ok);
 }
 
 .warning {
-    --tone: var(--cs2-warning);
+    --tone: var(--color-warn);
 }
 
 .error {
-    --tone: var(--cs2-danger);
+    --tone: var(--color-bad);
 }
 
 .icon {
-    display: flex;
+    display: inline-grid;
     flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.5rem;
-    background: rgba(var(--tone), 0.2);
-    color: rgb(var(--tone));
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-chip);
+    background: color-mix(in oklab, var(--tone) 22%, var(--color-paper-2));
+    color: var(--tone);
 }

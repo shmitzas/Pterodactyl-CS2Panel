@@ -18,10 +18,14 @@ const SpinnerOverlay: React.FC<Props> = ({ size, fixed, visible, backgroundOpaci
                 // In-page overlays stay under the sidebar drawer (z-35); fixed ones cover the whole UI.
                 !fixed ? tw`absolute z-30` : tw`fixed z-40`,
             ]}
-            style={{ background: `rgba(0, 0, 0, ${backgroundOpacity || 0.45})` }}
+            style={{
+                background: `color-mix(in oklab, var(--color-paper-3) ${Math.round(
+                    (backgroundOpacity || 0.55) * 100
+                )}%, transparent)`,
+            }}
         >
             <Spinner size={size} />
-            {children && (typeof children === 'string' ? <p css={tw`mt-4 text-neutral-400`}>{children}</p> : children)}
+            {children && (typeof children === 'string' ? <p css={tw`mt-4 text-muted`}>{children}</p> : children)}
         </div>
     </Fade>
 );

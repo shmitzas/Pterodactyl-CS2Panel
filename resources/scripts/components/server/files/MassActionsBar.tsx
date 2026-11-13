@@ -97,11 +97,11 @@ const MassActionsBar = () => {
                         <Fade timeout={75} in={selectedFiles.length > 0} unmountOnExit>
                             <div
                                 className={
-                                    'pointer-events-auto flex items-center gap-3 rounded-2xl border border-cs2-accent/30 bg-cs2-surface/95 p-3 shadow-lg shadow-black/50'
+                                    'pointer-events-auto flex items-center gap-3 rounded-2xl border border-accent/30 bg-paper-2 p-3 shadow-lg shadow-black/50'
                                 }
                             >
-                                <span className={'px-2 text-sm text-white/70'}>
-                                    <span className={'font-semibold text-white'}>{selectedFiles.length}</span> selected
+                                <span className={'px-2 text-sm text-ink-2'}>
+                                    <span className={'font-semibold text-ink'}>{selectedFiles.length}</span> selected
                                 </span>
                                 <Button.Text onClick={() => setShowMove(true)}>Move</Button.Text>
                                 <Button.Text onClick={onClickCompress}>Archive</Button.Text>

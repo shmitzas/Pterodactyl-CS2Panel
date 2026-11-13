@@ -123,19 +123,19 @@ export default () => {
         <PageContentBlock>
             <FlashMessageRender byKey={'files:view'} css={tw`mb-4`} />
             <ErrorBoundary>
-                <div className={'mb-4 rounded-xl border border-white/10 bg-cs2-surface/60 py-2.5 pr-4'}>
+                <div className={'mb-4 rounded-xl border border-rule bg-paper-2 py-2.5 pr-4'}>
                     <FileManagerBreadcrumbs withinFileEditor isNewFile={action !== 'edit'} />
                 </div>
             </ErrorBoundary>
             {hash.replace(/^#/, '').endsWith('.pteroignore') && (
-                <div className={'mb-4 rounded-xl border border-cs2-info/30 bg-cs2-info/10 p-4'}>
-                    <p className={'text-sm text-white/80'}>
+                <div className={'mb-4 rounded-xl border border-net/30 bg-net/10 p-4'}>
+                    <p className={'text-sm text-ink-2'}>
                         You&apos;re editing a{' '}
-                        <code className={'rounded bg-black/40 px-1 py-px font-mono'}>.pteroignore</code> file. Any files
+                        <code className={'rounded bg-paper-3 px-1 py-px font-mono'}>.pteroignore</code> file. Any files
                         or directories listed in here will be excluded from backups. Wildcards are supported by using an
-                        asterisk (<code className={'rounded bg-black/40 px-1 py-px font-mono'}>*</code>). You can negate
+                        asterisk (<code className={'rounded bg-paper-3 px-1 py-px font-mono'}>*</code>). You can negate
                         a prior rule by prepending an exclamation point (
-                        <code className={'rounded bg-black/40 px-1 py-px font-mono'}>!</code>).
+                        <code className={'rounded bg-paper-3 px-1 py-px font-mono'}>!</code>).
                     </p>
                 </div>
             )}
@@ -147,7 +147,7 @@ export default () => {
                     save(name);
                 }}
             />
-            <div className={'relative overflow-hidden rounded-2xl border border-white/10 shadow-lg shadow-black/30'}>
+            <div className={'relative overflow-hidden rounded-2xl border border-rule shadow-lg shadow-black/30'}>
                 <SpinnerOverlay visible={loading} />
                 <CodemirrorEditor
                     mode={mode}

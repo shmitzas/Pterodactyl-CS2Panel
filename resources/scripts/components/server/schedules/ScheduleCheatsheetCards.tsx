@@ -16,12 +16,12 @@ const characters = [
 ];
 
 const Card = ({ title, rows }: { title: string; rows: string[][] }) => (
-    <div className={'h-full overflow-hidden rounded-xl border border-white/10 bg-black/20 md:w-1/2'}>
-        <h2 className={'px-6 py-4 font-bold text-white'}>{title}</h2>
+    <div className={'h-full overflow-hidden rounded-xl border border-rule bg-paper-3 md:w-1/2'}>
+        <h2 className={'px-6 py-4 font-bold text-ink'}>{title}</h2>
         {rows.map(([value, meaning]) => (
-            <div key={value} className={'flex px-6 py-3 odd:bg-white/5'}>
-                <div className={'w-1/2 font-mono text-cs2-accent'}>{value}</div>
-                <div className={'w-1/2 text-white/70'}>{meaning}</div>
+            <div key={value} className={'flex px-6 py-3 odd:bg-paper-2'}>
+                <div className={'w-1/2 font-mono text-accent-text'}>{value}</div>
+                <div className={'w-1/2 text-ink-2'}>{meaning}</div>
             </div>
         ))}
     </div>
