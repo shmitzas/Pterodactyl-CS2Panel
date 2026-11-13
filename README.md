@@ -36,6 +36,7 @@ Everything stock Pterodactyl 1.15.2 does, plus:
 | Guide | Description |
 |-------|-------------|
 | **[Features](../../wiki/Features)** | Everything the panel adds |
+| **[Showcase](../../wiki/Showcase)** | Screenshots of the panel |
 | **[Installation](../../wiki/Installation)** | Install and verify |
 | **[Upgrading](../../wiki/Upgrading)** | Panel and Wings, from stock or an earlier build |
 
