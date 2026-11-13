@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Builds the drop-in archive release/cs2-panel-<version>.zip (extract over /var/www/pterodactyl).
-# Needs git, Node 16 + Yarn 1, PHP 8.2+ with Composer 2, and zip. Packs the committed HEAD, not local edits.
+# Needs git, Node 22 + Yarn 1, PHP 8.2+ with Composer 2, and zip. Packs the committed HEAD, not local edits.
 set -euo pipefail
 
 cd "$(dirname "$0")"

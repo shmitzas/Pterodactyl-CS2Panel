@@ -11,10 +11,10 @@ interface Params {
 export default (uuid: string, params: Params, subuser?: Subuser): Promise<Subuser> => {
     return new Promise((resolve, reject) => {
         http.post(`/api/client/servers/${uuid}/users${subuser ? `/${subuser.uuid}` : ''}`, {
-                email: params.email,
-                permissions: params.permissions,
-                file_rules: params.fileRules,
-            })
+            email: params.email,
+            permissions: params.permissions,
+            file_rules: params.fileRules,
+        })
             .then((data) => resolve(rawDataToServerSubuser(data.data)))
             .catch(reject);
     });

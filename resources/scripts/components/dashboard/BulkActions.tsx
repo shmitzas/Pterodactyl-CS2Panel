@@ -28,7 +28,7 @@ import styles from './dashboard.module.css';
 
 const FLASH_KEY = 'dashboard:bulk';
 
-    // Defined by the CS2 egg ("Allow Prerelease Updates", 0/1); read by its updaters on server start.
+// Defined by the CS2 egg ("Allow Prerelease Updates", 0/1); read by its updaters on server start.
 const PRERELEASE_VARIABLE = 'PRERELEASE';
 
 const prereleaseVariable = (server: Server) => server.variables.find((v) => v.envVariable === PRERELEASE_VARIABLE);

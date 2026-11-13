@@ -25,7 +25,9 @@ public/assets/manifest.json
 # For local development with docker
 # Remove if we ever put the Dockerfile in the repo
 .dockerignore
-docker-compose.yml
+docker-compose.*
+!docker-compose.example.yml
+!docker-compose.example.yaml
 
 # for image related files
 misc
@@ -38,9 +40,15 @@ resources/lang/locales.js
 /public/hot
 /public/storage
 result
-docker-compose.yaml
 /release
 
 # Composer credentials for private repositories
 auth.json
 /.phpunit.cache
+
+# Test coverage, patch leftovers and Windows folder files
+coverage/
+*.orig
+*.rej
+Thumbs.db
+desktop.ini
