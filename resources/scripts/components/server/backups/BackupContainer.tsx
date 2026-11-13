@@ -58,7 +58,7 @@ const BackupContainer = () => {
                         // Don't show any error messages if the server has no backups and the user cannot
                         // create additional ones for the server.
                         !backupLimit ? null : (
-                            <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                            <div className={'cs2-card cs2-empty'}>
                                 {page > 1
                                     ? "Looks like we've run out of backups to show you, try going back a page."
                                     : 'It looks like there are no backups currently stored for this server.'}

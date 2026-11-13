@@ -36,11 +36,8 @@ import { Dialog } from '@/components/elements/dialog';
 type ModalType = 'rename' | 'move' | 'chmod';
 
 const StyledRow = styled.div<{ $danger?: boolean }>`
-    ${tw`flex items-center rounded-lg px-3 py-2 text-sm text-white/80 cursor-pointer transition-colors duration-150`};
-    ${(props) =>
-        props.$danger
-            ? tw`hover:bg-cs2-danger/10 hover:text-cs2-danger`
-            : tw`hover:bg-cs2-accent/10 hover:text-cs2-accent`};
+    ${tw`flex items-center rounded-lg px-3 py-2 text-sm text-ink-2 cursor-pointer transition-colors duration-150`};
+    ${(props) => (props.$danger ? tw`hover:bg-bad/10 hover:text-bad` : tw`hover:bg-raise hover:text-ink`)};
 `;
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -145,7 +142,9 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
                 ref={onClickRef}
                 renderToggle={(onClick) => (
                     <div
-                        className={'px-4 py-2 text-white/50 transition-colors duration-150 hover:text-cs2-accent'}
+                        className={
+                            'w-12 py-3 text-center text-muted transition-colors duration-150 hover:text-ink cursor-pointer'
+                        }
                         onClick={onClick}
                     >
                         <FontAwesomeIcon icon={faEllipsisH} />

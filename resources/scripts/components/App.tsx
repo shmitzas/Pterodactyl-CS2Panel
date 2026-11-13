@@ -14,6 +14,7 @@ import AuthenticatedRoute from '@/components/elements/AuthenticatedRoute';
 import { ServerContext } from '@/state/server';
 import '@/assets/tailwind.css';
 import '@/assets/css/cs2.css';
+import '@/assets/css/sidebar.css';
 import Spinner from '@/components/elements/Spinner';
 import { DashboardPreferences, toDashboardPreferences } from '@/api/account/updateDashboardPreferences';
 

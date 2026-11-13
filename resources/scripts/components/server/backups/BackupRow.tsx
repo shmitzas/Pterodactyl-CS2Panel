@@ -53,16 +53,16 @@ export default ({ backup, className }: Props) => {
                 <div css={tw`mr-4`}>
                     {backup.completedAt !== null ? (
                         backup.isLocked ? (
-                            <span className={'cs2-tile cs2-tone-warning'} title={'Locked'}>
+                            <span className={'cs2-tile cs2-tone-warn'} title={'Locked'}>
                                 <FontAwesomeIcon icon={faLock} />
                             </span>
                         ) : (
-                            <span className={backup.isSuccessful ? 'cs2-tile' : 'cs2-tile cs2-tone-danger'}>
+                            <span className={backup.isSuccessful ? 'cs2-tile' : 'cs2-tile cs2-tone-bad'}>
                                 <FontAwesomeIcon icon={faArchive} />
                             </span>
                         )
                     ) : (
-                        <span className={'cs2-tile cs2-tone-muted'}>
+                        <span className={'cs2-tile cs2-tone-off'}>
                             <Spinner size={'small'} />
                         </span>
                     )}
@@ -70,23 +70,23 @@ export default ({ backup, className }: Props) => {
                 <div css={tw`flex flex-col truncate`}>
                     <div css={tw`flex items-center text-sm mb-1`}>
                         {backup.completedAt !== null && !backup.isSuccessful && (
-                            <span className={'cs2-badge cs2-tone-danger mr-2'}>Failed</span>
+                            <span className={'cs2-pill cs2-tone-bad mr-2'}>Failed</span>
                         )}
-                        <p css={tw`break-words truncate font-semibold text-white`}>{backup.name}</p>
+                        <p css={tw`break-words truncate font-semibold text-ink`}>{backup.name}</p>
                         {backup.completedAt !== null && backup.isSuccessful && (
-                            <span css={tw`ml-3 text-white/50 text-xs hidden sm:inline`}>
+                            <span css={tw`ml-3 text-muted text-xs hidden sm:inline`}>
                                 {bytesToString(backup.bytes)}
                             </span>
                         )}
                     </div>
-                    <p css={tw`mt-1 md:mt-0 text-xs text-white/40 font-mono truncate`}>{backup.checksum}</p>
+                    <p css={tw`mt-1 md:mt-0 text-xs text-muted font-mono truncate`}>{backup.checksum}</p>
                 </div>
             </div>
             <div css={tw`flex-1 md:flex-none md:w-48 mt-4 md:mt-0 md:ml-8 md:text-center`}>
-                <p title={format(backup.createdAt, 'ddd, MMMM do, yyyy HH:mm:ss')} css={tw`text-sm text-white/80`}>
+                <p title={format(backup.createdAt, 'ddd, MMMM do, yyyy HH:mm:ss')} css={tw`text-sm text-ink-2`}>
                     {formatDistanceToNow(backup.createdAt, { includeSeconds: true, addSuffix: true })}
                 </p>
-                <p css={tw`text-2xs text-white/40 uppercase tracking-wider mt-1`}>Created</p>
+                <p css={tw`text-2xs text-muted uppercase tracking-wider mt-1`}>Created</p>
             </div>
             <Can action={['backup.download', 'backup.restore', 'backup.delete']} matchAny>
                 <div css={tw`mt-4 md:mt-0 ml-6`} style={{ marginRight: '-0.5rem' }}>

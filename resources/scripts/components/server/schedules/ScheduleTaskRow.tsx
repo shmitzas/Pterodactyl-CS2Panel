@@ -67,7 +67,7 @@ export default ({ schedule, task }: Props) => {
     const [title, icon] = getActionDetails(task.action);
 
     return (
-        <div css={tw`sm:flex items-center p-3 sm:p-6 border-b border-white/10 last:border-0`}>
+        <div css={tw`sm:flex items-center p-3 sm:p-6 border-b border-rule last:border-0`}>
             <SpinnerOverlay visible={isLoading} fixed size={'large'} />
             <TaskDetailsModal
                 schedule={schedule}
@@ -90,16 +90,14 @@ export default ({ schedule, task }: Props) => {
                 </span>
             </div>
             <div css={tw`flex-none sm:flex-1 w-full sm:w-auto overflow-x-auto`}>
-                <p css={tw`md:ml-6 text-white font-semibold uppercase tracking-wider text-sm`}>{title}</p>
+                <p css={tw`md:ml-6 text-ink font-semibold uppercase tracking-wider text-sm`}>{title}</p>
                 {task.payload && (
                     <div css={tw`md:ml-6 mt-2`}>
                         {task.action === 'backup' && (
-                            <p css={tw`text-xs uppercase tracking-wider text-white/40 mb-1`}>
-                                Ignoring files & folders:
-                            </p>
+                            <p css={tw`text-xs uppercase tracking-wider text-muted mb-1`}>Ignoring files & folders:</p>
                         )}
                         <div
-                            css={tw`font-mono rounded-md border border-white/10 bg-black/40 py-1 px-2 text-sm text-white/90 w-auto inline-block whitespace-pre-wrap break-all`}
+                            css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-sm text-ink-2 w-auto inline-block whitespace-pre-wrap break-all`}
                         >
                             {task.payload}
                         </div>
@@ -109,7 +107,7 @@ export default ({ schedule, task }: Props) => {
             <div css={tw`mt-3 sm:mt-0 flex items-center w-full sm:w-auto`}>
                 {task.continueOnFailure && (
                     <div css={tw`mr-6`}>
-                        <div className={'cs2-badge cs2-tone-warning'}>
+                        <div className={'cs2-pill cs2-tone-warn'}>
                             <Icon icon={faArrowCircleDown} css={tw`w-3 h-3`} />
                             Continues on Failure
                         </div>
@@ -117,7 +115,7 @@ export default ({ schedule, task }: Props) => {
                 )}
                 {task.sequenceId > 1 && task.timeOffset > 0 && (
                     <div css={tw`mr-6`}>
-                        <div className={'cs2-badge cs2-tone-muted'}>
+                        <div className={'cs2-pill cs2-tone-off'}>
                             <Icon icon={faClock} css={tw`w-3 h-3`} />
                             {task.timeOffset}s later
                         </div>
@@ -127,7 +125,7 @@ export default ({ schedule, task }: Props) => {
                     <button
                         type={'button'}
                         aria-label={'Edit scheduled task'}
-                        css={tw`block text-sm p-2 text-white/50 hover:text-cs2-accent transition-colors duration-150 mr-4 ml-auto sm:ml-0`}
+                        css={tw`block text-sm p-2 text-muted hover:text-accent-text transition-colors duration-150 mr-4 ml-auto sm:ml-0`}
                         onClick={() => setIsEditing(true)}
                     >
                         <FontAwesomeIcon icon={faPencilAlt} />
@@ -137,7 +135,7 @@ export default ({ schedule, task }: Props) => {
                     <button
                         type={'button'}
                         aria-label={'Delete scheduled task'}
-                        css={tw`block text-sm p-2 text-white/50 hover:text-cs2-danger transition-colors duration-150`}
+                        css={tw`block text-sm p-2 text-muted hover:text-bad transition-colors duration-150`}
                         onClick={() => setVisible(true)}
                     >
                         <FontAwesomeIcon icon={faTrashAlt} />

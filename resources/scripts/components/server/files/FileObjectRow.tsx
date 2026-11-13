@@ -3,11 +3,11 @@ import { faFileAlt, faFileArchive, faFileImport, faFolder } from '@fortawesome/f
 import { encodePathSegments } from '@/helpers';
 import { differenceInHours, format, formatDistanceToNow } from 'date-fns';
 import React, { memo } from 'react';
+import classNames from 'classnames';
 import { FileObject } from '@/api/server/files/loadDirectory';
 import FileDropdownMenu from '@/components/server/files/FileDropdownMenu';
 import { ServerContext } from '@/state/server';
 import { NavLink, useRouteMatch } from 'react-router-dom';
-import tw from 'twin.macro';
 import isEqual from 'react-fast-compare';
 import SelectFileCheckbox from '@/components/server/files/SelectFileCheckbox';
 import { usePermissions } from '@/plugins/usePermissions';
@@ -34,48 +34,43 @@ const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
     );
 }, isEqual);
 
-const FileObjectRow = ({ file }: { file: FileObject }) => (
-    <div
-        className={styles.file_row}
-        key={file.name}
-        onContextMenu={(e) => {
-            e.preventDefault();
-            window.dispatchEvent(new CustomEvent(`pterodactyl:files:ctx:${file.key}`, { detail: e.clientX }));
-        }}
-    >
-        <SelectFileCheckbox name={file.name} />
-        <Clickable file={file}>
-            <div
-                className={file.isFile ? 'text-white/50' : 'text-cs2-accent'}
-                css={tw`flex-none ml-6 mr-4 text-lg pl-3`}
-            >
-                {file.isFile ? (
-                    <FontAwesomeIcon
-                        icon={file.isSymlink ? faFileImport : file.isArchiveType() ? faFileArchive : faFileAlt}
-                    />
-                ) : (
-                    <FontAwesomeIcon icon={faFolder} />
-                )}
-            </div>
-            <div css={tw`flex-1 truncate`}>{file.name}</div>
-            {file.isFile && (
-                <div className={'text-white/50'} css={tw`w-1/6 text-right mr-4 hidden sm:block`}>
-                    {bytesToString(file.size)}
-                </div>
-            )}
-            <div
-                className={'text-white/50'}
-                css={tw`w-1/5 text-right mr-4 hidden md:block`}
-                title={file.modifiedAt.toString()}
-            >
-                {Math.abs(differenceInHours(file.modifiedAt, new Date())) > 48
-                    ? format(file.modifiedAt, 'MMM do, yyyy h:mma')
-                    : formatDistanceToNow(file.modifiedAt, { addSuffix: true })}
-            </div>
-        </Clickable>
-        <FileDropdownMenu file={file} />
-    </div>
-);
+const kindOf = (file: FileObject) =>
+    !file.isFile
+        ? { icon: faFolder, className: styles.folder }
+        : file.isSymlink
+        ? { icon: faFileImport, className: styles.symlink }
+        : file.isArchiveType()
+        ? { icon: faFileArchive, className: styles.archive }
+        : { icon: faFileAlt, className: styles.file };
+
+const FileObjectRow = ({ file }: { file: FileObject }) => {
+    const selected = ServerContext.useStoreState((state) => state.files.selectedFiles.indexOf(file.name) >= 0);
+    const kind = kindOf(file);
+
+    return (
+        <div
+            className={classNames(styles.file_row, selected && styles.selected)}
+            key={file.name}
+            onContextMenu={(e) => {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent(`pterodactyl:files:ctx:${file.key}`, { detail: e.clientX }));
+            }}
+        >
+            <SelectFileCheckbox name={file.name} />
+            <Clickable file={file}>
+                <FontAwesomeIcon icon={kind.icon} className={classNames(styles.icon, kind.className)} />
+                <span className={classNames(styles.name, !file.isFile && styles.folder_name)}>{file.name}</span>
+                <span className={styles.size}>{file.isFile ? bytesToString(file.size) : ''}</span>
+                <span className={styles.modified} title={file.modifiedAt.toString()}>
+                    {Math.abs(differenceInHours(file.modifiedAt, new Date())) > 48
+                        ? format(file.modifiedAt, 'MMM do, yyyy h:mma')
+                        : formatDistanceToNow(file.modifiedAt, { addSuffix: true })}
+                </span>
+            </Clickable>
+            <FileDropdownMenu file={file} />
+        </div>
+    );
+};
 
 export default memo(FileObjectRow, (prevProps, nextProps) => {
     /* eslint-disable @typescript-eslint/no-unused-vars */

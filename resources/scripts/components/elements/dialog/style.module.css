@@ -5,14 +5,16 @@
 /* Modal styling kept in step with the admin dialogs. */
 .panel {
     @apply relative mx-auto w-full max-w-xl text-left;
-    border: 1px solid rgba(var(--cs2-accent), 0.3);
-    border-radius: 1rem;
-    background: linear-gradient(135deg, rgba(33, 37, 41, 0.95), rgba(23, 27, 31, 0.95));
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(var(--cs2-accent), 0.2);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-2);
+    box-shadow: var(--shadow-pop);
 }
 
 .title {
-    @apply mb-1 pr-10 text-xl font-semibold text-white;
+    @apply mb-1 pr-10 text-xl text-ink;
+    font-family: var(--font-display);
+    font-weight: 600;
 }
 
 .close_icon {
@@ -20,24 +22,25 @@
 }
 
 .dialog_icon {
-    --tone: var(--cs2-accent);
-    @apply mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl;
-    background: rgba(var(--tone), 0.2);
-    color: rgb(var(--tone));
+    --tone: var(--color-accent-text);
+    @apply mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center;
+    border-radius: var(--radius-control);
+    background: color-mix(in oklab, var(--tone) 16%, var(--color-paper-2));
+    color: var(--tone);
 
     &.danger {
-        --tone: var(--cs2-danger);
+        --tone: var(--color-bad);
     }
 
     &.warning {
-        --tone: var(--cs2-warning);
+        --tone: var(--color-warn);
     }
 
     &.success {
-        --tone: var(--cs2-success);
+        --tone: var(--color-ok);
     }
 
     &.info {
-        --tone: var(--cs2-accent);
+        --tone: var(--color-accent-text);
     }
 }

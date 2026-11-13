@@ -23,12 +23,12 @@ interface Values {
 
 const ServerResult = styled(Link)`
     ${tw`flex items-center p-4 rounded-xl no-underline transition-all duration-200`};
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--color-rule);
+    background: var(--color-paper-3);
 
     &:hover {
-        border-color: rgba(13, 202, 240, 0.3);
-        background: rgba(13, 202, 240, 0.08);
+        border-color: color-mix(in oklab, var(--color-accent-text) 55%, var(--color-rule));
+        background: var(--color-raise);
     }
 
     &:not(:last-of-type) {
@@ -110,8 +110,8 @@ export default ({ ...props }: Props) => {
                                     onClick={() => props.onDismissed()}
                                 >
                                     <div css={tw`flex-1 mr-4`}>
-                                        <p css={tw`text-sm text-white font-semibold`}>{server.name}</p>
-                                        <p css={tw`mt-1 text-xs text-neutral-400 font-mono`}>
+                                        <p css={tw`text-sm text-ink font-semibold`}>{server.name}</p>
+                                        <p css={tw`mt-1 text-xs text-muted font-mono`}>
                                             {server.allocations
                                                 .filter((alloc) => alloc.isDefault)
                                                 .map((allocation) => (
@@ -122,13 +122,7 @@ export default ({ ...props }: Props) => {
                                         </p>
                                     </div>
                                     <div css={tw`flex-none text-right`}>
-                                        <span
-                                            className={
-                                                'rounded-md bg-cs2-accent/20 px-2 py-1 text-xs font-semibold text-cs2-accent'
-                                            }
-                                        >
-                                            {server.node}
-                                        </span>
+                                        <span className={'cs2-tag'}>{server.node}</span>
                                     </div>
                                 </ServerResult>
                             ))}

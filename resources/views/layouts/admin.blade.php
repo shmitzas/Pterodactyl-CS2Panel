@@ -11,15 +11,15 @@
         <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
         <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
         <link rel="manifest" href="/favicons/manifest.json">
-        <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#bc6e3c">
+        <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#4d5fe4">
         <link rel="shortcut icon" href="/favicons/favicon.ico">
         <meta name="msapplication-config" content="/favicons/browserconfig.xml">
-        <meta name="theme-color" content="#0f1621">
+        <meta name="theme-color" content="#030614">
 
         @include('layouts.scripts')
 
         @section('scripts')
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap">
+            @include('partials.fonts')
             {!! Theme::css('vendor/select2/select2.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/bootstrap/bootstrap.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/adminlte/admin.min.css?t={cache-version}') !!}
@@ -29,6 +29,7 @@
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
             {{-- Last, so it overrides the vendor sheets; the mtime busts browser caches on every edit. --}}
+            <link rel="stylesheet" href="/themes/pterodactyl/css/cs2-tokens.css?v={{ filemtime(public_path('themes/pterodactyl/css/cs2-tokens.css')) }}">
             <link rel="stylesheet" href="/themes/pterodactyl/css/cs2-admin.css?v={{ filemtime(public_path('themes/pterodactyl/css/cs2-admin.css')) }}">
 
             <!--[if lt IE 9]>
@@ -74,7 +75,7 @@
                     <i class="fa fa-bars"></i>
                 </a>
                 <a href="{{ route('index') }}" class="cs2-brand" aria-label="{{ config('app.name', 'Pterodactyl') }}">
-                    <span class="cs2-brand-mark" aria-hidden="true"></span>
+                    <span class="cs2-brand-mark" aria-hidden="true"><i class="fa fa-crosshairs"></i></span>
                     <span>{{ config('app.name', 'Pterodactyl') }}</span>
                 </a>
                 <nav class="cs2-nav">

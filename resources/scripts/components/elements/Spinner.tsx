@@ -37,8 +37,8 @@ const SpinnerComponent = styled.div<Props>`
               `
             : null};
 
-    border-color: ${(props) => (!props.isBlue ? 'rgba(13, 202, 240, 0.2)' : 'hsla(212, 92%, 43%, 0.2)')};
-    border-top-color: ${(props) => (!props.isBlue ? 'rgb(13, 202, 240)' : 'hsl(212, 92%, 43%)')};
+    border-color: color-mix(in oklab, var(--color-accent-text) 22%, transparent);
+    border-top-color: var(--color-accent-text);
 `;
 
 const Spinner: Spinner = ({ centered, ...props }) =>

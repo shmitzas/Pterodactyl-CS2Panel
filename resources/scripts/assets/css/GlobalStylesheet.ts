@@ -1,31 +1,65 @@
-import tw from 'twin.macro';
 import { createGlobalStyle } from 'styled-components/macro';
 
 export default createGlobalStyle`
+    html {
+        min-height: 100%;
+        background: var(--color-paper);
+    }
+
     body {
-        ${tw`font-sans text-neutral-200`};
-        letter-spacing: 0.015em;
         min-height: 100vh;
-        /* Served from public/; kept out of the CSS files so css-loader doesn't try to bundle it. */
-        /* Keep the darkening overlay in step with cs2-admin.css. */
-        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-            url('/cs2/background.webp') center / cover no-repeat fixed;
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        caret-color: var(--color-accent);
+    }
+
+    /* Served from public/; kept out of the CSS files so css-loader doesn't try to bundle it. */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: url('/cs2/background.webp') center / cover no-repeat;
+        filter: var(--bg-image-filter);
+        opacity: var(--bg-image-opacity);
+        pointer-events: none;
     }
 
     h1, h2, h3, h4, h5, h6 {
-        ${tw`font-medium tracking-normal font-header`};
+        font-family: var(--font-display);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        font-synthesis: none;
     }
 
     p {
-        ${tw`text-neutral-200 leading-snug font-sans`};
+        color: var(--color-ink-2);
+        line-height: 1.375;
     }
 
     form {
-        ${tw`m-0`};
+        margin: 0;
     }
 
-    textarea, select, input, button, button:focus, button:focus-visible {
-        ${tw`outline-none`};
+    code, kbd, samp, pre {
+        font-family: var(--font-mono);
+    }
+
+    ::selection {
+        background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+        color: var(--color-ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    /* Fields draw their own focus ring. */
+    textarea:focus-visible, select:focus-visible, input:focus-visible {
+        outline: none;
     }
 
     input[type=number]::-webkit-outer-spin-button,
@@ -38,35 +72,24 @@ export default createGlobalStyle`
         -moz-appearance: textfield !important;
     }
 
-    /* Scroll Bar Style */
+    * {
+        scrollbar-color: var(--color-rule-2) transparent;
+    }
+
     ::-webkit-scrollbar {
         background: none;
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
     }
 
     ::-webkit-scrollbar-thumb {
-        border: solid 0 rgb(0 0 0 / 0%);
-        border-right-width: 4px;
-        border-left-width: 4px;
-        -webkit-border-radius: 9px 4px;
-        -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 0 0 4px rgba(255, 255, 255, 0.15);
+        border: 4px solid transparent;
+        border-radius: 999px;
+        background: var(--color-rule-2) padding-box;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        -webkit-box-shadow: inset 0 0 0 1px rgba(13, 202, 240, 0.4), inset 0 0 0 4px rgba(13, 202, 240, 0.4);
-    }
-
-    ::-webkit-scrollbar-track-piece {
-        margin: 4px 0;
-    }
-
-    ::-webkit-scrollbar-thumb:horizontal {
-        border-right-width: 0;
-        border-left-width: 0;
-        border-top-width: 4px;
-        border-bottom-width: 4px;
-        -webkit-border-radius: 4px 9px;
+        background: var(--color-muted) padding-box;
     }
 
     ::-webkit-scrollbar-corner {

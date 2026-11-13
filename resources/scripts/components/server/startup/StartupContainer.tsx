@@ -95,7 +95,7 @@ const StartupContainer = () => {
                 <TitledGreyBox title={'Startup Command'} css={tw`flex-1`}>
                     <div css={tw`px-1 py-2`}>
                         <p
-                            css={tw`font-mono rounded-lg border border-white/10 bg-black/40 py-2 px-4 text-sm text-white/90 break-all`}
+                            css={tw`font-mono rounded-lg border border-rule bg-paper-3 py-2 px-4 text-sm text-ink-2 break-all`}
                         >
                             {data.invocation}
                         </p>
@@ -117,7 +117,7 @@ const StartupContainer = () => {
                                     ))}
                                 </Select>
                             </InputSpinner>
-                            <p css={tw`text-xs text-white/50 mt-2`}>
+                            <p css={tw`text-xs text-muted mt-2`}>
                                 This is an advanced feature allowing you to select a Docker image to use when running
                                 this server instance.
                             </p>
@@ -126,7 +126,7 @@ const StartupContainer = () => {
                         <>
                             <Input disabled readOnly value={variables.dockerImage} />
                             {isCustomImage && (
-                                <p css={tw`text-xs text-white/50 mt-2`}>
+                                <p css={tw`text-xs text-muted mt-2`}>
                                     This {"server's"} Docker image has been manually set by an administrator and cannot
                                     be changed through this UI.
                                 </p>
@@ -135,7 +135,7 @@ const StartupContainer = () => {
                     )}
                 </TitledGreyBox>
             </div>
-            <h3 css={tw`mt-8 mb-4 text-xl font-bold text-white`}>Variables</h3>
+            <h3 css={tw`mt-8 mb-4 text-xl font-bold text-ink`}>Variables</h3>
             <div css={tw`grid gap-8 md:grid-cols-2`}>
                 {data.variables.map((variable) => (
                     <VariableBox key={variable.envVariable} variable={variable} />

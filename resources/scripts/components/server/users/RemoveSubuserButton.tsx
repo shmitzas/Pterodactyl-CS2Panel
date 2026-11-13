@@ -49,7 +49,7 @@ export default ({ subuser }: { subuser: Subuser }) => {
             <button
                 type={'button'}
                 aria-label={'Delete subuser'}
-                css={tw`block text-sm p-2 text-white/50 hover:text-cs2-danger transition-colors duration-150`}
+                css={tw`block text-sm p-2 text-muted hover:text-bad transition-colors duration-150`}
                 onClick={() => setShowConfirmation(true)}
             >
                 <FontAwesomeIcon icon={faTrashAlt} />

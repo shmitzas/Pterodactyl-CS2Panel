@@ -79,29 +79,111 @@ require('codemirror/mode/vue/vue');
 require('codemirror/mode/xml/xml');
 require('codemirror/mode/yaml/yaml');
 
+// The ayu-mirage base, recoloured to the v2 palette: paper-3 well, metric hues for the token kinds. Every
+// override names the theme class, since the theme sheet loads after this one and wins ties.
 const EditorContainer = styled.div`
-    min-height: 16rem;
-    height: calc(100vh - 20rem);
+    min-height: 18rem;
+    height: max(18rem, calc(100vh - 17.5rem));
     ${tw`relative`};
 
     > div {
-        ${tw`rounded h-full`};
+        ${tw`h-full`};
     }
 
     .CodeMirror {
-        font-size: 12px;
-        line-height: 1.375rem;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        line-height: 1.5rem;
     }
 
-    .CodeMirror-linenumber {
+    .cm-s-ayu-mirage.CodeMirror {
+        background: var(--color-paper-3);
+        color: var(--color-ink-2);
+    }
+
+    .cm-s-ayu-mirage .CodeMirror-gutters {
+        border-right: 1px solid var(--color-rule);
+        background: var(--color-paper-3);
+    }
+
+    .cm-s-ayu-mirage .CodeMirror-linenumber {
         padding: 1px 12px 0 12px !important;
+        color: var(--color-muted);
+    }
+
+    .cm-s-ayu-mirage .CodeMirror-cursor {
+        border-left: 2px solid var(--color-accent-text);
+    }
+
+    .cm-s-ayu-mirage .CodeMirror-line::selection,
+    .cm-s-ayu-mirage .CodeMirror-line > span::selection,
+    .cm-s-ayu-mirage .CodeMirror-line > span > span::selection {
+        background: color-mix(in oklab, var(--color-accent) 40%, transparent);
     }
 
     .CodeMirror-foldmarker {
-        color: #cbccc6;
+        color: var(--color-muted);
         text-shadow: none;
         margin-left: 0.25rem;
         margin-right: 0.25rem;
+    }
+
+    .cm-s-ayu-mirage div.CodeMirror-selected,
+    .cm-s-ayu-mirage.CodeMirror-focused div.CodeMirror-selected {
+        background: color-mix(in oklab, var(--color-accent) 40%, transparent);
+    }
+
+    .cm-s-ayu-mirage .CodeMirror-activeline-background {
+        background: var(--color-paper-2);
+    }
+
+    .cm-s-ayu-mirage .CodeMirror-matchingbracket {
+        color: var(--color-ink) !important;
+        background: color-mix(in oklab, var(--color-accent) 30%, transparent);
+        text-decoration: none;
+    }
+
+    .cm-s-ayu-mirage span.cm-comment {
+        color: var(--color-muted);
+        font-style: italic;
+    }
+
+    .cm-s-ayu-mirage span.cm-keyword,
+    .cm-s-ayu-mirage span.cm-meta {
+        color: var(--color-mem);
+    }
+
+    .cm-s-ayu-mirage span.cm-string,
+    .cm-s-ayu-mirage span.cm-string-2 {
+        color: var(--color-ok);
+    }
+
+    .cm-s-ayu-mirage span.cm-number {
+        color: var(--color-warn);
+    }
+
+    .cm-s-ayu-mirage span.cm-atom,
+    .cm-s-ayu-mirage span.cm-builtin {
+        color: var(--color-net);
+    }
+
+    .cm-s-ayu-mirage span.cm-def,
+    .cm-s-ayu-mirage span.cm-type,
+    .cm-s-ayu-mirage span.cm-variable-2,
+    .cm-s-ayu-mirage span.cm-variable-3 {
+        color: var(--color-accent-text);
+    }
+
+    .cm-s-ayu-mirage span.cm-variable,
+    .cm-s-ayu-mirage span.cm-operator {
+        color: var(--color-ink-2);
+    }
+
+    /* After the string rule: JSON keys carry both classes and read as properties. */
+    .cm-s-ayu-mirage span.cm-property,
+    .cm-s-ayu-mirage span.cm-attribute,
+    .cm-s-ayu-mirage span.cm-tag {
+        color: var(--color-cpu);
     }
 `;
 

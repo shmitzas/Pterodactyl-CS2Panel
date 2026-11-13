@@ -11,7 +11,12 @@ import FlashMessageRender from '@/components/FlashMessageRender';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import { ServerError } from '@/components/elements/ScreenBlock';
 import tw from 'twin.macro';
-import Button from '@/components/elements/Button';
+import { Button } from '@/components/elements/button/index';
+import Code from '@/components/elements/Code';
+import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileAlt, faFileMedical, faSave } from '@fortawesome/free-solid-svg-icons';
+import styles from './style.module.css';
 import Select from '@/components/elements/Select';
 import modes from '@/modes';
 import useFlash from '@/plugins/useFlash';
@@ -20,6 +25,8 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { encodePathSegments, hashToPath } from '@/helpers';
 import { dirname } from 'pathe';
 import CodemirrorEditor from '@/components/elements/CodemirrorEditor';
+
+const isMac = /mac/i.test(navigator.platform);
 
 const getNewFileDraftKey = (uuid: string, directory: string) => `pterodactyl:new-file:${uuid}:${directory}`;
 
@@ -123,19 +130,20 @@ export default () => {
         <PageContentBlock>
             <FlashMessageRender byKey={'files:view'} css={tw`mb-4`} />
             <ErrorBoundary>
-                <div className={'mb-4 rounded-xl border border-white/10 bg-cs2-surface/60 py-2.5 pr-4'}>
+                <div className={classNames('cs2-card cs2-tone-accent', styles.toolbar)}>
+                    <span className={'cs2-tile cs2-tile--sm'} aria-hidden={'true'}>
+                        <FontAwesomeIcon icon={action === 'edit' ? faFileAlt : faFileMedical} />
+                    </span>
                     <FileManagerBreadcrumbs withinFileEditor isNewFile={action !== 'edit'} />
                 </div>
             </ErrorBoundary>
             {hash.replace(/^#/, '').endsWith('.pteroignore') && (
-                <div className={'mb-4 rounded-xl border border-cs2-info/30 bg-cs2-info/10 p-4'}>
-                    <p className={'text-sm text-white/80'}>
-                        You&apos;re editing a{' '}
-                        <code className={'rounded bg-black/40 px-1 py-px font-mono'}>.pteroignore</code> file. Any files
-                        or directories listed in here will be excluded from backups. Wildcards are supported by using an
-                        asterisk (<code className={'rounded bg-black/40 px-1 py-px font-mono'}>*</code>). You can negate
-                        a prior rule by prepending an exclamation point (
-                        <code className={'rounded bg-black/40 px-1 py-px font-mono'}>!</code>).
+                <div className={'cs2-notice cs2-tone-net mb-4'}>
+                    <p className={'text-sm text-ink-2'}>
+                        You&apos;re editing a <Code dark>.pteroignore</Code> file. Any files or directories listed in
+                        here will be excluded from backups. Wildcards are supported by using an asterisk (
+                        <Code dark>*</Code>). You can negate a prior rule by prepending an exclamation point (
+                        <Code dark>!</Code>).
                     </p>
                 </div>
             )}
@@ -147,49 +155,61 @@ export default () => {
                     save(name);
                 }}
             />
-            <div className={'relative overflow-hidden rounded-2xl border border-white/10 shadow-lg shadow-black/30'}>
-                <SpinnerOverlay visible={loading} />
-                <CodemirrorEditor
-                    mode={mode}
-                    filename={hash.replace(/^#/, '')}
-                    onModeChanged={setMode}
-                    initialContent={content}
-                    fetchContent={(value) => {
-                        fetchFileContent = value;
-                    }}
-                    onContentSaved={() => {
-                        if (action !== 'edit') {
-                            setModalVisible(true);
-                        } else {
-                            save();
-                        }
-                    }}
-                    onContentChanged={action === 'new' ? saveDraft : undefined}
-                />
-            </div>
-            <div css={tw`flex justify-end mt-4`}>
-                <div css={tw`flex-1 sm:flex-none mr-4`}>
-                    <Select value={mode} onChange={(e) => setMode(e.currentTarget.value)}>
-                        {modes.map((mode) => (
-                            <option key={`${mode.name}_${mode.mime}`} value={mode.mime}>
-                                {mode.name}
-                            </option>
-                        ))}
-                    </Select>
+            <div className={classNames('cs2-card', styles.editor)}>
+                <div className={styles.editor_body}>
+                    <SpinnerOverlay visible={loading} />
+                    <CodemirrorEditor
+                        mode={mode}
+                        filename={hash.replace(/^#/, '')}
+                        onModeChanged={setMode}
+                        initialContent={content}
+                        fetchContent={(value) => {
+                            fetchFileContent = value;
+                        }}
+                        onContentSaved={() => {
+                            if (action !== 'edit') {
+                                setModalVisible(true);
+                            } else {
+                                save();
+                            }
+                        }}
+                        onContentChanged={action === 'new' ? saveDraft : undefined}
+                    />
                 </div>
-                {action === 'edit' ? (
-                    <Can action={'file.update'}>
-                        <Button css={tw`flex-1 sm:flex-none`} onClick={() => save()}>
-                            Save Content
-                        </Button>
-                    </Can>
-                ) : (
-                    <Can action={'file.create'}>
-                        <Button css={tw`flex-1 sm:flex-none`} onClick={() => setModalVisible(true)}>
-                            Create File
-                        </Button>
-                    </Can>
-                )}
+                <div className={styles.editor_bar}>
+                    <div className={styles.editor_mode}>
+                        <Select
+                            value={mode}
+                            aria-label={'Syntax highlighting'}
+                            onChange={(e) => setMode(e.currentTarget.value)}
+                        >
+                            {modes.map((mode) => (
+                                <option key={`${mode.name}_${mode.mime}`} value={mode.mime}>
+                                    {mode.name}
+                                </option>
+                            ))}
+                        </Select>
+                    </div>
+                    <p className={styles.editor_hint}>
+                        <kbd>{isMac ? '⌘' : 'Ctrl'}</kbd> <kbd>S</kbd> {action === 'edit' ? 'saves' : 'creates'} the
+                        file
+                    </p>
+                    {action === 'edit' ? (
+                        <Can action={'file.update'}>
+                            <Button onClick={() => save()}>
+                                <FontAwesomeIcon icon={faSave} />
+                                Save Content
+                            </Button>
+                        </Can>
+                    ) : (
+                        <Can action={'file.create'}>
+                            <Button onClick={() => setModalVisible(true)}>
+                                <FontAwesomeIcon icon={faSave} />
+                                Create File
+                            </Button>
+                        </Can>
+                    )}
+                </div>
             </div>
         </PageContentBlock>
     );

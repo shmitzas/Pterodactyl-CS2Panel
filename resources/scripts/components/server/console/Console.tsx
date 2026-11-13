@@ -15,32 +15,36 @@ import { debounce } from 'debounce';
 import { usePersistedState } from '@/plugins/usePersistedState';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
 import classNames from 'classnames';
-import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronRight, faSearch, faTerminal } from '@fortawesome/free-solid-svg-icons';
+import { Button } from '@/components/elements/button/index';
 import PanelConfig from '@/config';
 
 import 'xterm/css/xterm.css';
 import styles from './style.module.css';
 
+// The v2 palette on the console's paper-3 well; xterm draws on a canvas, so it needs literal colours.
 const theme = {
-    background: '#05080d',
+    background: th`colors.paper.3`.toString(),
+    foreground: th`colors.ink.2`.toString(),
     cursor: 'transparent',
-    black: th`colors.black`.toString(),
-    red: '#E54B4B',
-    green: '#9ECE58',
-    yellow: '#FAED70',
-    blue: '#396FE2',
-    magenta: '#BB80B3',
-    cyan: '#2DDAFD',
-    white: '#d0d0d0',
-    brightBlack: 'rgba(255, 255, 255, 0.2)',
-    brightRed: '#FF5370',
-    brightGreen: '#C3E88D',
-    brightYellow: '#FFCB6B',
-    brightBlue: '#82AAFF',
-    brightMagenta: '#C792EA',
-    brightCyan: '#89DDFF',
-    brightWhite: '#ffffff',
-    selection: 'rgba(13, 202, 240, 0.35)',
+    black: th`colors.rule.DEFAULT`.toString(),
+    red: th`colors.bad`.toString(),
+    green: th`colors.ok`.toString(),
+    yellow: th`colors.warn`.toString(),
+    blue: th`colors.accent.text`.toString(),
+    magenta: th`colors.mem`.toString(),
+    cyan: th`colors.cpu`.toString(),
+    white: th`colors.ink.2`.toString(),
+    brightBlack: th`colors.muted`.toString(),
+    brightRed: '#ff9a9a',
+    brightGreen: '#8ef0a8',
+    brightYellow: '#ffd772',
+    brightBlue: '#b4c4ff',
+    brightMagenta: '#e3b8ff',
+    brightCyan: '#7eeaf8',
+    brightWhite: th`colors.ink.DEFAULT`.toString(),
+    selection: 'rgba(77, 95, 228, 0.45)',
 };
 
 const terminalProps: ITerminalOptions = {
@@ -56,6 +60,10 @@ const terminalProps: ITerminalOptions = {
 export default () => {
     const TERMINAL_PRELUDE = `\u001b[1m\u001b[33m${PanelConfig.TERMINAL_PRELUDE} \u001b[0m`;
     const ref = useRef<HTMLDivElement>(null);
+    const input = useRef<HTMLInputElement>(null);
+    const searchBarRef = useRef<SearchBarAddon>();
+    // The addons below are rebuilt on every render; these keep the instances the terminal actually loaded.
+    const fitAddonRef = useRef<FitAddon>();
     const terminal = useMemo(() => new Terminal({ ...terminalProps }), []);
     const fitAddon = new FitAddon();
     const searchAddon = new SearchAddon();
@@ -95,6 +103,17 @@ export default () => {
     const handlePowerChangeEvent = (state: string) =>
         terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m');
 
+    const sendCommand = (field: HTMLInputElement) => {
+        const command = field.value;
+        if (!command.length) return;
+
+        setHistory((prevHistory) => [command, ...prevHistory!].slice(0, 32));
+        setHistoryIndex(-1);
+
+        instance && instance.send('send command', command);
+        field.value = '';
+    };
+
     const handleCommandKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'ArrowUp') {
             const newIndex = Math.min(historyIndex + 1, history!.length - 1);
@@ -113,25 +132,29 @@ export default () => {
             setHistoryIndex(newIndex);
             e.currentTarget.value = history![newIndex] || '';
         }
-
-        const command = e.currentTarget.value;
-        if (e.key === 'Enter' && command.length > 0) {
-            setHistory((prevHistory) => [command, ...prevHistory!].slice(0, 32));
-            setHistoryIndex(-1);
-
-            instance && instance.send('send command', command);
-            e.currentTarget.value = '';
-        }
     };
 
     useEffect(() => {
-        if (connected && ref.current && !terminal.element) {
+        if (!connected || !ref.current || terminal.element) return;
+
+        let cancelled = false;
+        // xterm measures its cells when it opens, so wait for the web font (capped, in case the font CDN is blocked).
+        const fontLoaded = Promise.race([
+            document.fonts?.load(`${terminalProps.fontSize}px "JetBrains Mono"`).catch(() => undefined),
+            new Promise((resolve) => setTimeout(resolve, 2000)),
+        ]);
+
+        fontLoaded.then(() => {
+            if (cancelled || !ref.current || terminal.element) return;
+
             terminal.loadAddon(fitAddon);
             terminal.loadAddon(searchAddon);
             terminal.loadAddon(searchBar);
             terminal.loadAddon(webLinksAddon);
             terminal.loadAddon(unicode11Addon);
             terminal.loadAddon(scrollDownHelperAddon);
+            searchBarRef.current = searchBar;
+            fitAddonRef.current = fitAddon;
 
             terminal.open(ref.current);
 
@@ -155,14 +178,18 @@ export default () => {
                 }
                 return true;
             });
-        }
+        });
+
+        return () => {
+            cancelled = true;
+        };
     }, [terminal, connected]);
 
     useEventListener(
         'resize',
         debounce(() => {
             if (terminal.element) {
-                fitAddon.fit();
+                fitAddonRef.current?.fit();
             }
         }, 100)
     );
@@ -200,37 +227,65 @@ export default () => {
     }, [connected, instance]);
 
     return (
-        <div className={classNames(styles.terminal, 'relative')}>
-            <SpinnerOverlay visible={!connected} size={'large'} />
-            <div
-                className={classNames(styles.container, styles.overflows_container, { 'rounded-b': !canSendCommands })}
-            >
-                <div className={'h-full'}>
-                    <div id={styles.terminal} ref={ref} />
+        <section className={classNames('cs2-card cs2-tone-accent', styles.console)} aria-labelledby={'console-title'}>
+            <div className={classNames('cs2-card-head', styles.console_head)}>
+                <span className={'cs2-tile'} aria-hidden={'true'}>
+                    <FontAwesomeIcon icon={faTerminal} />
+                </span>
+                <div className={'cs2-card-titles'}>
+                    <h2 className={'cs2-card-title'} id={'console-title'}>
+                        Console
+                    </h2>
                 </div>
+                <span className={classNames('cs2-pill', connected ? 'cs2-tone-ok' : 'cs2-tone-warn')} role={'status'}>
+                    <span className={'cs2-pill-dot'} />
+                    {connected ? 'Connected' : 'Connecting…'}
+                </span>
+                <Button.Text
+                    size={Button.Sizes.Small}
+                    variant={Button.Variants.Secondary}
+                    disabled={!connected}
+                    aria-label={'Search the console'}
+                    onClick={() => searchBarRef.current?.show()}
+                >
+                    <FontAwesomeIcon icon={faSearch} />
+                    <span className={styles.search_label}>Search</span>
+                </Button.Text>
             </div>
-            {canSendCommands && (
-                <div className={classNames('relative', styles.overflows_container)}>
-                    <input
-                        className={classNames('peer', styles.command_input)}
-                        type={'text'}
-                        placeholder={'Type a command...'}
-                        aria-label={'Console command input.'}
-                        disabled={!instance || !connected}
-                        onKeyDown={handleCommandKeyDown}
-                        autoCorrect={'off'}
-                        autoCapitalize={'none'}
-                    />
-                    <div
-                        className={classNames(
-                            'text-cs2-accent/60 peer-focus:text-cs2-accent peer-focus:animate-pulse',
-                            styles.command_icon
-                        )}
-                    >
-                        <ChevronDoubleRightIcon className={'w-4 h-4'} />
-                    </div>
-                </div>
+            <div className={styles.terminal}>
+                <SpinnerOverlay visible={!connected} size={'large'} />
+                <div id={styles.terminal} ref={ref} />
+            </div>
+            {canSendCommands ? (
+                <form
+                    className={styles.command}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        input.current && sendCommand(input.current);
+                    }}
+                >
+                    <label className={classNames(styles.prompt, (!instance || !connected) && styles.prompt_disabled)}>
+                        <FontAwesomeIcon icon={faChevronRight} />
+                        <span className={'sr-only'}>Command</span>
+                        <input
+                            ref={input}
+                            type={'text'}
+                            placeholder={'Type a command…'}
+                            disabled={!instance || !connected}
+                            onKeyDown={handleCommandKeyDown}
+                            autoComplete={'off'}
+                            autoCorrect={'off'}
+                            autoCapitalize={'none'}
+                            spellCheck={false}
+                        />
+                    </label>
+                    <Button type={'submit'} disabled={!instance || !connected}>
+                        Send
+                    </Button>
+                </form>
+            ) : (
+                <div className={'h-4'} />
             )}
-        </div>
+        </section>
     );
 };

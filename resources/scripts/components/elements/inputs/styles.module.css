@@ -6,35 +6,35 @@
     width: 1.125rem;
     height: 1.125rem;
     margin: 0;
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    border: 1px solid var(--color-rule-2);
     border-radius: 0.375rem;
-    background-color: rgba(0, 0, 0, 0.4);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230f1621' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+    background-color: var(--color-paper-3);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f7f8fc' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
     background-position: center;
     background-repeat: no-repeat;
     background-size: 0% 0%;
     cursor: pointer;
-    transition: background-color 0.2s var(--cs2-ease), background-size 0.2s var(--cs2-ease),
-        border-color 0.2s var(--cs2-ease), box-shadow 0.2s var(--cs2-ease);
+    transition: background-color var(--dur-short) var(--ease-out), background-size var(--dur-short) var(--ease-out),
+        border-color var(--dur-short) var(--ease-out);
 
     &:hover:not(:disabled) {
-        border-color: rgba(var(--cs2-accent), 0.6);
+        border-color: var(--color-muted);
     }
 
     &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
     }
 
     &:checked,
     &:indeterminate {
-        background-color: rgb(var(--cs2-accent));
+        background-color: var(--color-accent);
         background-size: 100% 100%;
-        border-color: rgb(var(--cs2-accent));
+        border-color: var(--color-accent);
     }
 
     &:indeterminate {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230f1621' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M4 8h8'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23f7f8fc' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M4 8h8'/%3E%3C/svg%3E");
     }
 
     &:disabled {
@@ -45,30 +45,30 @@
 
 .text_input {
     width: 100%;
-    padding: 0.5rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 0.5rem;
-    background-color: rgba(var(--cs2-surface), 0.7);
-    color: #fff;
+    min-height: var(--control);
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-control);
+    background-color: var(--color-paper-3);
+    color: var(--color-ink);
+    font-size: var(--text-sm);
     outline: none;
-    transition: all 0.2s var(--cs2-ease);
+    transition: border-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
 
     &::placeholder {
-        color: rgba(255, 255, 255, 0.35);
+        color: var(--color-muted);
     }
 
     &:hover {
-        border-color: rgba(var(--cs2-accent), 0.35);
-        background-color: rgba(var(--cs2-surface), 0.8);
+        border-color: var(--color-muted);
     }
 
     &:focus {
-        border-color: rgba(var(--cs2-accent), 0.6);
-        background-color: rgba(var(--cs2-surface), 0.85);
-        box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.12), 0 0 12px rgba(var(--cs2-accent), 0.08);
+        border-color: var(--color-accent-text);
+        box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 35%, transparent);
     }
 
     &.loose {
-        padding: 0.75rem 1.5rem;
+        padding: 0.75rem 1.25rem;
     }
 }

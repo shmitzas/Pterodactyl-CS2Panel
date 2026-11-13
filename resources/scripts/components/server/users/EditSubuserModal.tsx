@@ -130,7 +130,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                 </div>
                 <FlashMessageRender byKey={'user:edit'} css={tw`mt-4`} />
                 {!isRootAdmin && loggedInPermissions[0] !== '*' && (
-                    <div css={tw`mt-4 pl-4 py-2 border-l-4 border-cyan-400`}>
+                    <div css={tw`mt-4 pl-4 py-2 border-l-4 border-accent-text`}>
                         <p css={tw`text-sm text-neutral-300`}>
                             Only permissions which your account is currently assigned may be selected when creating or
                             modifying other users.
@@ -160,7 +160,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                                     {(form.values.fileRules as string[]).map((rule, index) => (
                                         <div key={index} css={tw`flex items-center mb-2`}>
                                             <input
-                                                css={tw`flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-cs2-accent`}
+                                                css={tw`flex-1 bg-paper-3 border border-rule rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-accent-text`}
                                                 type={'text'}
                                                 placeholder={'/plugins'}
                                                 value={rule}
@@ -172,7 +172,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                                             {canEditFileRules && (
                                                 <button
                                                     type={'button'}
-                                                    css={tw`ml-2 text-red-400 hover:text-red-300 text-sm px-2`}
+                                                    css={tw`ml-2 text-bad hover:text-ink text-sm px-2`}
                                                     onClick={() => remove(index)}
                                                 >
                                                     Remove
@@ -183,7 +183,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                                     {canEditFileRules && (
                                         <button
                                             type={'button'}
-                                            css={tw`mt-2 text-cyan-400 hover:text-cyan-300 text-sm`}
+                                            css={tw`mt-2 text-accent-text hover:text-ink text-sm`}
                                             onClick={() => push('/')}
                                         >
                                             + Add allowed directory

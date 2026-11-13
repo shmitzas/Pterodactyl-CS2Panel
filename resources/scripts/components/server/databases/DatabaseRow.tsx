@@ -147,24 +147,24 @@ export default ({ database, className }: Props) => {
                 </div>
                 <div css={tw`flex-1 ml-4`}>
                     <CopyOnClick text={database.name}>
-                        <p css={tw`text-lg font-semibold text-white`}>{database.name}</p>
+                        <p css={tw`text-lg font-semibold text-ink`}>{database.name}</p>
                     </CopyOnClick>
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>
                     <CopyOnClick text={database.connectionString}>
-                        <p css={tw`text-sm text-white/80`}>{database.connectionString}</p>
+                        <p css={tw`text-sm text-ink-2`}>{database.connectionString}</p>
                     </CopyOnClick>
-                    <p css={tw`mt-1 text-2xs text-white/40 uppercase tracking-wider select-none`}>Endpoint</p>
+                    <p css={tw`mt-1 text-2xs text-muted uppercase tracking-wider select-none`}>Endpoint</p>
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>
-                    <p css={tw`text-sm text-white/80`}>{database.allowConnectionsFrom}</p>
-                    <p css={tw`mt-1 text-2xs text-white/40 uppercase tracking-wider select-none`}>Connections from</p>
+                    <p css={tw`text-sm text-ink-2`}>{database.allowConnectionsFrom}</p>
+                    <p css={tw`mt-1 text-2xs text-muted uppercase tracking-wider select-none`}>Connections from</p>
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>
                     <CopyOnClick text={database.username}>
-                        <p css={tw`text-sm text-white/80`}>{database.username}</p>
+                        <p css={tw`text-sm text-ink-2`}>{database.username}</p>
                     </CopyOnClick>
-                    <p css={tw`mt-1 text-2xs text-white/40 uppercase tracking-wider select-none`}>Username</p>
+                    <p css={tw`mt-1 text-2xs text-muted uppercase tracking-wider select-none`}>Username</p>
                 </div>
                 <div css={tw`ml-8`}>
                     <Button isSecondary css={tw`mr-2`} onClick={() => setConnectionVisible(true)}>

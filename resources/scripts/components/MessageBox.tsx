@@ -29,8 +29,8 @@ const MessageBox = ({ title, children, type = 'info' }: Props) => (
         <span className={styles.icon}>
             <FontAwesomeIcon icon={icons[type]} />
         </span>
-        <p className={'min-w-0 flex-1 text-sm text-white/80'}>
-            {title && <span className={'mr-2 font-semibold text-white'}>{title}</span>}
+        <p className={'min-w-0 flex-1 text-sm text-ink-2'}>
+            {title && <span className={'mr-2 font-semibold text-ink'}>{title}</span>}
             {children}
         </p>
     </div>

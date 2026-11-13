@@ -44,27 +44,23 @@ export default ({ activity, children }: Props) => {
     const properties = wrapProperties(activity.properties);
 
     return (
-        <div className={'grid grid-cols-10 py-4 border-b border-white/10 last:border-0 group'}>
+        <div className={'grid grid-cols-10 py-4 border-b border-rule last:border-0 group'}>
             <div className={'hidden sm:flex sm:col-span-1 items-center justify-center select-none'}>
-                <div
-                    className={
-                        'flex items-center w-10 h-10 rounded-full bg-white/10 ring-1 ring-white/10 overflow-hidden'
-                    }
-                >
+                <div className={'flex items-center w-10 h-10 rounded-full bg-raise ring-1 ring-rule overflow-hidden'}>
                     <Avatar name={actor?.uuid || 'system'} />
                 </div>
             </div>
             <div className={'col-span-10 sm:col-span-9 flex'}>
                 <div className={'flex-1 px-4 sm:px-0'}>
-                    <div className={'flex items-center text-white'}>
+                    <div className={'flex items-center text-ink'}>
                         <Tooltip placement={'top'} content={actor?.email || 'System User'}>
                             <span className={'font-semibold'}>{actor?.username || 'System'}</span>
                         </Tooltip>
-                        <span className={'text-white/40'}>&nbsp;&mdash;&nbsp;</span>
+                        <span className={'text-muted'}>&nbsp;&mdash;&nbsp;</span>
                         <Link
                             to={`#${pathTo({ event: activity.event })}`}
                             className={
-                                'font-mono text-sm text-cs2-accent/80 transition-colors duration-150 hover:text-cs2-accent'
+                                'font-mono text-sm text-accent-text transition-colors duration-150 hover:text-ink'
                             }
                         >
                             {activity.event}
@@ -86,11 +82,11 @@ export default ({ activity, children }: Props) => {
                     <p className={style.description}>
                         <Translate ns={'activity'} values={properties} i18nKey={activity.event.replace(':', '.')} />
                     </p>
-                    <div className={'mt-1 flex items-center text-xs text-white/50'}>
+                    <div className={'mt-1 flex items-center text-xs text-muted'}>
                         {activity.ip && (
                             <span>
                                 {activity.ip}
-                                <span className={'text-white/30'}>&nbsp;|&nbsp;</span>
+                                <span className={'text-muted'}>&nbsp;|&nbsp;</span>
                             </span>
                         )}
                         <Tooltip placement={'right'} content={format(activity.timestamp, 'MMM do, yyyy H:mm:ss')}>

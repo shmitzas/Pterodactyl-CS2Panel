@@ -89,7 +89,7 @@ const AllocationRow = ({ allocation }: Props) => {
             <div className={'mt-4 w-full md:mt-0 md:flex-1 md:w-auto'}>
                 <InputSpinner visible={loading}>
                     <Textarea
-                        className={'!bg-black/20'}
+                        className={'!bg-paper-3'}
                         placeholder={'Notes'}
                         defaultValue={allocation.notes || undefined}
                         onChange={(e) => setAllocationNotes(e.currentTarget.value)}
@@ -98,7 +98,7 @@ const AllocationRow = ({ allocation }: Props) => {
             </div>
             <div className={'flex justify-end space-x-4 mt-4 w-full md:mt-0 md:w-48'}>
                 {allocation.isDefault ? (
-                    <span className={'cs2-badge cs2-tone-success'}>Primary</span>
+                    <span className={'cs2-pill cs2-tone-ok'}>Primary</span>
                 ) : (
                     <>
                         <Can action={'allocation.delete'}>

@@ -1,8 +1,15 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faCogs, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+    faBars,
+    faCrosshairs,
+    faLayerGroup,
+    faShieldAlt,
+    faSignOutAlt,
+    faUser,
+} from '@fortawesome/free-solid-svg-icons';
 import { useStoreState } from 'easy-peasy';
 import classNames from 'classnames';
 import { ApplicationStore } from '@/state';
@@ -11,30 +18,17 @@ import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import Avatar from '@/components/Avatar';
+import { toggleSidebar } from '@/components/Sidebar';
 import styles from './NavigationBar.module.css';
-
-const onTriggerNavButton = () => {
-    const sidebar = document.getElementById('sidebar');
-
-    if (sidebar) {
-        sidebar.classList.toggle('active-nav');
-    }
-};
 
 export default () => {
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
-    const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
+    const user = useStoreState((state: ApplicationStore) => state.user.data!);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const location = useLocation();
-    const [showSidebar, setShowSidebar] = useState(false);
+    const { pathname } = useLocation();
 
-    useEffect(() => {
-        if (location.pathname.startsWith('/server') || location.pathname.startsWith('/account')) {
-            setShowSidebar(true);
-            return;
-        }
-        setShowSidebar(false);
-    }, [location.pathname]);
+    // Server and account pages have a sidebar; the bar spans the same frame as the page below it.
+    const withSidebar = pathname.startsWith('/server') || pathname.startsWith('/account');
 
     const onTriggerLogout = () => {
         setIsLoggingOut(true);
@@ -45,61 +39,59 @@ export default () => {
     };
 
     return (
-        <div className={classNames('topbar overflow-x-auto', styles.bar)}>
-            <SpinnerOverlay visible={isLoggingOut} />
-            <div className={'mx-auto flex h-full w-full max-w-[1200px] items-center gap-4 px-4'}>
-                {showSidebar && (
-                    <button
-                        type={'button'}
-                        className={classNames(styles.link, styles.menu)}
-                        aria-label={'Toggle navigation'}
-                        aria-controls={'sidebar'}
-                        onClick={onTriggerNavButton}
-                    >
-                        <FontAwesomeIcon icon={faBars} />
-                    </button>
+        <header className={classNames(styles.bar, !withSidebar && styles.narrow)}>
+            <SpinnerOverlay visible={isLoggingOut} fixed />
+            {withSidebar && (
+                <button
+                    type={'button'}
+                    className={classNames(styles.icon_button, styles.menu)}
+                    aria-label={'Sections'}
+                    aria-controls={'sidebar'}
+                    aria-expanded={'false'}
+                    onClick={toggleSidebar}
+                >
+                    <FontAwesomeIcon icon={faBars} />
+                </button>
+            )}
+            <Link to={'/'} className={styles.brand}>
+                <span className={'cs2-brand-mark'} aria-hidden={'true'}>
+                    <FontAwesomeIcon icon={faCrosshairs} />
+                </span>
+                <span className={styles.name}>{name}</span>
+            </Link>
+            <SearchContainer className={styles.search} />
+            <nav className={styles.links} aria-label={'Panel'}>
+                <NavLink to={'/'} exact className={styles.link}>
+                    <FontAwesomeIcon icon={faLayerGroup} fixedWidth />
+                    Servers
+                </NavLink>
+                <NavLink to={'/account'} className={styles.link}>
+                    <FontAwesomeIcon icon={faUser} fixedWidth />
+                    Account
+                </NavLink>
+                {user.rootAdmin && (
+                    <a href={'/admin'} className={styles.link}>
+                        <FontAwesomeIcon icon={faShieldAlt} fixedWidth />
+                        Admin
+                    </a>
                 )}
-
-                <div id={'logo'} className={'flex min-w-0 flex-1'}>
-                    <Link to={'/'} className={styles.brand} aria-label={name}>
-                        <span className={styles.mark} aria-hidden={'true'} />
-                        <span className={'truncate text-lg font-bold tracking-wide'}>{name}</span>
-                    </Link>
-                </div>
-
-                <nav className={styles.links}>
-                    <SearchContainer className={styles.link} />
-                    <Tooltip placement={'bottom'} content={'Dashboard'}>
-                        <NavLink to={'/'} exact className={styles.link} aria-label={'Dashboard'}>
-                            <FontAwesomeIcon icon={faLayerGroup} />
-                        </NavLink>
-                    </Tooltip>
-                    {rootAdmin && (
-                        <Tooltip placement={'bottom'} content={'Admin'}>
-                            <a href={'/admin'} rel={'noreferrer'} className={styles.link} aria-label={'Admin'}>
-                                <FontAwesomeIcon icon={faCogs} />
-                            </a>
-                        </Tooltip>
-                    )}
-                    <Tooltip placement={'bottom'} content={'Account Settings'}>
-                        <NavLink to={'/account'} className={styles.link} aria-label={'Account Settings'}>
-                            <span className={'flex items-center w-5 h-5'}>
-                                <Avatar.User />
-                            </span>
-                        </NavLink>
-                    </Tooltip>
-                    <Tooltip placement={'bottom'} content={'Sign Out'}>
-                        <button
-                            type={'button'}
-                            className={classNames(styles.link, styles.logout)}
-                            aria-label={'Sign Out'}
-                            onClick={onTriggerLogout}
-                        >
-                            <FontAwesomeIcon icon={faSignOutAlt} />
-                        </button>
-                    </Tooltip>
-                </nav>
-            </div>
-        </div>
+            </nav>
+            <span className={styles.user}>
+                <span className={styles.avatar} aria-hidden={'true'}>
+                    <Avatar.User />
+                </span>
+                <span className={styles.username}>{user.username}</span>
+            </span>
+            <Tooltip placement={'bottom'} content={'Sign out'}>
+                <button
+                    type={'button'}
+                    className={classNames(styles.icon_button, styles.logout)}
+                    aria-label={'Sign out'}
+                    onClick={onTriggerLogout}
+                >
+                    <FontAwesomeIcon icon={faSignOutAlt} />
+                </button>
+            </Tooltip>
+        </header>
     );
 };

@@ -6,12 +6,12 @@ import { CSSTransition } from 'react-transition-group';
 import tw from 'twin.macro';
 
 const BarFill = styled.div<{ style?: { top?: string } }>`
-    ${tw`h-full bg-cs2-accent`};
+    ${tw`h-full bg-accent-text`};
     transition: 250ms ease-in-out;
     margin-top: 0 !important;
-    box-shadow: 0 0 10px 1px rgba(13, 202, 240, 0.6);
+    box-shadow: 0 0 10px 1px rgba(142, 165, 253, 0.6);
     position: fixed;
-    top: 3.5rem;
+    top: 0;
     height: 2px;
 `;
 
@@ -63,7 +63,7 @@ export default () => {
     }, [progress, continuous]);
 
     return (
-        <div css={tw`w-full fixed`} style={{ height: '2px' }}>
+        <div css={tw`w-full fixed top-0 left-0 z-50`} style={{ height: '2px' }}>
             <CSSTransition timeout={150} appear in={visible} unmountOnExit classNames={'fade'}>
                 <BarFill style={{ width: progress === undefined ? '100%' : `${progress}%` }} />
             </CSSTransition>

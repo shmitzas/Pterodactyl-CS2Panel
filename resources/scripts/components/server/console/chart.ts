@@ -12,11 +12,22 @@ import { DeepPartial } from 'ts-essentials';
 import { useState } from 'react';
 import { deepmerge, deepmergeCustom } from 'deepmerge-ts';
 import { theme } from 'twin.macro';
+import { hexToRgba } from '@/lib/helpers';
 
 ChartJS.register(LineElement, PointElement, Filler, LinearScale);
 
+// The canvas can't read CSS custom properties, so the chart takes the hex mirrors of the v2 tokens.
+export const chartColors = {
+    cpu: theme`colors.cpu`.toString(),
+    mem: theme`colors.mem`.toString(),
+    net: theme`colors.net`.toString(),
+    // The network colour mixed toward ink, as the swatch beside the chart does with color-mix().
+    netOut: '#b3dcfb',
+};
+
 const options: ChartOptions<'line'> = {
     responsive: true,
+    maintainAspectRatio: false,
     animation: false,
     plugins: {
         legend: { display: false },
@@ -44,17 +55,17 @@ const options: ChartOptions<'line'> = {
             type: 'linear',
             grid: {
                 display: true,
-                color: 'rgba(255, 255, 255, 0.06)',
+                color: hexToRgba(theme`colors.muted`.toString(), 0.14),
                 drawBorder: false,
             },
             ticks: {
                 display: true,
                 count: 3,
-                color: 'rgba(255, 255, 255, 0.5)',
+                color: theme`colors.muted`.toString(),
                 font: {
                     family: theme('fontFamily.sans'),
                     size: 12,
-                    weight: '400',
+                    weight: '600',
                 },
             },
         },
@@ -64,7 +75,8 @@ const options: ChartOptions<'line'> = {
             radius: 0,
         },
         line: {
-            tension: 0.15,
+            tension: 0.25,
+            borderWidth: 2,
         },
     },
 };
@@ -75,7 +87,12 @@ function getOptions(opts?: DeepPartial<ChartOptions<'line'>> | undefined): Chart
 
 type ChartDatasetCallback = (value: ChartDataset<'line'>, index: number) => ChartDataset<'line'>;
 
-function getEmptyData(label: string, sets = 1, callback?: ChartDatasetCallback | undefined): ChartData<'line'> {
+function getEmptyData(
+    label: string,
+    sets = 1,
+    callback?: ChartDatasetCallback | undefined,
+    color = chartColors.cpu
+): ChartData<'line'> {
     const next = callback || ((value) => value);
 
     return {
@@ -90,8 +107,8 @@ function getEmptyData(label: string, sets = 1, callback?: ChartDatasetCallback |
                         fill: true,
                         label,
                         data: Array(20).fill(-5),
-                        borderColor: '#0dcaf0',
-                        backgroundColor: 'rgba(13, 202, 240, 0.15)',
+                        borderColor: color,
+                        backgroundColor: hexToRgba(color, 0.18),
                     },
                     index
                 )
@@ -103,6 +120,7 @@ const merge = deepmergeCustom({ mergeArrays: false });
 
 interface UseChartOptions {
     sets: number;
+    color?: string;
     options?: DeepPartial<ChartOptions<'line'>> | number | undefined;
     callback?: ChartDatasetCallback | undefined;
 }
@@ -111,7 +129,7 @@ function useChart(label: string, opts?: UseChartOptions) {
     const options = getOptions(
         typeof opts?.options === 'number' ? { scales: { y: { min: 0, suggestedMax: opts.options } } } : opts?.options
     );
-    const [data, setData] = useState(getEmptyData(label, opts?.sets || 1, opts?.callback));
+    const [data, setData] = useState(getEmptyData(label, opts?.sets || 1, opts?.callback, opts?.color));
 
     const push = (items: number | null | (number | null)[]) =>
         setData((state) =>
@@ -138,9 +156,10 @@ function useChart(label: string, opts?: UseChartOptions) {
     return { props: { data, options }, push, clear };
 }
 
-function useChartTickLabel(label: string, max: number, tickLabel: string, roundTo?: number) {
+function useChartTickLabel(label: string, max: number, tickLabel: string, roundTo?: number, color?: string) {
     return useChart(label, {
         sets: 1,
+        color,
         options: {
             scales: {
                 y: {

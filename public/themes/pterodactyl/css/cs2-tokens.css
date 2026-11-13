@@ -1,0 +1,81 @@
+/*
+ * v2 design tokens, shared by the client (imported by resources/scripts/assets/css/cs2.css) and the admin
+ * area (linked before cs2-admin.css). tailwind.config.js mirrors the colours in hex; keep the two in step.
+ */
+:root {
+    color-scheme: dark;
+
+    --color-paper: oklch(13% 0.032 268);
+    --color-paper-2: oklch(23% 0.042 268);
+    --color-paper-3: oklch(11% 0.026 268);
+    --color-raise: oklch(27.5% 0.047 268);
+    --color-ink: oklch(97% 0.01 265);
+    --color-ink-2: oklch(85% 0.028 266);
+    --color-muted: oklch(72% 0.04 266);
+    --color-rule: oklch(32% 0.05 268);
+    --color-rule-2: oklch(41% 0.056 268);
+
+    --color-accent: oklch(55% 0.2 272);
+    --color-accent-hover: oklch(50% 0.2 272);
+    --color-accent-ink: oklch(98% 0.005 272);
+    --color-accent-text: oklch(74% 0.13 272);
+    --color-focus: oklch(70% 0.155 272);
+
+    /* One hue per metric, used by its tile, label, meter and chart on every screen. */
+    --color-cpu: oklch(81% 0.135 210);
+    --color-mem: oklch(74% 0.16 310);
+    --color-disk: oklch(80% 0.13 175);
+    --color-net: oklch(77% 0.12 240);
+
+    --color-ok: oklch(79% 0.17 150);
+    --color-warn: oklch(83% 0.15 85);
+    --color-bad: oklch(71% 0.175 22);
+    --color-error: var(--color-bad);
+    --color-success: var(--color-ok);
+
+    --shadow-card: 0 18px 40px -22px oklch(4% 0.02 268 / 0.95), 0 2px 8px -2px oklch(4% 0.02 268 / 0.55);
+    --shadow-pop: 0 24px 60px -24px oklch(4% 0.02 268 / 0.95), 0 4px 14px -4px oklch(4% 0.02 268 / 0.7);
+
+    --font-display: 'Clash Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --radius-card: 16px;
+    --radius-inner: 12px;
+    --radius-control: 10px;
+    --radius-chip: 8px;
+    --radius-pill: 999px;
+
+    --space-3xs: 2px;
+    --space-2xs: 4px;
+    --space-xs: 8px;
+    --space-sm: 12px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px;
+    --space-3xl: 96px;
+    --space-4xl: 144px;
+
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-md: 1rem;
+    --text-lg: 1.2rem;
+    --text-xl: 1.44rem;
+    --text-2xl: 1.728rem;
+    --text-3xl: 2.074rem;
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+    --dur-micro: 120ms;
+    --dur-short: 220ms;
+    --dur-long: 420ms;
+
+    --control: 38px;
+    --topbar: 60px;
+    --sidebar: 16.5rem;
+    --frame: 1600px;
+
+    --bg-image-filter: grayscale(1) contrast(1.15);
+    --bg-image-opacity: 0.14;
+}

@@ -1,118 +1,244 @@
+/* Floating top bar; sticky with a gap above it, so it reads as a panel over the page. */
 .bar {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(var(--cs2-surface), 0.85);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    position: sticky;
+    top: var(--space-sm);
+    z-index: 36;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: var(--frame);
+    min-height: var(--topbar);
+    margin: 0 auto var(--space-lg);
+    padding: 0 var(--space-sm) 0 var(--space-md);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-2);
+    box-shadow: var(--shadow-card);
+}
 
-    /* Blur lives on a pseudo-element: backdrop-filter on the bar would trap its fixed-position tooltips. */
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-    }
+.narrow {
+    max-width: 1280px;
 }
 
 .brand {
     display: inline-flex;
+    flex-shrink: 0;
     align-items: center;
-    gap: 0.625rem;
+    gap: var(--space-sm);
     min-width: 0;
-    color: #fff;
+    min-height: var(--control);
+    color: var(--color-ink);
     text-decoration: none;
-    transition: color 0.2s var(--cs2-ease);
-
-    &:hover {
-        color: rgb(var(--cs2-accent));
-    }
 }
 
-/* Stands in for a logo file, so the panel ships with no brand image an operator has to replace. */
-.mark {
-    flex: none;
-    width: 0.25rem;
-    height: 1.5rem;
-    border-radius: 9999px;
-    background: rgb(var(--cs2-accent));
-    box-shadow: 0 0 12px rgba(var(--cs2-accent), 0.6);
+.name {
+    overflow: hidden;
+    max-width: 16rem;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search {
+    display: inline-flex;
+    flex: 0 1 22rem;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 0;
+    min-height: var(--control);
+    margin-left: var(--space-sm);
+    padding-inline: var(--space-sm);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-control);
+    background: var(--color-paper-3);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+
+    &:hover {
+        border-color: var(--color-rule-2);
+        color: var(--color-ink-2);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    & kbd {
+        margin-left: auto;
+        padding: 0 var(--space-2xs);
+        border: 1px solid var(--color-rule);
+        border-radius: var(--radius-chip);
+        font-family: inherit;
+        font-size: var(--text-xs);
+        white-space: nowrap;
+    }
 }
 
 .links {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    height: 100%;
+    gap: var(--space-2xs);
+    margin-left: auto;
 }
 
 /* One class on every nav item: nesting under a selector list makes postcss emit :is() it can't lower. */
 .link {
-    position: relative;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 2.5rem;
-    height: 2.5rem;
-    padding: 0 0.75rem;
-    border-radius: 0.5rem;
-    color: rgba(255, 255, 255, 0.7);
+    gap: var(--space-xs);
+    min-height: var(--control);
+    padding-inline: var(--space-sm);
+    border-radius: var(--radius-control);
+    color: var(--color-ink-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
     text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+    transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
 
-    /* Underline grows from the centre (design system: navigation links). */
-    &::after {
-        content: '';
-        position: absolute;
-        left: 50%;
-        bottom: 0.125rem;
-        width: 0;
-        height: 2px;
-        border-radius: 1px;
-        background: rgb(var(--cs2-accent));
-        transform: translateX(-50%);
-        transition: width 0.3s var(--cs2-ease);
+    & svg {
+        color: var(--color-muted);
     }
 
     &:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-    }
-
-    &:hover::after,
-    &:global(.active)::after {
-        width: 60%;
+        background: var(--color-raise);
+        color: var(--color-ink);
     }
 
     &:global(.active) {
-        background: rgba(var(--cs2-accent), 0.1);
-        color: rgb(var(--cs2-accent));
+        background: color-mix(in oklab, var(--color-accent) 24%, var(--color-paper-2));
+        color: var(--color-ink);
+    }
+
+    &:global(.active) svg {
+        color: var(--color-accent-text);
     }
 
     &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
     }
 }
 
-/* Declared after .link so the danger tint wins at equal specificity. */
-.logout {
+.user {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--space-xs);
+    padding-left: var(--space-sm);
+    border-left: 1px solid var(--color-rule);
+}
+
+.avatar {
+    display: inline-flex;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 50%;
+
+    & svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.username {
+    overflow: hidden;
+    max-width: 10rem;
+    color: var(--color-ink);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.icon_button {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: var(--control);
+    height: var(--control);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+    transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+
     &:hover {
-        background: rgba(var(--cs2-danger), 0.1);
-        color: rgb(var(--cs2-danger));
+        background: var(--color-raise);
+        color: var(--color-ink);
     }
 
-    &::after {
-        background: rgb(var(--cs2-danger));
+    &:focus-visible {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
     }
+}
+
+/* Declared after .icon_button so the danger tint wins at equal specificity. */
+.logout:hover {
+    background: color-mix(in oklab, var(--color-bad) 14%, var(--color-paper-2));
+    color: var(--color-bad);
 }
 
 /* Sidebar drawer toggle; the breakpoint matches the drawer's in sidebar.css. */
 .menu {
     display: none;
-    flex-shrink: 0;
+}
 
-    @media (max-width: 1150px) {
-        display: flex;
+@media (max-width: 60rem) {
+    .menu {
+        display: inline-grid;
+    }
+
+    .search {
+        flex: none;
+        justify-content: center;
+        width: var(--control);
+        margin-left: auto;
+        padding: 0;
+    }
+
+    .search span,
+    .search kbd {
+        display: none;
+    }
+
+    .links {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 48rem) {
+    .bar {
+        flex-wrap: wrap;
+        gap: var(--space-2xs) var(--space-xs);
+        padding: var(--space-xs) var(--space-sm);
+    }
+
+    .brand {
+        flex: 1;
+    }
+
+    .user {
+        display: none;
+    }
+
+    /* Second row, scrolling sideways when the links outgrow a phone. */
+    .links {
+        order: 10;
+        flex-basis: 100%;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
     }
 }

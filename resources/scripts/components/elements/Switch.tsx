@@ -13,18 +13,18 @@ const ToggleContainer = styled.div`
         ${tw`absolute w-px h-px m-0 p-0 opacity-0 overflow-hidden`};
 
         &:checked + label {
-            border-color: rgba(13, 202, 240, 0.6);
-            background: rgba(13, 202, 240, 0.25);
+            border-color: var(--color-accent);
+            background: var(--color-accent);
         }
 
         &:checked + label:before {
             transform: translateX(1.25rem);
-            background: #0dcaf0;
-            box-shadow: 0 0 10px rgba(13, 202, 240, 0.6);
+            background: var(--color-accent-ink);
         }
 
         &:focus-visible + label {
-            box-shadow: 0 0 0 3px rgba(13, 202, 240, 0.25);
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
         }
 
         &:disabled + label {
@@ -34,21 +34,20 @@ const ToggleContainer = styled.div`
 
     & > label {
         ${tw`mb-0 block cursor-pointer rounded-full h-6`};
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        background: rgba(255, 255, 255, 0.08);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid var(--color-rule-2);
+        background: var(--color-paper-3);
+        transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
 
         &::before {
             ${tw`absolute block h-4 w-4 rounded-full`};
             top: 0.25rem;
             left: 0.25rem;
             content: '';
-            background: rgba(255, 255, 255, 0.7);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--color-muted);
+            transition: transform var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
         }
     }
 `;
-
 export interface SwitchProps {
     name: string;
     label?: string;
@@ -84,7 +83,7 @@ const Switch = ({ name, label, description, defaultChecked, readOnly, onChange, 
                             {label}
                         </Label>
                     )}
-                    {description && <p css={tw`text-neutral-400 text-sm mt-2`}>{description}</p>}
+                    {description && <p css={tw`text-muted text-sm mt-2`}>{description}</p>}
                 </div>
             )}
         </div>

@@ -10,6 +10,12 @@ interface Props {
     isNewFile?: boolean;
 }
 
+const Separator = () => (
+    <span css={tw`px-0.5 text-rule-2`} aria-hidden={'true'}>
+        /
+    </span>
+);
+
 export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
     const [file, setFile] = useState<string | null>(null);
     const id = ServerContext.useStoreState((state) => state.server.data!.id);
@@ -38,37 +44,44 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
             });
 
     return (
-        <div css={tw`flex flex-grow-0 items-center text-sm text-white/30 overflow-x-hidden`}>
-            {renderLeft || <div css={tw`w-12`} />}/<span css={tw`px-1 text-white/50`}>home</span>/
+        <nav
+            css={tw`flex min-w-0 flex-1 flex-wrap items-center gap-y-1 text-sm text-muted`}
+            aria-label={'Current directory'}
+        >
+            {renderLeft}
+            <span css={tw`px-0.5`}>home</span>
+            <Separator />
             <NavLink
                 to={`/server/${id}/files`}
-                css={tw`px-1 text-white/80 no-underline transition-colors duration-150 hover:text-cs2-accent`}
+                css={tw`rounded px-0.5 font-semibold text-ink-2 no-underline transition-colors duration-150 hover:text-accent-text`}
             >
                 container
             </NavLink>
-            /
-            {breadcrumbs().map((crumb, index) =>
-                crumb.path ? (
-                    <React.Fragment key={index}>
+            {breadcrumbs().map((crumb, index) => (
+                <React.Fragment key={index}>
+                    <Separator />
+                    {crumb.path ? (
                         <NavLink
                             to={`/server/${id}/files#${encodePathSegments(crumb.path)}`}
-                            css={tw`px-1 text-white/80 no-underline transition-colors duration-150 hover:text-cs2-accent`}
+                            css={tw`rounded px-0.5 font-semibold text-ink-2 no-underline transition-colors duration-150 hover:text-accent-text`}
                         >
                             {crumb.name}
                         </NavLink>
-                        /
-                    </React.Fragment>
-                ) : (
-                    <span key={index} css={tw`px-1 font-semibold text-white`}>
-                        {crumb.name}
-                    </span>
-                )
-            )}
-            {file && (
-                <React.Fragment>
-                    <span css={tw`px-1 font-semibold text-white`}>{file}</span>
+                    ) : (
+                        <span css={tw`px-0.5 font-bold text-ink`} aria-current={'location'}>
+                            {crumb.name}
+                        </span>
+                    )}
                 </React.Fragment>
+            ))}
+            {file && (
+                <>
+                    <Separator />
+                    <span css={tw`px-0.5 font-bold text-ink`} aria-current={'page'}>
+                        {file}
+                    </span>
+                </>
             )}
-        </div>
+        </nav>
     );
 };

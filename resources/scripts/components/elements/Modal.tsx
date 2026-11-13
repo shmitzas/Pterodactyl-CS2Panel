@@ -22,9 +22,9 @@ export interface ModalProps extends RequiredModalProps {
 
 export const ModalMask = styled.div`
     ${tw`fixed z-50 overflow-auto flex w-full inset-0`};
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: color-mix(in oklab, var(--color-paper-3) 70%, transparent);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 `;
 
 const ModalContainer = styled.div<{ alignTop?: boolean }>`
@@ -45,14 +45,14 @@ const ModalContainer = styled.div<{ alignTop?: boolean }>`
 
     & > .modal-content {
         ${tw`p-3 sm:p-4 md:p-6 overflow-y-auto`};
-        border: 1px solid rgba(13, 202, 240, 0.3);
-        border-radius: 1rem;
-        background: linear-gradient(135deg, rgba(33, 37, 41, 0.95), rgba(23, 27, 31, 0.95));
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(13, 202, 240, 0.2);
+        border: 1px solid var(--color-rule);
+        border-radius: var(--radius-card);
+        background: var(--color-paper-2);
+        box-shadow: var(--shadow-pop);
     }
 
     & > .close-icon {
-        ${tw`absolute right-0 p-2 text-white cursor-pointer opacity-50 transition-all duration-150 ease-linear hover:opacity-100`};
+        ${tw`absolute right-0 p-2 text-ink cursor-pointer opacity-60 transition-all duration-150 ease-linear hover:opacity-100`};
         top: -2.5rem;
 
         &:hover {
@@ -133,7 +133,10 @@ const Modal: React.FC<ModalProps> = ({
                         <Fade timeout={150} appear in>
                             <div
                                 css={tw`absolute w-full h-full rounded-2xl flex items-center justify-center`}
-                                style={{ background: 'hsla(211, 10%, 53%, 0.35)', zIndex: 9999 }}
+                                style={{
+                                    background: 'color-mix(in oklab, var(--color-paper-3) 55%, transparent)',
+                                    zIndex: 9999,
+                                }}
                             >
                                 <Spinner />
                             </div>
