@@ -24,7 +24,12 @@ export default ({ className }: { className?: string }) => {
     return (
         <>
             {visible && <SearchModal appear visible={visible} onDismissed={() => setVisible(false)} />}
-            <button type={'button'} className={className} aria-label={'Search servers'} onClick={() => setVisible(true)}>
+            <button
+                type={'button'}
+                className={className}
+                aria-label={'Search servers'}
+                onClick={() => setVisible(true)}
+            >
                 <FontAwesomeIcon icon={faSearch} />
                 <span>Search servers</span>
                 <kbd aria-hidden={'true'}>{isMac ? '⌘ K' : 'Ctrl K'}</kbd>

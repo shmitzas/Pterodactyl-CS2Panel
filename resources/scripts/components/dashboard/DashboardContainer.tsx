@@ -145,7 +145,10 @@ export default () => {
                 <div className={styles.list} aria-busy={'true'} aria-label={'Loading servers'}>
                     {[0, 1, 2].map((key) => (
                         <div key={key} className={'cs2-card grid gap-3 px-6 py-5'}>
-                            <span className={'cs2-skel cs2-skel--tall'} style={{ '--w': '30%' } as React.CSSProperties} />
+                            <span
+                                className={'cs2-skel cs2-skel--tall'}
+                                style={{ '--w': '30%' } as React.CSSProperties}
+                            />
                             <span className={'cs2-skel'} style={{ '--w': '65%' } as React.CSSProperties} />
                         </div>
                     ))}

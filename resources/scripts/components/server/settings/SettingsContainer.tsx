@@ -67,18 +67,14 @@ export default () => {
                     <TitledGreyBox title={'Debug Information'} css={tw`mb-6 md:mb-10`}>
                         <div css={tw`flex items-center justify-between text-sm`}>
                             <p css={tw`text-muted`}>Node</p>
-                            <code
-                                css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-ink-2`}
-                            >
+                            <code css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-ink-2`}>
                                 {node}
                             </code>
                         </div>
                         <CopyOnClick text={uuid}>
                             <div css={tw`flex items-center justify-between mt-2 text-sm`}>
                                 <p css={tw`text-muted`}>Server ID</p>
-                                <code
-                                    css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-ink-2`}
-                                >
+                                <code css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-ink-2`}>
                                     {uuid}
                                 </code>
                             </div>

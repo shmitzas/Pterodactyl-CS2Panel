@@ -138,10 +138,11 @@ export default () => {
         if (!connected || !ref.current || terminal.element) return;
 
         let cancelled = false;
-        // xterm measures its cells when it opens, so load the web font first or the glyphs misalign.
-        const fontLoaded = document.fonts
-            ? document.fonts.load(`${terminalProps.fontSize}px "JetBrains Mono"`).catch(() => undefined)
-            : Promise.resolve();
+        // xterm measures its cells when it opens, so wait for the web font (capped, in case the font CDN is blocked).
+        const fontLoaded = Promise.race([
+            document.fonts?.load(`${terminalProps.fontSize}px "JetBrains Mono"`).catch(() => undefined),
+            new Promise((resolve) => setTimeout(resolve, 2000)),
+        ]);
 
         fontLoaded.then(() => {
             if (cancelled || !ref.current || terminal.element) return;
@@ -244,10 +245,11 @@ export default () => {
                     size={Button.Sizes.Small}
                     variant={Button.Variants.Secondary}
                     disabled={!connected}
+                    aria-label={'Search the console'}
                     onClick={() => searchBarRef.current?.show()}
                 >
                     <FontAwesomeIcon icon={faSearch} />
-                    Search
+                    <span className={styles.search_label}>Search</span>
                 </Button.Text>
             </div>
             <div className={styles.terminal}>

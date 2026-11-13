@@ -62,9 +62,7 @@ export default () => {
             </PageHeader>
             <FlashMessageRender byKey={'users'} css={tw`mb-4`} />
             {!subusers.length ? (
-                <div className={'cs2-card cs2-empty'}>
-                    It looks like you don&apos;t have any subusers.
-                </div>
+                <div className={'cs2-card cs2-empty'}>It looks like you don&apos;t have any subusers.</div>
             ) : (
                 subusers.map((subuser) => <UserRow key={subuser.uuid} subuser={subuser} />)
             )}

@@ -309,6 +309,12 @@
         padding: var(--space-md);
     }
 
+    /* Keeps the title, connection state and search on one row of a phone. */
+    .console_head > :global(.cs2-tile),
+    .search_label {
+        display: none;
+    }
+
     .terminal {
         height: 22rem;
         margin-inline: var(--space-sm);

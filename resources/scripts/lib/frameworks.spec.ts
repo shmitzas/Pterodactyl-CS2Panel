@@ -6,11 +6,9 @@ const keys = (listings: Record<string, string[] | null | undefined>, rules: stri
 describe('@/lib/frameworks.ts', function () {
     describe('detectFrameworks()', function () {
         it('should find frameworks by folder name, keeping the folder case', function () {
-            expect(keys({ '/game/csgo/addons': ['metamod', 'SwiftlyS2', 'maps'], '/game': ['csgo', 'sharp'] })).toEqual([
-                'metamod:/game/csgo/addons/metamod',
-                'swiftlys2:/game/csgo/addons/SwiftlyS2',
-                'modsharp:/game/sharp',
-            ]);
+            expect(keys({ '/game/csgo/addons': ['metamod', 'SwiftlyS2', 'maps'], '/game': ['csgo', 'sharp'] })).toEqual(
+                ['metamod:/game/csgo/addons/metamod', 'swiftlys2:/game/csgo/addons/SwiftlyS2', 'modsharp:/game/sharp']
+            );
         });
 
         it('should find nothing while loading or when an unrestricted listing fails', function () {
@@ -37,7 +35,10 @@ describe('@/lib/frameworks.ts', function () {
     });
 
     describe('deepestMatch()', function () {
-        const items = [{ directory: '/game/csgo/addons/swiftlys2' }, { directory: '/game/csgo/addons/swiftlys2/plugins' }];
+        const items = [
+            { directory: '/game/csgo/addons/swiftlys2' },
+            { directory: '/game/csgo/addons/swiftlys2/plugins' },
+        ];
 
         it('should pick the deepest directory holding the path', function () {
             expect(deepestMatch(items, '/game/csgo/addons/swiftlys2/plugins/Ranks/')).toBe(items[1]);

@@ -2,7 +2,8 @@ import React from 'react';
 import BoringAvatar, { AvatarProps } from 'boring-avatars';
 import { useStoreState } from '@/state/hooks';
 
-const palette = ['#FFAD08', '#EDD75A', '#73B06F', '#0C8F8F', '#587291'];
+// The v2 accent and metric hues, so generated avatars sit in the same cold palette as the rest of the panel.
+const palette = ['#4d5fe4', '#24d8f1', '#ca8cf5', '#49d9b9', '#66bef9'];
 
 type Props = Omit<AvatarProps, 'colors'>;
 

@@ -10,8 +10,7 @@ const setSidebarOpen = (open: boolean) => {
         .forEach((button) => button.setAttribute('aria-expanded', String(open)));
 };
 
-export const toggleSidebar = () =>
-    setSidebarOpen(!document.getElementById('sidebar')?.classList.contains(OPEN_CLASS));
+export const toggleSidebar = () => setSidebarOpen(!document.getElementById('sidebar')?.classList.contains(OPEN_CLASS));
 
 interface Props {
     label?: string;

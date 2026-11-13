@@ -54,7 +54,7 @@ export default () => {
                 </button>
             )}
             <Link to={'/'} className={styles.brand}>
-                <span className={styles.mark} aria-hidden={'true'}>
+                <span className={'cs2-brand-mark'} aria-hidden={'true'}>
                     <FontAwesomeIcon icon={faCrosshairs} />
                 </span>
                 <span className={styles.name}>{name}</span>

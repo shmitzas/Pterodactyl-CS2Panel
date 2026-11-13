@@ -313,7 +313,23 @@
 
 @media (max-width: 48rem) {
     .totals {
-        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-sm);
+    }
+
+    .stat {
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md) var(--space-md);
+    }
+
+    .stat :global(.cs2-tile) {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-chip);
+        font-size: 0.9375rem;
+    }
+
+    .big {
+        font-size: var(--text-xl);
     }
 
     .row {

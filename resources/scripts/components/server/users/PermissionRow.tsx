@@ -13,8 +13,8 @@ const Container = styled.label`
         ${tw`cursor-pointer`};
 
         &:hover {
-            border-color: rgba(13, 202, 240, 0.3);
-            background-color: rgba(255, 255, 255, 0.03);
+            border-color: var(--color-rule);
+            background-color: var(--color-raise);
         }
     }
 

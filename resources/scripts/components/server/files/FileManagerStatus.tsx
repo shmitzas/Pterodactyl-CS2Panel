@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import classNames from 'classnames';
 import { ServerContext } from '@/state/server';
 import { CloudUploadIcon, XIcon } from '@heroicons/react/solid';
 import asDialog from '@/hoc/asDialog';
@@ -18,11 +19,10 @@ const svgProps = {
 };
 
 const Spinner = ({ progress, className }: { progress: number; className?: string }) => (
-    <svg viewBox={'0 0 32 32'} className={className}>
+    <svg viewBox={'0 0 32 32'} className={classNames('text-accent-text', className)}>
         <circle {...svgProps} className={'opacity-25'} />
         <circle
             {...svgProps}
-            stroke={'#0dcaf0'}
             strokeDasharray={28 * Math.PI}
             className={'rotate-[-90deg] origin-[50%_50%] transition-[stroke-dashoffset] duration-300'}
             style={{ strokeDashoffset: ((100 - progress) / 100) * 28 * Math.PI }}
@@ -41,10 +41,7 @@ const FileUploadList = () => {
     return (
         <div className={'space-y-2 mt-6'}>
             {uploads.map(([name, file]) => (
-                <div
-                    key={name}
-                    className={'flex items-center space-x-3 rounded-xl border border-rule bg-paper-3 p-3'}
-                >
+                <div key={name} className={'flex items-center space-x-3 rounded-xl border border-rule bg-paper-3 p-3'}>
                     <Tooltip content={`${Math.floor((file.loaded / file.total) * 100)}%`} placement={'left'}>
                         <div className={'flex-shrink-0'}>
                             <Spinner progress={(file.loaded / file.total) * 100} className={'w-6 h-6'} />

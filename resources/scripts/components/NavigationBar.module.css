@@ -31,19 +31,6 @@
     text-decoration: none;
 }
 
-/* Stands in for a logo file, so the panel ships with no brand image an operator has to replace. */
-.mark {
-    display: inline-grid;
-    flex-shrink: 0;
-    place-items: center;
-    width: 34px;
-    height: 34px;
-    border-radius: var(--radius-control);
-    background: var(--color-accent);
-    color: var(--color-accent-ink);
-    font-size: 1.125rem;
-}
-
 .name {
     overflow: hidden;
     max-width: 16rem;

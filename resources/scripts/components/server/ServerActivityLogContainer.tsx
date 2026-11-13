@@ -54,9 +54,7 @@ export default () => {
             {!data && isValidating ? (
                 <Spinner centered />
             ) : !data?.items.length ? (
-                <div className={'cs2-card cs2-empty'}>
-                    No activity logs available for this server.
-                </div>
+                <div className={'cs2-card cs2-empty'}>No activity logs available for this server.</div>
             ) : (
                 <div className={'cs2-card px-2'}>
                     {data?.items.map((activity) => (

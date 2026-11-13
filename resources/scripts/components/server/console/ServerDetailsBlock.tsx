@@ -18,25 +18,35 @@ const SAMPLES = 30;
 
 const push = (values: number[], value: number) => [...values, value].slice(-SAMPLES);
 
-// A sparkline scaled to its own range, so a steady load still shows its movement.
+// A sparkline scaled to its own range, so a steady load still shows its movement and a flat one sits mid-height.
 const Spark = ({ values, label }: { values: number[]; label: string }) => {
     if (values.length < 2) {
         return <svg className={styles.spark} viewBox={'0 0 120 30'} aria-hidden={'true'} />;
     }
 
-    const top = Math.max(...values) * 1.25 || 1;
+    const low = Math.min(...values);
+    const high = Math.max(...values);
+    const pad = Math.max((high - low) * 0.25, high * 0.05, 1e-9);
+    const bottom = Math.max(0, low - pad);
+    const span = high + pad - bottom;
     const step = 120 / (SAMPLES - 1);
     const offset = SAMPLES - values.length;
     const points = values.map((value, index) => {
         const x = ((offset + index) * step).toFixed(1);
-        const y = (29 - (value / top) * 27).toFixed(1);
+        const y = (29 - ((value - bottom) / span) * 27).toFixed(1);
 
         return `${x} ${y}`;
     });
     const line = `M${points.join(' L')}`;
 
     return (
-        <svg className={styles.spark} viewBox={'0 0 120 30'} preserveAspectRatio={'none'} role={'img'} aria-label={label}>
+        <svg
+            className={styles.spark}
+            viewBox={'0 0 120 30'}
+            preserveAspectRatio={'none'}
+            role={'img'}
+            aria-label={label}
+        >
             <path className={styles.spark_fill} d={`${line} L120 30 L${(offset * step).toFixed(1)} 30 Z`} />
             <path className={styles.spark_line} d={line} />
         </svg>

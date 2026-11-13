@@ -45,7 +45,7 @@ const modes: Mode[] = [
         mime: 'application/json',
         mimes: ['application/json', 'application/x-json'],
         mode: 'javascript',
-        ext: ['json', 'map'],
+        ext: ['json', 'jsonc', 'map'],
         alias: ['json5'],
     },
     { name: 'Lua', mime: 'text/x-lua', mode: 'lua', ext: ['lua'] },

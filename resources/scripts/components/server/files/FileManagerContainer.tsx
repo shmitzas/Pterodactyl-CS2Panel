@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import classNames from 'classnames';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -9,7 +10,6 @@ import NewDirectoryButton from '@/components/server/files/NewDirectoryButton';
 import { NavLink, useLocation } from 'react-router-dom';
 import Can from '@/components/elements/Can';
 import { ServerError } from '@/components/elements/ScreenBlock';
-import tw from 'twin.macro';
 import { Button } from '@/components/elements/button/index';
 import { ServerContext } from '@/state/server';
 import useFileManagerSwr from '@/plugins/useFileManagerSwr';
@@ -22,7 +22,9 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
 import PageHeader from '@/components/elements/PageHeader';
-import { faFolder } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFolder, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+import styles from './style.module.css';
 
 const sortFiles = (files: FileObject[]): FileObject[] => {
     const sortedFiles: FileObject[] = files
@@ -77,28 +79,42 @@ export default () => {
                         </NavLink>
                     </Can>
                 </PageHeader>
-                <div className={'mb-3 rounded-xl border border-rule bg-paper-2 py-2.5'}>
-                    <FileManagerBreadcrumbs
-                        renderLeft={
-                            <FileActionCheckbox
-                                type={'checkbox'}
-                                css={tw`mx-4`}
-                                aria-label={'Select all'}
-                                checked={selectedFilesLength === (files?.length === 0 ? -1 : files?.length)}
-                                onChange={onSelectAllClick}
-                            />
-                        }
-                    />
+                <div className={classNames('cs2-card cs2-tone-accent', styles.toolbar)}>
+                    <span className={'cs2-tile cs2-tile--sm'} aria-hidden={'true'}>
+                        <FontAwesomeIcon icon={faFolderOpen} />
+                    </span>
+                    <FileManagerBreadcrumbs />
+                    {files && (
+                        <span className={styles.toolbar_meta}>
+                            {files.length} {files.length === 1 ? 'item' : 'items'}
+                        </span>
+                    )}
                 </div>
             </ErrorBoundary>
             {!files ? (
                 <Spinner size={'large'} centered />
             ) : (
-                <>
-                    {!files.length ? (
-                        <div className={'cs2-card cs2-empty'}>
-                            This directory seems to be empty.
+                <div className={classNames('cs2-card', styles.list)}>
+                    <div className={styles.list_head}>
+                        <label className={styles.check}>
+                            <FileActionCheckbox
+                                type={'checkbox'}
+                                aria-label={'Select all'}
+                                disabled={!files.length}
+                                checked={selectedFilesLength === (files.length === 0 ? -1 : files.length)}
+                                onChange={onSelectAllClick}
+                            />
+                        </label>
+                        <div className={styles.details}>
+                            <span className={styles.icon} />
+                            <span className={styles.name}>Name</span>
+                            <span className={styles.size}>Size</span>
+                            <span className={styles.modified}>Modified</span>
                         </div>
+                        <span className={styles.menu_spacer} />
+                    </div>
+                    {!files.length ? (
+                        <div className={'cs2-empty'}>This directory seems to be empty.</div>
                     ) : (
                         <CSSTransition classNames={'fade'} timeout={150} appear in>
                             <div>
@@ -109,7 +125,7 @@ export default () => {
                             </div>
                         </CSSTransition>
                     )}
-                </>
+                </div>
             )}
         </ServerContentBlock>
     );

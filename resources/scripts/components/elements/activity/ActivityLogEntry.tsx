@@ -46,11 +46,7 @@ export default ({ activity, children }: Props) => {
     return (
         <div className={'grid grid-cols-10 py-4 border-b border-rule last:border-0 group'}>
             <div className={'hidden sm:flex sm:col-span-1 items-center justify-center select-none'}>
-                <div
-                    className={
-                        'flex items-center w-10 h-10 rounded-full bg-raise ring-1 ring-rule overflow-hidden'
-                    }
-                >
+                <div className={'flex items-center w-10 h-10 rounded-full bg-raise ring-1 ring-rule overflow-hidden'}>
                     <Avatar name={actor?.uuid || 'system'} />
                 </div>
             </div>

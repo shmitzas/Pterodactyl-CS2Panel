@@ -59,9 +59,7 @@ export default () => {
             ) : (
                 <>
                     {schedules.length === 0 ? (
-                        <div className={'cs2-card cs2-empty'}>
-                            There are no schedules configured for this server.
-                        </div>
+                        <div className={'cs2-card cs2-empty'}>There are no schedules configured for this server.</div>
                     ) : (
                         schedules.map((schedule) => (
                             <GreyRowBox

@@ -109,7 +109,9 @@ const otherRoutes = listedRoutes.concat(
         .filter((route) => route.name && ![...topRoutes, ...listedRoutes].includes(route.path))
         .map((route) => route.path)
 );
-const routePermissions = routes.server.flatMap((route) => (route.permission ? ([] as string[]).concat(route.permission) : []));
+const routePermissions = routes.server.flatMap((route) =>
+    route.permission ? ([] as string[]).concat(route.permission) : []
+);
 
 const ServerSidebar = () => {
     const { url } = useRouteMatch();
@@ -129,7 +131,9 @@ const ServerSidebar = () => {
     const detected = browse ? detectFrameworks({ '/game/csgo/addons': addons, '/game': game }, rules) : [];
 
     const allowed = (shortcut: Shortcut) => isPathAllowed(shortcut.directory, rules);
-    const configs = browse ? [{ name: 'CS2 configs', icon: faSlidersH, directory: '/game/csgo/cfg' }].filter(allowed) : [];
+    const configs = browse
+        ? [{ name: 'CS2 configs', icon: faSlidersH, directory: '/game/csgo/cfg' }].filter(allowed)
+        : [];
     const roots = detected
         .map((framework) => ({ name: framework.name, icon: frameworkIcons[framework.key], directory: framework.root }))
         .filter(allowed);
@@ -147,7 +151,10 @@ const ServerSidebar = () => {
         .filter((group) => group.shortcuts.length > 0);
 
     // The deepest shortcut holding the open directory is highlighted; elsewhere in the tree it is Files.
-    const active = deepestMatch([...configs, ...roots, ...groups.flatMap((group) => group.shortcuts)], hashToPath(hash));
+    const active = deepestMatch(
+        [...configs, ...roots, ...groups.flatMap((group) => group.shortcuts)],
+        hashToPath(hash)
+    );
 
     const to = (path: string) => (path === '/' ? url : `${url.replace(/\/*$/, '')}${path}`);
 
@@ -157,7 +164,9 @@ const ServerSidebar = () => {
 
         return (
             !route.permission ||
-            ([] as string[]).concat(route.permission).some((permission) => granted[routePermissions.indexOf(permission)])
+            ([] as string[])
+                .concat(route.permission)
+                .some((permission) => granted[routePermissions.indexOf(permission)])
         );
     };
 

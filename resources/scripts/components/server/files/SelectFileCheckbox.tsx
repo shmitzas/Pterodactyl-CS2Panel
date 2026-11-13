@@ -1,16 +1,20 @@
 import React from 'react';
-import tw from 'twin.macro';
 import { ServerContext } from '@/state/server';
 import styled from 'styled-components/macro';
 import Input from '@/components/elements/Input';
+import styles from './style.module.css';
 
 export const FileActionCheckbox = styled(Input)`
     && {
-        ${tw`bg-transparent`};
-        border-color: rgba(255, 255, 255, 0.3);
+        background-color: transparent;
+        border-color: var(--color-muted);
 
         &:not(:checked):hover {
-            border-color: rgba(13, 202, 240, 0.6);
+            border-color: var(--color-accent-text);
+        }
+
+        &:checked {
+            background-color: var(--color-accent);
         }
     }
 `;
@@ -21,12 +25,13 @@ export default ({ name }: { name: string }) => {
     const removeSelectedFile = ServerContext.useStoreActions((actions) => actions.files.removeSelectedFile);
 
     return (
-        <label css={tw`flex-none px-4 py-2 absolute self-center z-30 cursor-pointer`}>
+        <label className={styles.check}>
             <FileActionCheckbox
                 name={'selectedFiles'}
                 value={name}
                 checked={isChecked}
                 type={'checkbox'}
+                aria-label={`Select ${name}`}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     if (e.currentTarget.checked) {
                         appendSelectedFile(name);

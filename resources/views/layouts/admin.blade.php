@@ -75,7 +75,7 @@
                     <i class="fa fa-bars"></i>
                 </a>
                 <a href="{{ route('index') }}" class="cs2-brand" aria-label="{{ config('app.name', 'Pterodactyl') }}">
-                    <span class="cs2-brand-mark" aria-hidden="true"></span>
+                    <span class="cs2-brand-mark" aria-hidden="true"><i class="fa fa-crosshairs"></i></span>
                     <span>{{ config('app.name', 'Pterodactyl') }}</span>
                 </a>
                 <nav class="cs2-nav">
