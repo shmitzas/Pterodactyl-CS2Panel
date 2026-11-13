@@ -3,10 +3,10 @@
 namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pterodactyl\Enum\JwtScope;
 use Pterodactyl\Models\Server;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Facades\Activity;
 use Pterodactyl\Services\Nodes\NodeJWTService;
@@ -258,9 +258,11 @@ class FileController extends ClientApiController
      */
     public function compress(CompressFilesRequest $request, Server $server): array
     {
+        $root = $request->input('root') ?? '/';
         $this->assertPathsAllowed(
             $this->getSubuserFileRules($server, $request),
-            $request->input('root') ?? '/'
+            $root,
+            ...array_map(fn ($f) => rtrim($root, '/') . '/' . ltrim((string) $f, '/'), $request->input('files', []))
         );
 
         $file = $this->fileRepository->setServer($server)->compressFiles(
@@ -283,9 +285,11 @@ class FileController extends ClientApiController
      */
     public function decompress(DecompressFilesRequest $request, Server $server): JsonResponse
     {
+        $root = $request->input('root') ?? '/';
         $this->assertPathsAllowed(
             $this->getSubuserFileRules($server, $request),
-            $request->input('root') ?? '/'
+            $root,
+            rtrim($root, '/') . '/' . ltrim($request->input('file'), '/')
         );
 
         set_time_limit(300);
@@ -338,9 +342,11 @@ class FileController extends ClientApiController
      */
     public function chmod(ChmodFilesRequest $request, Server $server): JsonResponse
     {
+        $root = $request->input('root') ?? '/';
         $this->assertPathsAllowed(
             $this->getSubuserFileRules($server, $request),
-            $request->input('root') ?? '/'
+            $root,
+            ...array_map(fn ($f) => rtrim($root, '/') . '/' . ltrim((string) $f['file'], '/'), $request->input('files', []))
         );
 
         $this->fileRepository->setServer($server)->chmodFiles(
@@ -358,10 +364,12 @@ class FileController extends ClientApiController
      */
     public function pull(PullFileRequest $request, Server $server): JsonResponse
     {
-        $this->assertPathsAllowed(
-            $this->getSubuserFileRules($server, $request),
-            $request->input('directory') ?? '/'
-        );
+        $directory = $request->input('directory') ?? '/';
+        $paths = [$directory];
+        if ($request->filled('filename')) {
+            $paths[] = rtrim($directory, '/') . '/' . ltrim($request->input('filename'), '/');
+        }
+        $this->assertPathsAllowed($this->getSubuserFileRules($server, $request), ...$paths);
 
         $this->fileRepository->setServer($server)->pull(
             $request->input('url'),
