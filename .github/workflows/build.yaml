@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build panel archive
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, posix, tokenizer, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Build archive
+        run: bash release.sh
+
+      # Short retention: releases carry the real builds.
+      - name: Upload archive
+        uses: actions/upload-artifact@v7
+        with:
+          path: release/cs2-panel-*.zip
+          archive: false
+          retention-days: 3

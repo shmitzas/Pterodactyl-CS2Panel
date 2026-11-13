@@ -1,0 +1,116 @@
+import React, { useEffect } from 'react';
+import { httpErrorToHuman } from '@/api/http';
+import { CSSTransition } from 'react-transition-group';
+import Spinner from '@/components/elements/Spinner';
+import FileObjectRow from '@/components/server/files/FileObjectRow';
+import FileManagerBreadcrumbs from '@/components/server/files/FileManagerBreadcrumbs';
+import { FileObject } from '@/api/server/files/loadDirectory';
+import NewDirectoryButton from '@/components/server/files/NewDirectoryButton';
+import { NavLink, useLocation } from 'react-router-dom';
+import Can from '@/components/elements/Can';
+import { ServerError } from '@/components/elements/ScreenBlock';
+import tw from 'twin.macro';
+import { Button } from '@/components/elements/button/index';
+import { ServerContext } from '@/state/server';
+import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import FileManagerStatus from '@/components/server/files/FileManagerStatus';
+import MassActionsBar from '@/components/server/files/MassActionsBar';
+import UploadButton from '@/components/server/files/UploadButton';
+import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import { useStoreActions } from '@/state/hooks';
+import ErrorBoundary from '@/components/elements/ErrorBoundary';
+import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
+import { hashToPath } from '@/helpers';
+import PageHeader from '@/components/elements/PageHeader';
+import { faFolder } from '@fortawesome/free-solid-svg-icons';
+
+const sortFiles = (files: FileObject[]): FileObject[] => {
+    const sortedFiles: FileObject[] = files
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, b) => (a.isFile === b.isFile ? 0 : a.isFile ? 1 : -1));
+    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name);
+};
+
+export default () => {
+    const id = ServerContext.useStoreState((state) => state.server.data!.id);
+    const { hash } = useLocation();
+    const { data: files, error, mutate } = useFileManagerSwr();
+    const directory = ServerContext.useStoreState((state) => state.files.directory);
+    const clearFlashes = useStoreActions((actions) => actions.flashes.clearFlashes);
+    const setDirectory = ServerContext.useStoreActions((actions) => actions.files.setDirectory);
+
+    const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);
+    const selectedFilesLength = ServerContext.useStoreState((state) => state.files.selectedFiles.length);
+
+    useEffect(() => {
+        clearFlashes('files');
+        setSelectedFiles([]);
+        setDirectory(hashToPath(hash));
+    }, [hash]);
+
+    useEffect(() => {
+        mutate();
+    }, [directory]);
+
+    const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedFiles(e.currentTarget.checked ? files?.map((file) => file.name) || [] : []);
+    };
+
+    if (error) {
+        return <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()} />;
+    }
+
+    return (
+        <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
+            <ErrorBoundary>
+                <PageHeader
+                    icon={faFolder}
+                    title={'Files'}
+                    description={'Open a file to edit it, or right-click a row for more actions.'}
+                >
+                    <Can action={'file.create'}>
+                        <FileManagerStatus />
+                        <NewDirectoryButton />
+                        <UploadButton />
+                        <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
+                            <Button>New File</Button>
+                        </NavLink>
+                    </Can>
+                </PageHeader>
+                <div className={'mb-3 rounded-xl border border-white/10 bg-cs2-surface/60 py-2.5'}>
+                    <FileManagerBreadcrumbs
+                        renderLeft={
+                            <FileActionCheckbox
+                                type={'checkbox'}
+                                css={tw`mx-4`}
+                                aria-label={'Select all'}
+                                checked={selectedFilesLength === (files?.length === 0 ? -1 : files?.length)}
+                                onChange={onSelectAllClick}
+                            />
+                        }
+                    />
+                </div>
+            </ErrorBoundary>
+            {!files ? (
+                <Spinner size={'large'} centered />
+            ) : (
+                <>
+                    {!files.length ? (
+                        <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                            This directory seems to be empty.
+                        </div>
+                    ) : (
+                        <CSSTransition classNames={'fade'} timeout={150} appear in>
+                            <div>
+                                {sortFiles(files).map((file) => (
+                                    <FileObjectRow key={file.key} file={file} />
+                                ))}
+                                <MassActionsBar />
+                            </div>
+                        </CSSTransition>
+                    )}
+                </>
+            )}
+        </ServerContentBlock>
+    );
+};

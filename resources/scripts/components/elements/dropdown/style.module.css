@@ -1,0 +1,63 @@
+.menu {
+    @apply relative inline-block text-left;
+
+    & .button {
+        @apply inline-flex justify-center items-center w-full py-2 text-white/80 rounded-lg;
+        @apply transition-all duration-150;
+
+        &:hover,
+        &[aria-expanded='true'] {
+            @apply bg-white/5 text-white;
+        }
+
+        &:focus-visible {
+            @apply outline-none text-white;
+            box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+        }
+
+        & svg {
+            @apply w-5 h-5 transition-transform duration-75;
+        }
+
+        &[aria-expanded='true'] svg[data-animated='true'] {
+            @apply rotate-180;
+        }
+    }
+
+    & .items_container {
+        @apply absolute right-0 mt-2 origin-top-right rounded-xl z-10 border border-white/10 bg-cs2-surface/95 shadow-lg shadow-black/50;
+    }
+}
+
+/* Flat selectors: nesting under a list (&:hover, &:focus { & svg }) makes postcss emit :is(). */
+.menu_item {
+    @apply flex items-center rounded-lg w-full px-3 py-2 text-sm text-white/80 transition-colors duration-150;
+
+    & svg {
+        @apply w-4 h-4 mr-3 text-white/50 transition-colors duration-150;
+    }
+}
+
+.menu_item:hover,
+.menu_item:focus {
+    @apply bg-cs2-accent/10 text-cs2-accent outline-none;
+}
+
+.menu_item:hover svg,
+.menu_item:focus svg {
+    @apply text-cs2-accent;
+}
+
+.menu_item.danger:hover,
+.menu_item.danger:focus {
+    @apply bg-cs2-danger/10 text-cs2-danger;
+}
+
+.menu_item.danger:hover svg,
+.menu_item.danger:focus svg {
+    @apply text-cs2-danger;
+}
+
+.menu_item.disabled {
+    @apply cursor-not-allowed opacity-30 bg-transparent text-white/80;
+}

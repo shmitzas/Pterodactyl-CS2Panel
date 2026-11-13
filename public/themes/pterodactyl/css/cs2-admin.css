@@ -1,0 +1,2029 @@
+/*
+ * CS2 theme for the Blade admin area (AdminLTE 2 + Bootstrap 3), matching the client UI in
+ * resources/scripts/assets/css/cs2.css. Loaded after every vendor sheet; rules are scoped to
+ * body.cs2-admin so they outrank the vendor selectors they replace.
+ */
+:root {
+    /* Must match the same tokens in resources/scripts/assets/css/cs2.css. */
+    --cs2-accent: 240, 130, 30;
+    --cs2-info: 13, 202, 240;
+    --cs2-success: 25, 238, 25;
+    --cs2-danger: 255, 19, 19;
+    --cs2-warning: 255, 203, 49;
+    --cs2-muted: 148, 163, 184;
+    --cs2-surface: 15, 22, 33;
+    --cs2-ease: cubic-bezier(0.4, 0, 0.2, 1);
+    /* Whole pixels: slimScroll sizes the sidebar from this and shows a scrollbar for a half-pixel overflow. */
+    --cs2-header: 60px;
+    --cs2-sidebar: 15rem;
+}
+
+/* Same base size as the client; Bootstrap 3 sets 10px here but sizes everything else in px. */
+html {
+    font-size: 106.25%;
+    background-color: rgb(11, 15, 22);
+}
+
+/* ---------------------------------------------------------------- Base */
+
+.cs2-admin {
+    /* Keep the overlay in step with GlobalStylesheet.ts. */
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+        url('/cs2/background.webp') center / cover no-repeat fixed;
+    background-color: rgb(11, 15, 22);
+    color: #e5e5e5;
+    font-family: Roboto, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.015em;
+    color-scheme: dark;
+}
+
+.cs2-admin h1,
+.cs2-admin h2,
+.cs2-admin h3,
+.cs2-admin h4,
+.cs2-admin h5,
+.cs2-admin h6 {
+    color: #fff;
+    font-family: inherit;
+}
+
+.cs2-admin a {
+    color: rgb(var(--cs2-accent));
+    transition: color 0.2s ease;
+}
+
+.cs2-admin a:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.cs2-admin a:focus {
+    outline: none;
+    text-decoration: none;
+}
+
+.cs2-admin hr {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.cs2-admin code {
+    display: inline-block;
+    padding: 0.0625rem 0.4375rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.375rem;
+    background: rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.cs2-admin pre {
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.8125rem;
+}
+
+.cs2-admin pre code {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+.cs2-admin .text-muted,
+.cs2-admin .text-gray {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.cs2-admin .text-info,
+.cs2-admin .text-primary,
+.cs2-admin .text-aqua,
+.cs2-admin .text-blue {
+    color: rgb(var(--cs2-accent)) !important;
+}
+
+.cs2-admin .text-success,
+.cs2-admin .text-green {
+    color: rgb(var(--cs2-success)) !important;
+}
+
+.cs2-admin .text-warning,
+.cs2-admin .text-yellow,
+.cs2-admin .text-orange {
+    color: rgb(var(--cs2-warning)) !important;
+}
+
+.cs2-admin .text-danger,
+.cs2-admin .text-red {
+    color: rgb(var(--cs2-danger)) !important;
+}
+
+::-webkit-scrollbar {
+    background: none;
+    width: 16px;
+    height: 16px;
+}
+
+::-webkit-scrollbar-thumb {
+    border: solid 0 rgb(0 0 0 / 0%);
+    border-right-width: 4px;
+    border-left-width: 4px;
+    -webkit-border-radius: 9px 4px;
+    -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15), inset 0 0 0 4px rgba(255, 255, 255, 0.15);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    -webkit-box-shadow: inset 0 0 0 1px rgba(13, 202, 240, 0.4), inset 0 0 0 4px rgba(13, 202, 240, 0.4);
+}
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* Tinted icon tile, as in the client; pick the colour with --tone. */
+.cs2-admin .cs2-tile {
+    --tone: var(--cs2-accent);
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(var(--tone), 0.4);
+    border-radius: 0.75rem;
+    background: rgba(var(--tone), 0.12);
+    color: rgb(var(--tone));
+    font-size: 1rem;
+}
+
+/* ---------------------------------------------------------------- Layout */
+
+.cs2-admin .wrapper {
+    background: transparent;
+}
+
+.cs2-admin .main-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    height: var(--cs2-header);
+    max-height: none;
+    padding: 0 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--cs2-surface), 0.85);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.cs2-admin .cs2-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+    transition: color 0.2s var(--cs2-ease);
+}
+
+.cs2-admin .cs2-brand:hover {
+    color: rgb(var(--cs2-accent));
+}
+
+/* Stands in for a logo file; mirrors .mark in NavigationBar.module.css. */
+.cs2-admin .cs2-brand-mark {
+    flex: none;
+    width: 0.25rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: rgb(var(--cs2-accent));
+    box-shadow: 0 0 12px rgba(var(--cs2-accent), 0.6);
+}
+
+.cs2-admin .cs2-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: auto;
+}
+
+.cs2-admin .cs2-nav-link {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Underline grows from the centre (design system: navigation links). */
+.cs2-admin .cs2-nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0.125rem;
+    width: 0;
+    height: 2px;
+    border-radius: 1px;
+    background: rgb(var(--cs2-accent));
+    transform: translateX(-50%);
+    transition: width 0.3s var(--cs2-ease);
+}
+
+.cs2-admin .cs2-nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.cs2-admin .cs2-nav-link:hover::after,
+.cs2-admin .cs2-nav-link.active::after {
+    width: 60%;
+}
+
+.cs2-admin .cs2-nav-link.active {
+    background: rgba(var(--cs2-accent), 0.1);
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .cs2-nav-link:focus-visible {
+    box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+}
+
+.cs2-admin .cs2-logout:hover {
+    background: rgba(var(--cs2-danger), 0.1);
+    color: rgb(var(--cs2-danger));
+}
+
+.cs2-admin .cs2-logout::after {
+    background: rgb(var(--cs2-danger));
+}
+
+.cs2-admin .cs2-avatar {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+}
+
+.cs2-admin .main-sidebar {
+    top: var(--cs2-header);
+    width: var(--cs2-sidebar);
+    height: calc(100vh - var(--cs2-header));
+    min-height: 0;
+    padding-top: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--cs2-surface), 0.92);
+    box-shadow: none;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    transition: transform 0.3s var(--cs2-ease);
+}
+
+.cs2-admin .sidebar {
+    padding: 1rem 0.75rem;
+}
+
+.cs2-admin .sidebar-menu > li.header {
+    margin-top: 0.75rem;
+    padding: 0.75rem 0.5rem 0.375rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: none;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+}
+
+.cs2-admin .sidebar-menu > li.header:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.cs2-admin .sidebar-menu > li > a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.125rem;
+    padding: 0.3125rem 0.5rem;
+    border: 0;
+    border-radius: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cs2-admin .sidebar-menu > li > a > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cs2-admin .sidebar-menu > li > a > .fa {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.625rem;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    transition: all 0.2s var(--cs2-ease);
+}
+
+.cs2-admin .sidebar-menu > li > a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.cs2-admin .sidebar-menu > li > a:hover > .fa {
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.cs2-admin .sidebar-menu > li.active > a {
+    background: rgba(var(--cs2-accent), 0.1);
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .sidebar-menu > li.active > a > .fa {
+    border-color: rgba(var(--cs2-accent), 0.5);
+    background: rgba(var(--cs2-accent), 0.2);
+    color: rgb(var(--cs2-accent));
+    box-shadow: 0 0 12px rgba(var(--cs2-accent), 0.25);
+}
+
+.cs2-admin .sidebar-menu > li > a:focus-visible {
+    box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+}
+
+.cs2-admin .slimScrollBar {
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+.cs2-admin .content-wrapper {
+    background: transparent;
+}
+
+.cs2-admin .content-wrapper,
+.cs2-admin .main-footer {
+    margin-left: var(--cs2-sidebar);
+    transition: margin-left 0.3s var(--cs2-ease), transform 0.3s var(--cs2-ease);
+}
+
+.cs2-admin.hold-transition .main-sidebar,
+.cs2-admin.hold-transition .content-wrapper,
+.cs2-admin.hold-transition .main-footer {
+    transition: none;
+}
+
+.cs2-admin.fixed .content-wrapper {
+    padding-top: var(--cs2-header);
+}
+
+.cs2-admin .content-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 2rem 2rem 0;
+}
+
+.cs2-admin .content-header > h1 {
+    flex: 1 1 16rem;
+    min-width: 0;
+    margin: 0;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.cs2-admin .content-header > h1 > small {
+    display: block;
+    margin-top: 0.125rem;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.cs2-admin .content-header > .breadcrumb {
+    position: static;
+    float: none;
+    margin: 0;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+    background: rgba(var(--cs2-surface), 0.6) !important;
+    font-size: 0.75rem;
+}
+
+.cs2-admin .content-header > .breadcrumb > li > a {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.cs2-admin .content-header > .breadcrumb > li > a:hover {
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .content-header > .breadcrumb > li + li::before {
+    content: '/';
+    padding: 0 0.375rem;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.cs2-admin .content-header > .breadcrumb > .active {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cs2-admin .content {
+    padding: 1.5rem 2rem 2rem;
+}
+
+.cs2-admin .main-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem 1rem;
+    padding: 1rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--cs2-surface), 0.6);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.75rem;
+}
+
+.cs2-admin .cs2-footer-meta {
+    display: inline-flex;
+    gap: 1rem;
+}
+
+/* The menu button collapses the sidebar on desktop and opens it as a drawer below 768px (AdminLTE push-menu). */
+@media (min-width: 768px) {
+    .cs2-admin.sidebar-collapse .main-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .cs2-admin.sidebar-collapse .content-wrapper,
+    .cs2-admin.sidebar-collapse .main-footer {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .cs2-admin .main-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .cs2-admin.sidebar-open .main-sidebar {
+        transform: none;
+        box-shadow: 12px 0 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .cs2-admin .content-wrapper,
+    .cs2-admin .main-footer,
+    .cs2-admin.sidebar-open .content-wrapper,
+    .cs2-admin.sidebar-open .main-footer {
+        margin-left: 0;
+        transform: none;
+    }
+
+    .cs2-admin.fixed .content-wrapper {
+        padding-top: var(--cs2-header);
+    }
+
+    .cs2-admin .content-header {
+        padding: 1.25rem 1rem 0;
+    }
+
+    .cs2-admin .content {
+        padding: 1rem;
+    }
+
+    .cs2-admin .main-footer {
+        padding: 1rem;
+    }
+}
+
+/* ---------------------------------------------------------------- Boxes */
+
+/* No backdrop blur: a filter would make every box a stacking context and trap its tooltips and dropdowns. */
+.cs2-admin .box {
+    --tone: var(--cs2-accent);
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    background: rgba(var(--cs2-surface), 0.72);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.cs2-admin .box.box-default {
+    --tone: var(--cs2-muted);
+}
+
+.cs2-admin .box.box-success {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .box.box-warning {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-admin .box.box-danger {
+    --tone: var(--cs2-danger);
+    border-color: rgba(var(--cs2-danger), 0.35);
+}
+
+.cs2-admin .box-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 1rem 1rem 0 0;
+    background: transparent;
+    color: #fff;
+}
+
+/* Clearfix pseudo-elements would otherwise become flex items. */
+.cs2-admin .box-header::before,
+.cs2-admin .box-header::after {
+    display: none;
+}
+
+.cs2-admin .box-header.with-border {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cs2-admin .box-header .box-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin: 0;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    text-transform: uppercase;
+}
+
+.cs2-admin .box-header .box-title::before {
+    content: '';
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: rgb(var(--tone));
+    box-shadow: 0 0 8px rgba(var(--tone), 0.6);
+}
+
+.cs2-admin .box-header > .box-tools {
+    position: static !important;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+    padding: 0;
+}
+
+.cs2-admin .box-header > .box-tools > form {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cs2-admin .box-body {
+    padding: 1.25rem;
+}
+
+.cs2-admin .box-footer {
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0 0 1rem 1rem;
+    background: transparent;
+}
+
+/* A flush table ends the box, so it has to follow the rounded corners. */
+.cs2-admin .box-body.table-responsive:last-child {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.cs2-admin .box > .overlay {
+    border-radius: 1rem;
+    background: rgba(var(--cs2-surface), 0.7);
+}
+
+.cs2-admin .box > .overlay > .fa {
+    color: rgb(var(--cs2-accent));
+}
+
+@media (max-width: 767px) {
+    .cs2-admin .box-header > .box-tools.search01 {
+        width: 100%;
+    }
+}
+
+/* ---------------------------------------------------------------- Tabs */
+
+.cs2-admin .nav-tabs-custom {
+    margin-bottom: 1.5rem;
+    padding: 0.375rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.875rem;
+    background: rgba(var(--cs2-surface), 0.72);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0;
+    border: 0;
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs::before,
+.cs2-admin .nav-tabs-custom > .nav-tabs::after {
+    display: none;
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs > li {
+    float: none;
+    margin: 0;
+    border-top: 0;
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs > li > a {
+    --tone: var(--cs2-accent);
+    margin: 0;
+    padding: 0.5rem 0.875rem;
+    border: 0;
+    border-radius: 0.625rem !important;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    line-height: 1.5;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs > li.tab-success > a {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs > li.tab-danger > a {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs > li > a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.cs2-admin .nav-tabs-custom > .nav-tabs > li.tab-success > a:hover,
+.cs2-admin .nav-tabs-custom > .nav-tabs > li.tab-danger > a:hover,
+.cs2-admin .nav-tabs-custom > .nav-tabs > li.active > a,
+.cs2-admin .nav-tabs-custom > .nav-tabs > li.active > a:hover {
+    border: 0;
+    background: rgba(var(--tone), 0.1);
+    color: rgb(var(--tone));
+}
+
+/* ---------------------------------------------------------------- Tables */
+
+.cs2-admin .table {
+    margin-bottom: 0;
+    color: inherit;
+    font-size: 0.875rem !important;
+}
+
+.cs2-admin .table > thead > tr > th,
+.cs2-admin .table > tbody > tr > th,
+.cs2-admin .table > tfoot > tr > th,
+.cs2-admin .table > thead > tr > td,
+.cs2-admin .table > tbody > tr > td,
+.cs2-admin .table > tfoot > tr > td {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    vertical-align: middle;
+}
+
+.cs2-admin .table > thead > tr > th,
+.cs2-admin .table > tbody > tr > th,
+.cs2-admin .table > tfoot > tr > th {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Most admin tables open their tbody with the header row. */
+.cs2-admin .table > tbody:first-child > tr:first-child > th,
+.cs2-admin .table > tbody:first-child > tr:first-child > td {
+    border-top: 0;
+}
+
+.cs2-admin .table-hover > tbody > tr {
+    transition: background-color 0.2s ease;
+}
+
+.cs2-admin .table-hover > tbody > tr:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.cs2-admin .table-hover > tbody > tr:has(> th):hover {
+    background-color: transparent;
+}
+
+.cs2-admin .table-responsive {
+    margin-bottom: 0;
+    border: 0;
+}
+
+/* ---------------------------------------------------------------- Buttons */
+
+/* Tinted outline buttons; --tone is an "r, g, b" triplet. */
+.cs2-admin .btn {
+    --tone: var(--cs2-accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding: 0 1rem;
+    border: 1px solid rgba(var(--tone), 0.5);
+    border-radius: 0.5rem;
+    background: rgba(var(--tone), 0.1);
+    color: rgb(var(--tone));
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    line-height: 1;
+    box-shadow: none;
+    transition: all 0.2s var(--cs2-ease);
+}
+
+.cs2-admin .btn-success {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .btn-warning {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-admin .btn-danger {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-admin .btn:hover {
+    border-color: rgb(var(--tone));
+    background: rgba(var(--tone), 0.2);
+    color: #fff;
+}
+
+.cs2-admin .btn:active {
+    box-shadow: none;
+    transform: scale(0.97);
+}
+
+.cs2-admin .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--tone), 0.3);
+}
+
+.cs2-admin .btn.active,
+.cs2-admin .open > .dropdown-toggle.btn {
+    border-color: rgb(var(--tone));
+    background: rgba(var(--tone), 0.25);
+    box-shadow: none;
+    color: #fff;
+}
+
+.cs2-admin .btn-default {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.cs2-admin .btn-default:hover {
+    border-color: rgba(var(--cs2-accent), 0.35);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.cs2-admin .btn.disabled,
+.cs2-admin .btn[disabled],
+.cs2-admin fieldset[disabled] .btn {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.cs2-admin .btn.disabled:hover,
+.cs2-admin .btn[disabled]:hover {
+    border-color: rgba(var(--tone), 0.5);
+    background: rgba(var(--tone), 0.1);
+    color: rgb(var(--tone));
+    transform: none;
+}
+
+.cs2-admin .btn-sm,
+.cs2-admin .input-group-sm > .input-group-btn > .btn {
+    height: 2rem;
+    padding: 0 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+.cs2-admin .btn-xs {
+    height: 1.625rem;
+    padding: 0 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.cs2-admin .btn-lg {
+    height: 3rem;
+    padding: 0 1.25rem;
+    font-size: 1rem;
+}
+
+.cs2-admin .btn-block {
+    display: flex;
+    width: 100%;
+}
+
+.cs2-admin .btn-group > .btn {
+    padding: 0 0.75rem;
+}
+
+/* ---------------------------------------------------------------- Forms */
+
+.cs2-admin .form-control {
+    height: 2.5rem;
+    padding: 0.5rem 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+    background-color: rgba(var(--cs2-surface), 0.7);
+    box-shadow: none;
+    color: #fff;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    transition: border-color 0.2s var(--cs2-ease), background-color 0.2s var(--cs2-ease), box-shadow 0.2s var(--cs2-ease);
+}
+
+.cs2-admin textarea.form-control,
+.cs2-admin select[multiple].form-control,
+.cs2-admin select[size].form-control {
+    height: auto;
+}
+
+.cs2-admin .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.cs2-admin .form-control:hover {
+    border-color: rgba(var(--cs2-accent), 0.35);
+}
+
+.cs2-admin .form-control:focus {
+    border-color: rgba(var(--cs2-accent), 0.6);
+    background-color: rgba(var(--cs2-surface), 0.85);
+    box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.12), 0 0 12px rgba(var(--cs2-accent), 0.08);
+    outline: 0;
+}
+
+.cs2-admin .form-control[disabled],
+.cs2-admin .form-control[readonly],
+.cs2-admin fieldset[disabled] .form-control {
+    border-color: rgba(255, 255, 255, 0.06);
+    background-color: rgba(var(--cs2-surface), 0.4);
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* These stay read-only until focused so browsers don't autofill them; they must not look disabled. */
+.cs2-admin input.form-autocomplete-stop[readonly] {
+    border-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(var(--cs2-surface), 0.7);
+    color: #fff;
+}
+
+.cs2-admin select.form-control {
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='rgba(255,255,255,0.55)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1rem;
+}
+
+.cs2-admin select[multiple].form-control {
+    padding-right: 0.875rem;
+    background-image: none;
+}
+
+.cs2-admin select.form-control option {
+    background-color: rgb(var(--cs2-surface));
+    color: #fff;
+}
+
+.cs2-admin input:-webkit-autofill {
+    -webkit-text-fill-color: #fff;
+    box-shadow: 0 0 0 1000px rgb(20, 28, 40) inset;
+    transition: background-color 9999s;
+}
+
+.cs2-admin input[type='file']::file-selector-button {
+    margin-right: 0.75rem;
+    padding: 0.375rem 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--cs2-ease);
+}
+
+.cs2-admin input[type='file']::file-selector-button:hover {
+    border-color: rgba(var(--cs2-accent), 0.35);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.cs2-admin .input-sm,
+.cs2-admin .input-group-sm > .form-control,
+.cs2-admin .input-group-sm > .input-group-addon {
+    height: 2rem;
+    padding: 0 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .input-group-addon {
+    padding: 0 0.875rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+}
+
+.cs2-admin .input-group-addon:first-child {
+    border-right: 0;
+}
+
+.cs2-admin .input-group-addon:last-child {
+    border-left: 0;
+}
+
+.cs2-admin .input-group-btn > a > .btn {
+    margin-left: -1px;
+}
+
+/* Joined corners, restated because the vendor versions lose to the radii set above. */
+.cs2-admin .input-group > .form-control:not(:last-child),
+.cs2-admin .input-group > .input-group-addon:not(:last-child),
+.cs2-admin .input-group > .input-group-btn:not(:last-child) > .btn,
+.cs2-admin .input-group-btn > .btn:not(:last-child),
+.cs2-admin .input-group-btn > a:not(:last-child) > .btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.cs2-admin .input-group > .form-control:not(:first-child),
+.cs2-admin .input-group > .input-group-addon:not(:first-child),
+.cs2-admin .input-group > .input-group-btn:not(:first-child) > .btn,
+.cs2-admin .input-group > .input-group-btn:not(:first-child) > a > .btn,
+.cs2-admin .input-group-btn > .btn:not(:first-child),
+.cs2-admin .input-group-btn > a:not(:first-child) > .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.cs2-admin .control-label,
+.cs2-admin .form-label,
+.cs2-admin .form-group > label {
+    margin-bottom: 0.375rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.cs2-admin label.control-label > span.field-required,
+.cs2-admin label.control-label > span.field-optional {
+    --tone: var(--cs2-danger);
+    margin-left: 0.375rem;
+    padding: 0 0.375rem;
+    border: 1px solid rgba(var(--tone), 0.35);
+    border-radius: 9999px;
+    background: rgba(var(--tone), 0.1);
+    font-size: 0.625rem;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    vertical-align: 0.0625rem;
+}
+
+.cs2-admin label.control-label > span.field-optional {
+    --tone: var(--cs2-muted);
+}
+
+.cs2-admin label.control-label > span.field-required::before,
+.cs2-admin label.control-label > span.field-optional::before {
+    color: rgb(var(--tone));
+}
+
+.cs2-admin p.small,
+.cs2-admin .help-block {
+    font-size: 0.8125rem;
+}
+
+/* Native controls, as in the client; the Bootsnipp ones below hide theirs behind the label. */
+.cs2-admin :not(.checkbox) > input[type='checkbox'],
+.cs2-admin :not(.radio) > input[type='radio'] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: rgba(0, 0, 0, 0.4);
+    background-position: center;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 0.2s var(--cs2-ease), background-size 0.2s var(--cs2-ease),
+        border-color 0.2s var(--cs2-ease), box-shadow 0.2s var(--cs2-ease);
+}
+
+.cs2-admin :not(.checkbox) > input[type='checkbox'] {
+    border-radius: 0.375rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230f1621' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+    background-size: 0% 0%;
+}
+
+.cs2-admin :not(.radio) > input[type='radio'] {
+    border-radius: 50%;
+}
+
+.cs2-admin :not(.checkbox) > input[type='checkbox']:hover:not(:disabled),
+.cs2-admin :not(.radio) > input[type='radio']:hover:not(:disabled) {
+    border-color: rgba(var(--cs2-accent), 0.6);
+}
+
+.cs2-admin :not(.checkbox) > input[type='checkbox']:checked {
+    border-color: rgb(var(--cs2-accent));
+    background-color: rgb(var(--cs2-accent));
+    background-size: 100% 100%;
+}
+
+.cs2-admin :not(.radio) > input[type='radio']:checked {
+    border-color: rgb(var(--cs2-accent));
+    background-image: radial-gradient(circle, rgb(var(--cs2-accent)) 0 38%, transparent 43%);
+}
+
+.cs2-admin :not(.checkbox) > input[type='checkbox']:focus-visible,
+.cs2-admin :not(.radio) > input[type='radio']:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+}
+
+.cs2-admin :not(.checkbox) > input[type='checkbox']:disabled,
+.cs2-admin :not(.radio) > input[type='radio']:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Bootsnipp checkboxes/radios (checkbox.css) draw their controls on the label's pseudo-elements. */
+.cs2-admin .checkbox,
+.cs2-admin .radio {
+    --tone: var(--cs2-accent);
+}
+
+.cs2-admin .checkbox-success,
+.cs2-admin .radio-success {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .checkbox-warning,
+.cs2-admin .radio-warning {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-admin .checkbox-danger,
+.cs2-admin .radio-danger {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-admin .checkbox label::before,
+.cs2-admin .radio label::before {
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: background-color 0.2s var(--cs2-ease), background-size 0.2s var(--cs2-ease),
+        border-color 0.2s var(--cs2-ease), box-shadow 0.2s var(--cs2-ease);
+}
+
+.cs2-admin .checkbox label::before {
+    border-radius: 0.375rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230f1621' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 0% 0%;
+}
+
+.cs2-admin .checkbox input[type='checkbox']:disabled + label::before {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.cs2-admin .checkbox input[type='checkbox']:checked + label::before {
+    border-color: rgb(var(--tone));
+    background-color: rgb(var(--tone));
+    background-size: 100% 100%;
+}
+
+.cs2-admin .checkbox input[type='checkbox']:checked + label::after {
+    content: none;
+}
+
+.cs2-admin .radio input[type='radio'] + label::after {
+    top: 6px;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    background-color: rgb(var(--tone));
+}
+
+.cs2-admin .radio input[type='radio']:checked + label::before {
+    border-color: rgb(var(--tone));
+}
+
+.cs2-admin .checkbox input[type='checkbox']:focus + label::before,
+.cs2-admin .radio input[type='radio']:focus + label::before {
+    outline: none;
+}
+
+.cs2-admin .checkbox input[type='checkbox']:focus-visible + label::before,
+.cs2-admin .radio input[type='radio']:focus-visible + label::before {
+    box-shadow: 0 0 0 3px rgba(var(--tone), 0.25);
+}
+
+/* ---------------------------------------------------------------- Select2 */
+
+.cs2-admin .select2-container--default .select2-selection--single,
+.cs2-admin .select2-container--default .select2-selection--multiple {
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0.5rem;
+    background-color: rgba(var(--cs2-surface), 0.7);
+    transition: border-color 0.2s var(--cs2-ease), box-shadow 0.2s var(--cs2-ease);
+}
+
+.cs2-admin .select2-container--default .select2-selection--single {
+    height: 2.5rem;
+    padding: 0 2.25rem 0 0.875rem;
+}
+
+.cs2-admin .select2-container--default .select2-selection--multiple {
+    min-height: 2.5rem !important;
+    padding: 0.1875rem 0.875rem;
+}
+
+.cs2-admin .select2-container--default:hover .select2-selection--single,
+.cs2-admin .select2-container--default:hover .select2-selection--multiple {
+    border-color: rgba(var(--cs2-accent), 0.35) !important;
+}
+
+.cs2-admin .select2-container--default.select2-container--focus .select2-selection,
+.cs2-admin .select2-container--default.select2-container--open .select2-selection {
+    border-color: rgba(var(--cs2-accent), 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.12);
+}
+
+.cs2-admin .select2-container--default .select2-selection--single .select2-selection__rendered {
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    line-height: calc(2.5rem - 2px);
+}
+
+.cs2-admin .select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.cs2-admin .select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 0;
+    right: 0.5rem;
+    height: calc(2.5rem - 2px);
+}
+
+.cs2-admin .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-top-color: rgba(255, 255, 255, 0.55);
+}
+
+.cs2-admin
+    .select2-container--default.select2-container--open
+    .select2-selection--single
+    .select2-selection__arrow
+    b {
+    border-bottom-color: rgba(255, 255, 255, 0.55);
+}
+
+.cs2-admin .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+    padding: 0;
+}
+
+.cs2-admin .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    margin: 0.1875rem 0.25rem 0.1875rem 0;
+    padding: 0.0625rem 0.625rem;
+    border: 1px solid rgba(var(--cs2-accent), 0.4);
+    border-radius: 9999px;
+    background: rgba(var(--cs2-accent), 0.12);
+    color: rgb(var(--cs2-accent));
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: rgba(var(--cs2-accent), 0.7);
+}
+
+.cs2-admin .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+    color: #fff;
+}
+
+.cs2-admin .select2-search--inline .select2-search__field {
+    margin-top: 0.375rem;
+    border: 0 !important;
+    background: transparent;
+    color: #fff;
+}
+
+.cs2-admin .select2-search--inline .select2-search__field::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.cs2-admin .select2-dropdown {
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+    background: rgba(var(--cs2-surface), 0.97);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.cs2-admin .select2-container--open .select2-dropdown--below {
+    margin-top: 0.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+}
+
+.cs2-admin .select2-container--open .select2-dropdown--above {
+    margin-top: -0.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+}
+
+.cs2-admin .select2-search--dropdown {
+    padding: 0.5rem;
+}
+
+.cs2-admin .select2-container--default .select2-search--dropdown .select2-search__field {
+    padding: 0.375rem 0.625rem;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    outline: none;
+}
+
+.cs2-admin .select2-container--default .select2-results__option {
+    padding: 0.5rem 0.875rem;
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.cs2-admin .select2-container--default .select2-results__option[aria-selected='true'],
+.cs2-admin .select2-container--default .select2-results__option[aria-selected='true']:hover {
+    background-color: rgba(var(--cs2-accent), 0.08);
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: rgba(var(--cs2-accent), 0.15);
+    color: #fff;
+}
+
+.cs2-admin .select2-container--default .select2-results__option[aria-disabled='true'] {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.cs2-admin .select2-container--default .select2-results__group {
+    padding: 0.5rem 0.875rem 0.25rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.cs2-admin .user-block .username,
+.cs2-admin .user-block .username > a {
+    color: #fff;
+    font-size: 0.9375rem;
+}
+
+.cs2-admin .user-block .description {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .img-bordered-xs {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ---------------------------------------------------------------- Badges */
+
+.cs2-admin .label,
+.cs2-admin .badge {
+    --tone: var(--cs2-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0 0.5rem;
+    border: 1px solid rgba(var(--tone), 0.4);
+    border-radius: 9999px;
+    background: rgba(var(--tone), 0.12) !important;
+    color: rgb(var(--tone)) !important;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.25rem;
+    text-transform: uppercase;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.cs2-admin .label:empty {
+    display: none;
+}
+
+.cs2-admin .label-primary,
+.cs2-admin .label-info {
+    --tone: var(--cs2-accent);
+}
+
+.cs2-admin .label-success {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .label-warning {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-admin .label-danger {
+    --tone: var(--cs2-danger);
+}
+
+/* ---------------------------------------------------------------- Alerts */
+
+.cs2-admin .alert,
+.cs2-admin .callout {
+    --tone: var(--cs2-accent);
+    position: relative;
+    margin-bottom: 1.25rem;
+    padding: 0.875rem 1rem 0.875rem 2.75rem;
+    border: 1px solid rgba(var(--tone), 0.4) !important;
+    border-radius: 0.75rem;
+    background: rgba(var(--tone), 0.1) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 0.875rem;
+}
+
+.cs2-admin .alert::before,
+.cs2-admin .callout::before {
+    content: '\f05a';
+    position: absolute;
+    top: 0.875rem;
+    left: 1rem;
+    color: rgb(var(--tone));
+    font: normal normal normal 1rem/1.3125rem FontAwesome;
+}
+
+.cs2-admin .alert-success,
+.cs2-admin .callout-success {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .alert-success::before,
+.cs2-admin .callout-success::before {
+    content: '\f058';
+}
+
+.cs2-admin .alert-warning,
+.cs2-admin .callout-warning {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-admin .alert-warning::before,
+.cs2-admin .callout-warning::before {
+    content: '\f06a';
+}
+
+.cs2-admin .alert-danger,
+.cs2-admin .callout-danger {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-admin .alert-danger::before,
+.cs2-admin .callout-danger::before {
+    content: '\f071';
+}
+
+.cs2-admin .alert a,
+.cs2-admin .callout a {
+    color: rgb(var(--tone));
+    text-decoration: underline;
+}
+
+.cs2-admin .alert a:hover,
+.cs2-admin .callout a:hover {
+    color: #fff;
+}
+
+.cs2-admin .alert ul {
+    margin: 0.25rem 0 0;
+    padding-left: 1.25rem;
+}
+
+.cs2-admin .close {
+    color: #fff;
+    font-weight: 400;
+    opacity: 0.6;
+    text-shadow: none;
+}
+
+.cs2-admin .close:hover {
+    color: #fff;
+    opacity: 1;
+}
+
+/* ---------------------------------------------------------------- Stat tiles */
+
+.cs2-admin .info-box {
+    --tone: var(--cs2-accent);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 0;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(var(--tone), 0.25);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03) !important;
+    box-shadow: none;
+    color: #fff !important;
+}
+
+.cs2-admin .info-box-icon {
+    display: flex;
+    float: none;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid rgba(var(--tone), 0.4);
+    border-radius: 0.875rem;
+    background: rgba(var(--tone), 0.12);
+    color: rgb(var(--tone));
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.cs2-admin .info-box-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0 !important;
+}
+
+.cs2-admin .info-box-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.cs2-admin .info-box-number {
+    margin-top: 0.125rem;
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.cs2-admin .progress {
+    height: 0.375rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+}
+
+.cs2-admin .progress .progress-bar,
+.cs2-admin .info-box .progress .progress-bar {
+    border-radius: inherit;
+    background: rgb(var(--tone, var(--cs2-accent)));
+    box-shadow: none;
+}
+
+.cs2-admin .info-box .progress {
+    margin: 0.5rem 0 0;
+    border-radius: 9999px;
+}
+
+.cs2-admin .small-box {
+    --tone: var(--cs2-muted);
+    position: relative;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(var(--tone), 0.3);
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.03) !important;
+    box-shadow: none;
+    color: #fff !important;
+    text-align: left;
+}
+
+.cs2-admin .small-box > .inner {
+    padding: 1rem 4.5rem 1rem 1.25rem;
+}
+
+.cs2-admin .small-box h3 {
+    margin: 0;
+    overflow: hidden;
+    color: #fff;
+    font-size: 1.375rem;
+    font-weight: 700;
+    text-overflow: ellipsis;
+}
+
+/* Status tiles (suspended, installing) carry no footer; their title takes the tone instead. */
+.cs2-admin .small-box:not(.bg-gray) h3 {
+    color: rgb(var(--tone));
+}
+
+.cs2-admin .small-box p {
+    margin: 0.125rem 0 0;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .small-box .icon,
+.cs2-admin .small-box:hover .icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(var(--tone), 0.4);
+    border-radius: 0.75rem;
+    background: rgba(var(--tone), 0.12);
+    color: rgb(var(--tone));
+    font-size: 1.125rem;
+    transition: none;
+}
+
+.cs2-admin .small-box > .small-box-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .small-box > .small-box-footer:hover {
+    background: rgba(var(--cs2-accent), 0.1);
+    color: rgb(var(--cs2-accent));
+}
+
+/* ---------------------------------------------------------------- Overlays */
+
+.cs2-admin .modal-backdrop.in {
+    opacity: 0.6;
+}
+
+/* Modal styling kept in step with the client dialogs. */
+.cs2-admin .modal-content {
+    overflow: hidden;
+    border: 1px solid rgba(var(--cs2-accent), 0.3);
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(33, 37, 41, 0.97), rgba(23, 27, 31, 0.97));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(var(--cs2-accent), 0.2);
+    color: #e5e5e5;
+}
+
+.cs2-admin .modal-header,
+.cs2-admin .modal-body,
+.cs2-admin .modal-footer {
+    background: transparent;
+}
+
+.cs2-admin .modal-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cs2-admin .modal-title {
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.cs2-admin .modal-body {
+    padding: 1.25rem;
+}
+
+.cs2-admin .modal-footer {
+    padding: 0.875rem 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cs2-admin .dropdown-menu {
+    padding: 0.375rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.75rem;
+    background: rgba(var(--cs2-surface), 0.97);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.cs2-admin .dropdown-menu > li > a {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.cs2-admin .dropdown-menu > li > a:hover,
+.cs2-admin .dropdown-menu > li > a:focus {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.cs2-admin .dropdown-menu .divider {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.cs2-admin .tooltip {
+    font-family: inherit;
+}
+
+.cs2-admin .tooltip.in {
+    opacity: 1;
+}
+
+.cs2-admin .tooltip-inner {
+    max-width: 24rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    background: rgba(var(--cs2-surface), 0.95);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .tooltip.top .tooltip-arrow {
+    border-top-color: rgba(var(--cs2-surface), 0.95);
+}
+
+.cs2-admin .tooltip.bottom .tooltip-arrow {
+    border-bottom-color: rgba(var(--cs2-surface), 0.95);
+}
+
+.cs2-admin .tooltip.left .tooltip-arrow {
+    border-left-color: rgba(var(--cs2-surface), 0.95);
+}
+
+.cs2-admin .tooltip.right .tooltip-arrow {
+    border-right-color: rgba(var(--cs2-surface), 0.95);
+}
+
+.cs2-admin .pagination {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.cs2-admin .pagination > li > a,
+.cs2-admin .pagination > li > span {
+    float: none;
+    min-width: 2.25rem;
+    margin: 0;
+    padding: 0.375rem 0.75rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem !important;
+    background: rgba(var(--cs2-surface), 0.72);
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    text-align: center;
+}
+
+.cs2-admin .pagination > li > a:hover {
+    border-color: rgba(var(--cs2-accent), 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.cs2-admin .pagination > .active > span,
+.cs2-admin .pagination > .active > span:hover {
+    border-color: rgba(var(--cs2-accent), 0.5);
+    background: rgba(var(--cs2-accent), 0.2);
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .pagination > .disabled > span {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.cs2-admin .well {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    box-shadow: none;
+}
+
+/* ---------------------------------------------------------------- SweetAlert */
+
+.cs2-admin .sweet-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.cs2-admin .sweet-alert {
+    --cs2-swal-bg: 22, 27, 33;
+    padding: 1.5rem;
+    border: 1px solid rgba(var(--cs2-accent), 0.3);
+    border-radius: 1rem;
+    background-color: rgb(var(--cs2-swal-bg));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(var(--cs2-accent), 0.2);
+    font-family: inherit;
+}
+
+.cs2-admin .sweet-alert h2 {
+    margin: 1.25rem 0 0.5rem;
+    color: #fff;
+    font-size: 1.375rem;
+    line-height: 1.4;
+}
+
+.cs2-admin .sweet-alert p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
+.cs2-admin .sweet-alert button {
+    --tone: var(--cs2-accent);
+    margin: 1.5rem 0.25rem 0;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid rgba(var(--tone), 0.5) !important;
+    border-radius: 0.5rem;
+    background: rgba(var(--tone), 0.1) !important;
+    box-shadow: none !important;
+    color: rgb(var(--tone));
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    transition: all 0.2s var(--cs2-ease);
+}
+
+.cs2-admin .sweet-alert button:hover {
+    border-color: rgb(var(--tone)) !important;
+    background: rgba(var(--tone), 0.2) !important;
+    color: #fff;
+}
+
+/* Every two-button dialog in the admin area confirms something destructive. */
+.cs2-admin .sweet-alert[data-has-cancel-button='true'] button.confirm {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-admin .sweet-alert button.cancel {
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.cs2-admin .sweet-alert button.cancel:hover {
+    border-color: rgba(var(--cs2-accent), 0.35) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff;
+}
+
+.cs2-admin .sweet-alert input {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    box-shadow: none;
+    color: #fff;
+    font-size: 0.9375rem;
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-warning,
+.cs2-admin .sweet-alert .sa-icon.sa-warning .sa-body,
+.cs2-admin .sweet-alert .sa-icon.sa-warning .sa-dot {
+    animation: none;
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-warning {
+    border-color: rgb(var(--cs2-warning));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-warning .sa-body,
+.cs2-admin .sweet-alert .sa-icon.sa-warning .sa-dot {
+    background-color: rgb(var(--cs2-warning));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-error {
+    border-color: rgb(var(--cs2-danger));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-error .sa-line {
+    background-color: rgb(var(--cs2-danger));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-info {
+    border-color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-info::before,
+.cs2-admin .sweet-alert .sa-icon.sa-info::after {
+    background-color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-success {
+    border-color: rgb(var(--cs2-success));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-success .sa-line {
+    background-color: rgb(var(--cs2-success));
+}
+
+.cs2-admin .sweet-alert .sa-icon.sa-success .sa-placeholder {
+    border-color: rgba(var(--cs2-success), 0.25);
+}
+
+/* The success tick animates behind masks that have to match the dialog colour. */
+.cs2-admin .sweet-alert .sa-icon.sa-success::before,
+.cs2-admin .sweet-alert .sa-icon.sa-success::after,
+.cs2-admin .sweet-alert .sa-icon.sa-success .sa-fix {
+    background-color: rgb(var(--cs2-swal-bg));
+}
+
+/* ---------------------------------------------------------------- Ace editor */
+
+/* Chrome is the only Ace theme bundled in vendor/ace, so it is recoloured instead of replaced. */
+.cs2-admin .ace_editor {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+    font-size: 0.8125rem;
+}
+
+.cs2-admin .ace-chrome {
+    background-color: rgba(var(--cs2-surface), 0.85);
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.cs2-admin .ace-chrome .ace_gutter {
+    background: rgba(0, 0, 0, 0.25);
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.cs2-admin .ace-chrome .ace_gutter-active-line,
+.cs2-admin .ace-chrome .ace_marker-layer .ace_active-line {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.cs2-admin .ace-chrome .ace_marker-layer .ace_selection {
+    background: rgba(var(--cs2-accent), 0.25);
+}
+
+.cs2-admin .ace-chrome .ace_marker-layer .ace_selected-word,
+.cs2-admin .ace-chrome .ace_marker-layer .ace_bracket {
+    border-color: rgba(var(--cs2-accent), 0.5);
+    background: none;
+}
+
+.cs2-admin .ace-chrome .ace_cursor {
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .ace-chrome .ace_indent-guide {
+    background: none;
+    box-shadow: inset 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.cs2-admin .ace-chrome .ace_print-margin {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.cs2-admin .ace-chrome .ace_invisible {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+.cs2-admin .ace-chrome .ace_comment {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.cs2-admin .ace-chrome .ace_keyword,
+.cs2-admin .ace-chrome .ace_storage,
+.cs2-admin .ace-chrome .ace_meta.ace_tag {
+    color: rgb(var(--cs2-accent));
+}
+
+.cs2-admin .ace-chrome .ace_string {
+    color: #98e39b;
+}
+
+.cs2-admin .ace-chrome .ace_constant,
+.cs2-admin .ace-chrome .ace_constant.ace_numeric,
+.cs2-admin .ace-chrome .ace_constant.ace_language {
+    color: rgb(var(--cs2-warning));
+}
+
+.cs2-admin .ace-chrome .ace_variable {
+    color: #f9a8d4;
+}
+
+.cs2-admin .ace-chrome .ace_support.ace_function,
+.cs2-admin .ace-chrome .ace_entity.ace_name.ace_function {
+    color: #7dd3fc;
+}
+
+/* ---------------------------------------------------------------- Tones */
+
+/* AdminLTE colour classes on tiles and badges; declared last so they override the default --tone. */
+.cs2-admin .bg-blue,
+.cs2-admin .bg-aqua,
+.cs2-admin .bg-light-blue,
+.cs2-admin .bg-teal {
+    --tone: var(--cs2-accent);
+}
+
+.cs2-admin .bg-green,
+.cs2-admin .bg-olive,
+.cs2-admin .bg-lime {
+    --tone: var(--cs2-success);
+}
+
+.cs2-admin .bg-yellow,
+.cs2-admin .bg-orange {
+    --tone: var(--cs2-warning);
+}
+
+.cs2-admin .bg-red,
+.cs2-admin .bg-maroon,
+.cs2-admin .bg-fuchsia {
+    --tone: var(--cs2-danger);
+}
+
+.cs2-admin .bg-gray,
+.cs2-admin .bg-black,
+.cs2-admin .bg-navy,
+.cs2-admin .bg-purple {
+    --tone: var(--cs2-muted);
+}

@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to create and release, e.g. v1.15.2-cs2.1
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: Publish panel archive
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ inputs.tag || github.ref_name }}
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: bcmath, curl, gd, mbstring, mysql, openssl, pdo, posix, tokenizer, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Build archive
+        run: bash release.sh "$TAG"
+
+      - name: Write release notes
+        run: |
+          sum=$(cut -d ' ' -f 1 "release/cs2-panel-$TAG.zip.sha256")
+          cat > release/notes.md <<EOF
+          Drop-in build of \`${GITHUB_SHA::7}\`: extract \`cs2-panel-$TAG.zip\` over \`/var/www/pterodactyl\`, then follow [Upgrading]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/wiki/Upgrading#panel).
+
+          SHA-256: \`$sum\`
+          EOF
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ env.TAG }}
+          target_commitish: ${{ github.sha }}
+          body_path: release/notes.md
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            release/cs2-panel-${{ env.TAG }}.zip
+            release/cs2-panel-${{ env.TAG }}.zip.sha256

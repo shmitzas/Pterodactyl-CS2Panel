@@ -1,0 +1,23 @@
+import React from 'react';
+import { Dialog, RenderDialogProps } from './';
+import { Button } from '@/components/elements/button/index';
+
+type ConfirmationProps = Omit<RenderDialogProps, 'description' | 'children'> & {
+    children: React.ReactNode;
+    confirm?: string | undefined;
+    onConfirmed: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+};
+
+// Design system: cancel is always danger and confirm always success; the warning icon carries the risk.
+export default ({ confirm = 'Okay', children, onConfirmed, ...props }: ConfirmationProps) => {
+    return (
+        <Dialog {...props} description={typeof children === 'string' ? children : undefined}>
+            <Dialog.Icon type={'warning'} />
+            {typeof children !== 'string' && children}
+            <Dialog.Footer>
+                <Button.Danger onClick={props.onClose}>Cancel</Button.Danger>
+                <Button.Success onClick={onConfirmed}>{confirm}</Button.Success>
+            </Dialog.Footer>
+        </Dialog>
+    );
+};

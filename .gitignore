@@ -1,0 +1,54 @@
+/vendor
+*.DS_Store*
+.env*
+!.env.ci
+!.env.example
+.vagrant/*
+.vscode/*
+storage/framework/*
+!storage/framework/.gitignore
+!storage/framework/cache/
+!storage/framework/sessions/
+!storage/framework/views/
+/.idea
+/nbproject
+/.direnv
+
+node_modules
+*.log
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+.yarn
+public/assets/manifest.json
+
+# For local development with docker
+# Remove if we ever put the Dockerfile in the repo
+.dockerignore
+docker-compose.*
+!docker-compose.example.yml
+!docker-compose.example.yaml
+
+# for image related files
+misc
+.php-cs-fixer.cache
+coverage.xml
+resources/lang/locales.js
+.phpunit.result.cache
+
+/public/build
+/public/hot
+/public/storage
+result
+/release
+
+# Composer credentials for private repositories
+auth.json
+/.phpunit.cache
+
+# Test coverage, patch leftovers and Windows folder files
+coverage/
+*.orig
+*.rej
+Thumbs.db
+desktop.ini

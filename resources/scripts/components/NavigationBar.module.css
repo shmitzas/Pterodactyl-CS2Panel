@@ -1,0 +1,118 @@
+.bar {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(var(--cs2-surface), 0.85);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+
+    /* Blur lives on a pseudo-element: backdrop-filter on the bar would trap its fixed-position tooltips. */
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-width: 0;
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.2s var(--cs2-ease);
+
+    &:hover {
+        color: rgb(var(--cs2-accent));
+    }
+}
+
+/* Stands in for a logo file, so the panel ships with no brand image an operator has to replace. */
+.mark {
+    flex: none;
+    width: 0.25rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: rgb(var(--cs2-accent));
+    box-shadow: 0 0 12px rgba(var(--cs2-accent), 0.6);
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    height: 100%;
+}
+
+/* One class on every nav item: nesting under a selector list makes postcss emit :is() it can't lower. */
+.link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+
+    /* Underline grows from the centre (design system: navigation links). */
+    &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0.125rem;
+        width: 0;
+        height: 2px;
+        border-radius: 1px;
+        background: rgb(var(--cs2-accent));
+        transform: translateX(-50%);
+        transition: width 0.3s var(--cs2-ease);
+    }
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+    }
+
+    &:hover::after,
+    &:global(.active)::after {
+        width: 60%;
+    }
+
+    &:global(.active) {
+        background: rgba(var(--cs2-accent), 0.1);
+        color: rgb(var(--cs2-accent));
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(var(--cs2-accent), 0.25);
+    }
+}
+
+/* Declared after .link so the danger tint wins at equal specificity. */
+.logout {
+    &:hover {
+        background: rgba(var(--cs2-danger), 0.1);
+        color: rgb(var(--cs2-danger));
+    }
+
+    &::after {
+        background: rgb(var(--cs2-danger));
+    }
+}
+
+/* Sidebar drawer toggle; the breakpoint matches the drawer's in sidebar.css. */
+.menu {
+    display: none;
+    flex-shrink: 0;
+
+    @media (max-width: 1150px) {
+        display: flex;
+    }
+}

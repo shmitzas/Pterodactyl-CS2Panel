@@ -1,0 +1,43 @@
+.container {
+    @apply flex min-h-full items-center justify-center p-4 text-center;
+}
+
+/* Modal styling kept in step with the admin dialogs. */
+.panel {
+    @apply relative mx-auto w-full max-w-xl text-left;
+    border: 1px solid rgba(var(--cs2-accent), 0.3);
+    border-radius: 1rem;
+    background: linear-gradient(135deg, rgba(33, 37, 41, 0.95), rgba(23, 27, 31, 0.95));
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(var(--cs2-accent), 0.2);
+}
+
+.title {
+    @apply mb-1 pr-10 text-xl font-semibold text-white;
+}
+
+.close_icon {
+    @apply w-5 h-5 group-hover:rotate-90 transition-transform duration-100;
+}
+
+.dialog_icon {
+    --tone: var(--cs2-accent);
+    @apply mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl;
+    background: rgba(var(--tone), 0.2);
+    color: rgb(var(--tone));
+
+    &.danger {
+        --tone: var(--cs2-danger);
+    }
+
+    &.warning {
+        --tone: var(--cs2-warning);
+    }
+
+    &.success {
+        --tone: var(--cs2-success);
+    }
+
+    &.info {
+        --tone: var(--cs2-accent);
+    }
+}

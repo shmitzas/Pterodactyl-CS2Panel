@@ -1,0 +1,67 @@
+.stat_block {
+    @apply flex items-center rounded-xl relative overflow-hidden;
+    @apply col-span-3 md:col-span-2 lg:col-span-6;
+    @apply px-3 py-2 md:p-3;
+    background: rgba(var(--cs2-surface), 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    & > .status_bar {
+        @apply w-1 h-full absolute left-0 top-0 sm:hidden;
+    }
+
+    & > .icon {
+        @apply hidden sm:flex sm:mr-3;
+
+        & > svg {
+            @apply w-4 h-4 m-auto;
+        }
+    }
+}
+
+/* CopyOnClick marks the one clickable block (the address) with cursor-pointer. */
+.stat_block:global(.cursor-pointer):hover {
+    border-color: rgba(var(--cs2-accent), 0.3);
+    box-shadow: 0 0 12px rgba(var(--cs2-accent), 0.08);
+}
+
+.terminal {
+    @apply flex flex-col w-full overflow-hidden rounded-2xl border border-white/10 shadow-lg shadow-black/30;
+
+    & .overflows_container {
+        @apply w-full;
+    }
+
+    & > .container {
+        @apply p-1 sm:p-2 min-h-[16rem] flex-1 font-mono text-sm;
+        background: #05080d;
+
+        & #terminal {
+            @apply h-full;
+        }
+    }
+
+    & .command_icon {
+        @apply flex items-center top-0 left-0 absolute z-10 select-none h-full px-3 transition-colors duration-150;
+    }
+
+    & .command_input {
+        @apply relative px-2 text-white pl-10 pr-4 py-3 w-full font-mono text-sm;
+        @apply focus:ring-0 outline-none focus-visible:outline-none;
+        @apply border-0 border-t border-white/10 transition-all duration-150;
+        background: rgba(10, 15, 23, 0.95);
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        &:focus {
+            background: rgba(13, 20, 30, 0.98);
+            box-shadow: inset 0 -2px 0 rgb(var(--cs2-accent));
+        }
+
+        &:disabled {
+            @apply cursor-not-allowed opacity-60;
+        }
+    }
+}
