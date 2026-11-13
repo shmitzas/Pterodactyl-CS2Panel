@@ -124,9 +124,9 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
 
 
         /*
-        * RFCs limit certain parts of an email to certain character limits.
-        * A limit of <= 64 for the local, then <= 63 for each domain label.
-        */
+         * RFCs limit certain parts of an email to certain character limits.
+         * A limit of <= 64 for the local, then <= 63 for each domain label.
+         */
         $local = str_repeat(Str::random(10), 6) . '1234';
         $label = str_repeat(Str::random(10), 6) . '1';
 
@@ -187,8 +187,8 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
         $this->assertNotEquals($server->node_id, $server2->node_id);
 
         Bus::assertDispatchedTimes(RevokeSftpAccessJob::class, 2);
-        Bus::assertDispatched(fn(RevokeSftpAccessJob $job) => $job->user === $user->uuid && $job->target->is($server->node));
-        Bus::assertDispatched(fn(RevokeSftpAccessJob $job) => $job->user === $user->uuid && $job->target->is($server2->node));
+        Bus::assertDispatched(fn (RevokeSftpAccessJob $job) => $job->user === $user->uuid && $job->target->is($server->node));
+        Bus::assertDispatched(fn (RevokeSftpAccessJob $job) => $job->user === $user->uuid && $job->target->is($server2->node));
     }
 
     /**
@@ -252,5 +252,46 @@ class AccountControllerTest extends ClientApiIntegrationTestCase
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $response->assertJsonPath('errors.0.meta.rule', 'confirmed');
         $response->assertJsonPath('errors.0.detail', 'The password confirmation does not match.');
+    }
+
+    /**
+     * Test that dashboard lists are stored without duplicates, and that a list left out of a
+     * request keeps its stored value.
+     */
+    public function testDashboardPreferencesAreStored()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+        $first = Str::uuid()->toString();
+        $second = Str::uuid()->toString();
+
+        $this->actingAs($user)
+            ->putJson('/api/client/account/dashboard', ['order' => [$first, $second, $first], 'power' => [$second]])
+            ->assertNoContent();
+
+        $this->actingAs($user)
+            ->putJson('/api/client/account/dashboard', ['prerelease' => [$first]])
+            ->assertNoContent();
+
+        $this->assertSame(
+            ['order' => [$first, $second], 'power' => [$second], 'prerelease' => [$first]],
+            $user->refresh()->dashboard_preferences
+        );
+    }
+
+    /**
+     * Test that dashboard lists only accept server UUIDs.
+     */
+    public function testDashboardPreferencesRejectInvalidValues()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->putJson('/api/client/account/dashboard', ['order' => ['not-a-uuid']])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonPath('errors.0.meta.rule', 'uuid');
+
+        $this->assertNull($user->refresh()->dashboard_preferences);
     }
 }

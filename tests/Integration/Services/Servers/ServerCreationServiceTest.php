@@ -3,11 +3,13 @@
 namespace Pterodactyl\Tests\Integration\Services\Servers;
 
 use Mockery\MockInterface;
+use Illuminate\Support\Str;
 use Pterodactyl\Models\Egg;
 use GuzzleHttp\Psr7\Request;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Models\User;
 use GuzzleHttp\Psr7\Response;
+use Pterodactyl\Models\Mount;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Location;
 use Pterodactyl\Models\Allocation;
@@ -205,6 +207,69 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $this->getService()->handle($data);
 
         $this->assertDatabaseMissing('servers', ['owner_id' => $user->id]);
+    }
+
+    /**
+     * Test that a new server gets the Auto Mount mounts its egg and node may use, and no others.
+     */
+    public function testAutoMountMountsAreAttachedToNewServer()
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Node $node */
+        $node = Node::factory()->create(['location_id' => Location::factory()->create()->id]);
+
+        /** @var Allocation $allocation */
+        $allocation = Allocation::factory()->create(['node_id' => $node->id]);
+
+        $attached = $this->createMount('attached', true, $this->bungeecord, $node);
+        $this->createMount('manual', false, $this->bungeecord, $node);
+        $this->createMount('other-egg', true, null, $node);
+
+        $this->daemonServerRepository->expects('setServer->create')->andReturnUndefined();
+
+        $server = $this->getService()->handle([
+            'name' => $this->faker->name,
+            'owner_id' => $user->id,
+            'allocation_id' => $allocation->id,
+            'node_id' => $allocation->node_id,
+            'memory' => 256,
+            'swap' => 128,
+            'disk' => 100,
+            'io' => 500,
+            'cpu' => 0,
+            'startup' => 'java server2.jar',
+            'image' => 'java:8',
+            'egg_id' => $this->bungeecord->id,
+            'environment' => [
+                'BUNGEE_VERSION' => '123',
+                'SERVER_JARFILE' => 'server2.jar',
+            ],
+        ]);
+
+        $this->assertSame([$attached->id], $server->mounts()->pluck('mounts.id')->all());
+    }
+
+    private function createMount(string $name, bool $autoMount, ?Egg $egg, Node $node): Mount
+    {
+        $mount = (new Mount())->forceFill([
+            'uuid' => Str::uuid()->toString(),
+            'name' => $name,
+            'source' => "/srv/mounts/$name",
+            'target' => "/mnt/$name",
+            'read_only' => false,
+            'user_mountable' => false,
+            'auto_mount' => $autoMount,
+        ]);
+        $mount->saveOrFail();
+
+        $mount->nodes()->attach($node->id);
+        if ($egg) {
+            $mount->eggs()->attach($egg->id);
+        }
+
+        return $mount;
     }
 
     private function getService(): ServerCreationService

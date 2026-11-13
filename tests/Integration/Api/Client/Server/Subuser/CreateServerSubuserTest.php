@@ -40,9 +40,10 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
             Permission::ACTION_USER_CREATE,
             Permission::ACTION_WEBSOCKET_CONNECT,
         ]);
+        $response->assertJsonPath('attributes.file_rules', []);
 
         $expected = $response->json('attributes');
-        unset($expected['permissions']);
+        unset($expected['permissions'], $expected['file_rules']);
 
         $this->assertJsonTransformedWith($expected, $subuser);
     }
@@ -199,6 +200,47 @@ class CreateServerSubuserTest extends ClientApiIntegrationTestCase
         $response->assertStatus(Response::HTTP_BAD_REQUEST);
         $response->assertJsonPath('errors.0.code', 'ServerSubuserExistsException');
         $response->assertJsonPath('errors.0.detail', 'A user with that email address is already assigned as a subuser for this server.');
+    }
+
+    /**
+     * Test that directory restrictions sent with a new subuser are normalised and stored.
+     */
+    public function testFileRulesAreStoredForNewSubuser()
+    {
+        [$user, $server] = $this->generateTestAccount();
+
+        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+            'email' => $email = $this->faker->email,
+            'permissions' => [Permission::ACTION_FILE_READ],
+            'file_rules' => ['plugins/', '/game/csgo/cfg', '/../etc'],
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('attributes.file_rules', ['/plugins', '/game/csgo/cfg']);
+
+        $subuser = Subuser::query()
+            ->where('server_id', $server->id)
+            ->where('user_id', User::query()->where('email', $email)->value('id'))
+            ->firstOrFail();
+
+        $this->assertSame(['/plugins', '/game/csgo/cfg'], $subuser->file_rules);
+    }
+
+    /**
+     * Test that a subuser cannot give a subuser they create directory restrictions.
+     */
+    public function testSubuserCannotSetFileRulesForNewSubuser()
+    {
+        [$user, $server] = $this->generateTestAccount([Permission::ACTION_USER_CREATE, Permission::ACTION_FILE_READ]);
+
+        $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
+            'email' => $this->faker->email,
+            'permissions' => [Permission::ACTION_FILE_READ],
+            'file_rules' => ['/plugins'],
+        ]);
+
+        $response->assertOk();
+        $response->assertJsonPath('attributes.file_rules', []);
     }
 
     public static function permissionsDataProvider(): array
