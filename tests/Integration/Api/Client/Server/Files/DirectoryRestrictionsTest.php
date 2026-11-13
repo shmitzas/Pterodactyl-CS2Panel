@@ -43,6 +43,25 @@ class DirectoryRestrictionsTest extends ClientApiIntegrationTestCase
             ->assertOk();
     }
 
+    /**
+     * Test that a download link is refused for an encoded path that decodes to one outside the
+     * directory restrictions, and still issued for a path inside them.
+     */
+    public function testDownloadChecksTheDecodedPath(): void
+    {
+        [$user, $server] = $this->generateRestrictedAccount();
+        $endpoint = $this->link($server, '/files/download') . '?file=';
+
+        $this->actingAs($user)
+            ->getJson($endpoint . rawurlencode('/plugins/%2e%2e/cfg/server.cfg'))
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->getJson($endpoint . rawurlencode('/plugins/Ranks/config.jsonc'))
+            ->assertOk()
+            ->assertJsonPath('object', 'signed_url');
+    }
+
     public static function outsideRequestProvider(): array
     {
         return [
@@ -59,6 +78,7 @@ class DirectoryRestrictionsTest extends ClientApiIntegrationTestCase
     private function generateRestrictedAccount(): array
     {
         [$user, $server] = $this->generateTestAccount([
+            Permission::ACTION_FILE_READ_CONTENT,
             Permission::ACTION_FILE_CREATE,
             Permission::ACTION_FILE_UPDATE,
             Permission::ACTION_FILE_ARCHIVE,

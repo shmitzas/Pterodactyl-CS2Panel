@@ -57,7 +57,13 @@ export default () => {
 
     const visible = servers ? sortByOrder(servers.items, dragOrder || preferences.order) : [];
 
+    // Upstream resets the page on every run, which would also drop a `?page=` the dashboard was opened with.
+    const toggled = useRef(false);
     useEffect(() => {
+        if (!toggled.current) {
+            toggled.current = true;
+            return;
+        }
         setPage(1);
     }, [showOnlyAdmin]);
 

@@ -12,6 +12,34 @@ use Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 class UpdateSubuserTest extends ClientApiIntegrationTestCase
 {
     /**
+     * Test that changing only a subuser's directory restrictions is saved, and closes their
+     * SFTP sessions.
+     */
+    public function testFileRulesAreSavedWithoutPermissionChanges()
+    {
+        Bus::fake([RevokeSftpAccessJob::class]);
+
+        [$user, $server] = $this->generateTestAccount();
+
+        /** @var Subuser $subuser */
+        $subuser = Subuser::factory()
+            ->for(User::factory()->create())
+            ->for($server)
+            ->create(['permissions' => [Permission::ACTION_FILE_READ, Permission::ACTION_WEBSOCKET_CONNECT]]);
+
+        $this->actingAs($user)
+            ->postJson("/api/client/servers/$server->uuid/users/{$subuser->user->uuid}", [
+                'permissions' => [Permission::ACTION_FILE_READ],
+                'file_rules' => ['/plugins'],
+            ])
+            ->assertOk()
+            ->assertJsonPath('attributes.file_rules', ['/plugins']);
+
+        $this->assertSame(['/plugins'], $subuser->refresh()->file_rules);
+        Bus::assertDispatchedTimes(RevokeSftpAccessJob::class, 1);
+    }
+
+    /**
      * Test that the correct permissions are applied to the account when making updates
      * to a subusers permissions.
      */

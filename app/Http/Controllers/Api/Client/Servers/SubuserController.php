@@ -93,6 +93,7 @@ class SubuserController extends ClientApiController
 
         $permissions = $this->getDefaultPermissions($request);
         $current = $subuser->permissions;
+        $fileRules = $this->getFileRules($request, $server, $subuser->file_rules);
 
         sort($permissions);
         sort($current);
@@ -107,12 +108,12 @@ class SubuserController extends ClientApiController
             ]);
 
         // Only update the database and hit up the Wings instance to invalidate JTI's if the permissions
-        // have actually changed for the user.
-        if ($permissions !== $current) {
-            $log->transaction(function () use ($request, $subuser, $server) {
+        // or directory restrictions have actually changed for the user.
+        if ($permissions !== $current || $fileRules !== $subuser->file_rules) {
+            $log->transaction(function () use ($request, $subuser, $server, $fileRules) {
                 $this->repository->update($subuser->id, [
                     'permissions' => $this->getDefaultPermissions($request),
-                    'file_rules' => $this->getFileRules($request, $server, $subuser->file_rules),
+                    'file_rules' => $fileRules,
                 ]);
 
                 RevokeSftpAccessJob::dispatch($subuser->user->uuid, $server);

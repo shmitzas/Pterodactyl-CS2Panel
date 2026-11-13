@@ -226,6 +226,7 @@ class ServerCreationServiceTest extends IntegrationTestCase
         $attached = $this->createMount('attached', true, $this->bungeecord, $node);
         $this->createMount('manual', false, $this->bungeecord, $node);
         $this->createMount('other-egg', true, null, $node);
+        $this->createMount('other-node', true, $this->bungeecord, Node::factory()->create(['location_id' => $node->location_id]));
 
         $this->daemonServerRepository->expects('setServer->create')->andReturnUndefined();
 

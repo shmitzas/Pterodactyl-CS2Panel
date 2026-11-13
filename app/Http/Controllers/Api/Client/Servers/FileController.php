@@ -130,9 +130,10 @@ class FileController extends ClientApiController
      */
     public function download(GetFileContentsRequest $request, Server $server): array
     {
+        // The token carries the decoded path, so that is the one to check.
         $this->assertPathsAllowed(
             $this->getSubuserFileRules($server, $request),
-            $request->get('file')
+            rawurldecode($request->get('file'))
         );
 
         $token = $this->jwtService
