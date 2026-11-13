@@ -108,8 +108,9 @@ class SubuserController extends ClientApiController
             ]);
 
         // Only update the database and hit up the Wings instance to invalidate JTI's if the permissions
-        // or directory restrictions have actually changed for the user.
-        if ($permissions !== $current || $fileRules !== $subuser->file_rules) {
+        // or directory restrictions have actually changed for the user. A request without file_rules
+        // keeps the stored restrictions unless its permissions change, as before restrictions existed.
+        if ($permissions !== $current || ($request->has('file_rules') && $fileRules !== $subuser->file_rules)) {
             $log->transaction(function () use ($request, $subuser, $server, $fileRules) {
                 $this->repository->update($subuser->id, [
                     'permissions' => $this->getDefaultPermissions($request),

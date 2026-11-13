@@ -40,6 +40,35 @@ class UpdateSubuserTest extends ClientApiIntegrationTestCase
     }
 
     /**
+     * Test that an update without file_rules and with unchanged permissions leaves the stored
+     * directory restrictions alone.
+     */
+    public function testFileRulesAreKeptWhenRequestOmitsThem()
+    {
+        Bus::fake([RevokeSftpAccessJob::class]);
+
+        [$user, $server] = $this->generateTestAccount();
+
+        /** @var Subuser $subuser */
+        $subuser = Subuser::factory()
+            ->for(User::factory()->create())
+            ->for($server)
+            ->create([
+                'permissions' => [Permission::ACTION_FILE_READ, Permission::ACTION_WEBSOCKET_CONNECT],
+                'file_rules' => ['/plugins'],
+            ]);
+
+        $this->actingAs($user)
+            ->postJson("/api/client/servers/$server->uuid/users/{$subuser->user->uuid}", [
+                'permissions' => [Permission::ACTION_FILE_READ],
+            ])
+            ->assertOk();
+
+        $this->assertSame(['/plugins'], $subuser->refresh()->file_rules);
+        Bus::assertNotDispatched(RevokeSftpAccessJob::class);
+    }
+
+    /**
      * Test that the correct permissions are applied to the account when making updates
      * to a subusers permissions.
      */
