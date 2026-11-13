@@ -17,6 +17,8 @@ class StoreSubuserRequest extends SubuserRequest
             'email' => 'required|email:strict|between:1,191',
             'permissions' => 'required|array',
             'permissions.*' => 'string',
+            'file_rules' => 'nullable|array',
+            'file_rules.*' => 'string',
         ];
     }
 }

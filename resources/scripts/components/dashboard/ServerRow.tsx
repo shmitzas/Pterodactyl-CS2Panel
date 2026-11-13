@@ -18,6 +18,7 @@ import {
     faQuestionCircle,
     faServer,
     faSyncAlt,
+    faTools,
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
@@ -118,7 +119,7 @@ export default ({ server, className, handle, onUsage }: Props) => {
     useEffect(() => {
         // Don't waste a HTTP request if there is nothing important to show to the user because
         // the server is suspended.
-        if (isSuspended) return;
+        if (isSuspended || server.isNodeUnderMaintenance) return;
 
         getStats().then(() => {
             interval.current = setInterval(() => getStats(), 30000);
@@ -127,7 +128,7 @@ export default ({ server, className, handle, onUsage }: Props) => {
         return () => {
             interval.current && clearInterval(interval.current);
         };
-    }, [isSuspended]);
+    }, [isSuspended, server.isNodeUnderMaintenance]);
 
     const alarms = { cpu: false, memory: false, disk: false };
     if (stats) {
@@ -148,6 +149,8 @@ export default ({ server, className, handle, onUsage }: Props) => {
 
     const state: State = isSuspended
         ? { label: 'Suspended', tone: 'danger', icon: faBan }
+        : server.isNodeUnderMaintenance
+        ? { label: 'Maintenance', tone: 'warning', icon: faTools }
         : server.isTransferring
         ? { label: 'Transferring', tone: 'info', icon: faExchangeAlt }
         : server.status === 'installing'

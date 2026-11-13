@@ -13,6 +13,7 @@ use Pterodactyl\Transformers\Api\Client\AccountTransformer;
 use Pterodactyl\Http\Requests\Api\Client\Account\UpdateEmailRequest;
 use Pterodactyl\Http\Requests\Api\Client\Account\UpdatePasswordRequest;
 use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Pterodactyl\Http\Requests\Api\Client\Account\UpdateDashboardPreferencesRequest;
 
 class AccountController extends ClientApiController
 {
@@ -59,6 +60,20 @@ class AccountController extends ClientApiController
                 ->property(['old' => $original, 'new' => $request->validated('email')])
                 ->log();
         }
+
+        return new JsonResponse([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Update the dashboard server order and saved selections. Omitted lists keep their stored value.
+     */
+    public function updateDashboard(UpdateDashboardPreferencesRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $lists = array_map(fn (array $uuids) => array_values(array_unique($uuids)), $request->validated());
+
+        $user->forceFill(['dashboard_preferences' => array_merge($user->dashboard_preferences ?? [], $lists)])
+            ->saveOrFail();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
     }
