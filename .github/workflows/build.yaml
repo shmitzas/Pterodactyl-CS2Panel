@@ -40,7 +40,7 @@ jobs:
       - name: Build archive
         run: bash release.sh
 
-      # Short retention: private-repo artifact storage is small, and releases carry the real builds.
+      # Short retention: releases carry the real builds.
       - name: Upload archive
         uses: actions/upload-artifact@v7
         with:

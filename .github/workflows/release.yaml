@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Tag to create and release, e.g. v1.11.11-cs2.1
+        description: Tag to create and release, e.g. v1.15.2-cs2.1
         required: true
         type: string
 

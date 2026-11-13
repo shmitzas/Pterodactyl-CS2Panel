@@ -27,7 +27,7 @@ Everything stock Pterodactyl 1.15.2 does, plus:
 - ⚡ **Power Actions** — start, restart, stop or kill a saved group of servers at once
 - 🧪 **SwiftlyS2 Pre-release** — pre-release updates on or off for a group of CS2 servers
 - 📊 **All servers** — combined CPU, memory and disk above the server list
-- 🔗 **Auto Mount** — a mount attached to every new server it lists
+- 🔗 **Auto Mount** — a mount attached to every new server whose egg and node it lists
 - 📦 **Release zip** — extract and migrate; no Node, Yarn or Composer on the server
 - 🦖 **Pterodactyl 1.15.2** — upstream's panel and its security fixes, with Wings 1.13.x
 
