@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const DropdownButtonRow = styled.button<{ danger?: boolean }>`
-    ${tw`flex items-center w-full rounded-lg px-3 py-2 text-sm text-white/80`};
+    ${tw`flex items-center w-full rounded-lg px-3 py-2 text-sm text-ink-2`};
     transition: 150ms all ease;
 
     &:hover {

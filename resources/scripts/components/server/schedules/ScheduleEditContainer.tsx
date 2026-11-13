@@ -24,14 +24,14 @@ interface Params {
 }
 
 const CronBox = ({ title, value }: { title: string; value: string }) => (
-    <div css={tw`rounded-xl border border-white/10 bg-cs2-surface/60 p-4`}>
-        <p css={tw`text-2xs font-semibold uppercase tracking-wider text-white/50`}>{title}</p>
+    <div css={tw`rounded-xl border border-rule bg-cs2-surface/60 p-4`}>
+        <p css={tw`text-2xs font-semibold uppercase tracking-wider text-muted`}>{title}</p>
         <p css={tw`mt-1 font-mono text-xl font-semibold text-white`}>{value}</p>
     </div>
 );
 
 const ActivePill = ({ active }: { active: boolean }) => (
-    <span className={classNames('cs2-badge ml-4', active ? 'cs2-tone-success' : 'cs2-tone-danger')}>
+    <span className={classNames('cs2-pill ml-4', active ? 'cs2-tone-ok' : 'cs2-tone-bad')}>
         {active ? 'Active' : 'Inactive'}
     </span>
 );
@@ -82,15 +82,15 @@ export default () => {
                 <>
                     <ScheduleCronRow
                         cron={schedule.cron}
-                        css={tw`sm:hidden rounded-xl border border-white/10 bg-cs2-surface/60 mb-4 p-3`}
+                        css={tw`sm:hidden rounded-xl border border-rule bg-cs2-surface/60 mb-4 p-3`}
                     />
                     <div>
-                        <div className={'glass-panel p-4 sm:flex sm:items-center sm:p-6'}>
+                        <div className={'cs2-card p-4 sm:flex sm:items-center sm:p-6'}>
                             <div css={tw`flex-1`}>
                                 <h3 css={tw`flex items-center text-white font-bold text-2xl`}>
                                     {schedule.name}
                                     {schedule.isProcessing ? (
-                                        <span className={'cs2-badge cs2-tone-muted ml-4'}>
+                                        <span className={'cs2-pill cs2-tone-off ml-4'}>
                                             <Spinner css={tw`w-3! h-3!`} />
                                             Processing
                                         </span>
@@ -98,19 +98,19 @@ export default () => {
                                         <ActivePill active={schedule.isActive} />
                                     )}
                                 </h3>
-                                <p css={tw`mt-1 text-sm text-white/70`}>
+                                <p css={tw`mt-1 text-sm text-ink-2`}>
                                     Last run at:&nbsp;
                                     {schedule.lastRunAt ? (
                                         format(schedule.lastRunAt, "MMM do 'at' h:mma")
                                     ) : (
-                                        <span css={tw`text-white/40`}>n/a</span>
+                                        <span css={tw`text-muted`}>n/a</span>
                                     )}
-                                    <span css={tw`ml-4 pl-4 border-l border-white/20 py-px`}>
+                                    <span css={tw`ml-4 pl-4 border-l border-rule-2 py-px`}>
                                         Next run at:&nbsp;
                                         {schedule.nextRunAt ? (
                                             format(schedule.nextRunAt, "MMM do 'at' h:mma")
                                         ) : (
-                                            <span css={tw`text-white/40`}>n/a</span>
+                                            <span css={tw`text-muted`}>n/a</span>
                                         )}
                                     </span>
                                 </p>
@@ -131,7 +131,7 @@ export default () => {
                             <CronBox title={'Month'} value={schedule.cron.month} />
                             <CronBox title={'Day (Week)'} value={schedule.cron.dayOfWeek} />
                         </div>
-                        <div className={schedule.tasks.length > 0 ? 'glass-panel overflow-hidden' : undefined}>
+                        <div className={schedule.tasks.length > 0 ? 'cs2-card overflow-hidden' : undefined}>
                             {schedule.tasks.length > 0
                                 ? schedule.tasks
                                       .sort((a, b) =>

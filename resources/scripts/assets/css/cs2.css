@@ -1,129 +1,258 @@
 /*
- * CS2 panel theme. Glass surfaces float over the full-bleed background; orange is the
- * interactive accent, the other colours are semantic only.
+ * Shared surfaces of the v2 theme. Colours come from cs2-tokens.css; put a cs2-tone-* class on an
+ * element and every tile, pill, tag, meter or tone-text inside it takes that colour.
  */
-:root {
-    /* Drives links, focus, hover and active chrome. Deliberately clear of the gold --cs2-warning. */
-    --cs2-accent: 240, 130, 30;
-    --cs2-info: 13, 202, 240;
-    --cs2-success: 25, 238, 25;
-    --cs2-danger: 255, 19, 19;
-    --cs2-warning: 255, 203, 49;
-    --cs2-surface: 15, 22, 33;
-    --cs2-ease: cubic-bezier(0.4, 0, 0.2, 1);
+@import '../../../../public/themes/pterodactyl/css/cs2-tokens.css';
+
+.cs2-tone-accent {
+    --tone: var(--color-accent-text);
 }
 
-html {
-    min-height: 100%;
-    background-color: rgb(11, 15, 22);
-    /* 17px instead of 16px, so every rem-based size grows with it; mirrored in cs2-admin.css. */
-    font-size: 106.25%;
+.cs2-tone-cpu {
+    --tone: var(--color-cpu);
 }
 
-.glass-card {
-    background: rgba(var(--cs2-surface), 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s var(--cs2-ease);
+.cs2-tone-mem {
+    --tone: var(--color-mem);
 }
 
-.glass-card:hover {
-    border-color: rgba(var(--cs2-accent), 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(var(--cs2-accent), 0.1);
+.cs2-tone-disk {
+    --tone: var(--color-disk);
 }
 
-/*
- * Static glass for page sections. The blur sits on ::before because backdrop-filter on the box
- * itself would become the containing block of the fixed-position tooltips rendered inside it.
- */
-.glass-panel {
-    position: relative;
-    isolation: isolate;
-    background: rgba(var(--cs2-surface), 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 1rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+.cs2-tone-net {
+    --tone: var(--color-net);
 }
 
-.glass-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
+.cs2-tone-ok {
+    --tone: var(--color-ok);
 }
 
-/* List rows can number in the hundreds (file manager), so they skip the blur entirely. */
-.glass-row {
-    background: rgba(var(--cs2-surface), 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 0.75rem;
-    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+.cs2-tone-warn {
+    --tone: var(--color-warn);
 }
 
-.glass-row:hover {
-    background: rgba(var(--cs2-surface), 0.8);
-    border-color: rgba(var(--cs2-accent), 0.3);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 12px rgba(var(--cs2-accent), 0.08);
+.cs2-tone-bad {
+    --tone: var(--color-bad);
 }
 
-/* Tinted icon tile and status pill; pick the colour with an cs2-tone-* class. */
-.cs2-tile {
-    --tone: var(--cs2-accent);
-    display: inline-flex;
-    flex-shrink: 0;
+.cs2-tone-off {
+    --tone: var(--color-muted);
+}
+
+.cs2-tone-text {
+    color: var(--tone);
+}
+
+.cs2-card,
+.cs2-row {
+    min-width: 0;
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-2);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-card);
+}
+
+.cs2-row {
+    transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+}
+
+.cs2-row:hover {
+    border-color: color-mix(in oklab, var(--color-accent-text) 55%, var(--color-rule));
+}
+
+.cs2-card-head {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid rgba(var(--tone), 0.4);
-    border-radius: 0.75rem;
-    background: rgba(var(--tone), 0.12);
-    color: rgb(var(--tone));
-    transition: all 0.2s var(--cs2-ease);
+    gap: var(--space-xs) var(--space-sm);
+    padding: var(--space-md) var(--space-lg) 0;
 }
 
-.cs2-badge {
-    --tone: var(--cs2-accent);
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 0.375rem;
-    padding: 0 0.625rem;
-    border: 1px solid rgba(var(--tone), 0.4);
-    border-radius: 9999px;
-    background: rgba(var(--tone), 0.12);
-    color: rgb(var(--tone));
-    font-size: 0.6875rem;
+.cs2-card-titles {
+    display: grid;
+    flex: 1;
+    gap: var(--space-3xs);
+    min-width: 0;
+}
+
+.cs2-card-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
     font-weight: 600;
-    line-height: 1.375rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-ink);
+}
+
+.cs2-card-sub {
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+}
+
+.cs2-card-body {
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+}
+
+.cs2-empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xl) var(--space-lg);
+    color: var(--color-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
+.cs2-tile {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-control);
+    background: color-mix(in oklab, var(--tone, var(--color-accent-text)) 16%, var(--color-paper-2));
+    color: var(--tone, var(--color-accent-text));
+    font-size: 1.125rem;
+}
+
+.cs2-tile--sm {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-chip);
+    font-size: 0.9375rem;
+}
+
+.cs2-tile--lg {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    font-size: 1.5rem;
+}
+
+.cs2-pill {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: var(--space-xs);
+    min-height: 26px;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--tone, var(--color-muted)) 15%, var(--color-paper-2));
+    color: var(--tone, var(--color-muted));
+    font-size: var(--text-xs);
+    font-weight: 700;
+    line-height: 1;
     white-space: nowrap;
 }
 
-/* Declared after the components so they override the default --tone. */
-.cs2-tone-info {
-    --tone: var(--cs2-info);
+.cs2-pill-dot {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
 }
 
-.cs2-tone-success {
-    --tone: var(--cs2-success);
+.cs2-pill-dot:first-child {
+    margin-left: calc(-1 * var(--space-2xs));
 }
 
-.cs2-tone-warning {
-    --tone: var(--cs2-warning);
+.cs2-tag {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    min-height: 22px;
+    padding: 0 var(--space-xs);
+    border-radius: var(--radius-chip);
+    background: color-mix(in oklab, var(--tone, var(--color-accent-text)) 16%, var(--color-paper-2));
+    color: var(--tone, var(--color-accent-text));
+    font-size: var(--text-xs);
+    font-weight: 700;
+    white-space: nowrap;
 }
 
-.cs2-tone-danger {
-    --tone: var(--cs2-danger);
+.cs2-meter {
+    display: block;
+    height: 6px;
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--tone, var(--color-cpu)) 14%, var(--color-paper-3));
 }
 
-.cs2-tone-muted {
-    --tone: 148, 163, 184;
+.cs2-meter > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--tone, var(--color-cpu));
+    transform: scaleX(var(--v, 0));
+    transform-origin: left center;
+    transition: transform var(--dur-short) var(--ease-out);
+}
+
+/* Usage bands shared by every meter: orange from 75%, red from 90%. */
+.cs2-meter.is-warn {
+    --tone: var(--color-warn);
+}
+
+.cs2-meter.is-high {
+    --tone: var(--color-bad);
+}
+
+.cs2-addr {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    max-width: 100%;
+    min-height: 32px;
+    padding: 0 var(--space-2xs) 0 var(--space-sm);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-chip);
+    background: var(--color-paper-3);
+}
+
+.cs2-addr code {
+    overflow: hidden;
+    color: var(--color-ink-2);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Mixed in sRGB: in oklab the raise colour's blue cancels the orange into grey. */
+.cs2-skel {
+    display: block;
+    width: var(--w, 100%);
+    height: 0.75em;
+    border-radius: var(--radius-chip);
+    background: color-mix(in srgb, var(--color-warn) 30%, var(--color-raise));
+    animation: cs2-skel 1.4s var(--ease-in-out) infinite alternate;
+}
+
+.cs2-skel--tall {
+    height: 1.6em;
+}
+
+@keyframes cs2-skel {
+    from {
+        opacity: 0.45;
+    }
+
+    to {
+        opacity: 0.95;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cs2-skel {
+        animation: none;
+        opacity: 0.7;
+    }
+
+    .cs2-row,
+    .cs2-meter > span {
+        transition: none;
+    }
 }

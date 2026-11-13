@@ -83,7 +83,7 @@ export default () => {
                                 <button css={tw`ml-4 p-2 text-sm`} onClick={() => setDeleteIdentifier(key.identifier)}>
                                     <FontAwesomeIcon
                                         icon={faTrashAlt}
-                                        css={tw`text-neutral-400 hover:text-red-400 transition-colors duration-150`}
+                                        css={tw`text-neutral-400 hover:text-bad transition-colors duration-150`}
                                     />
                                 </button>
                             </GreyRowBox>

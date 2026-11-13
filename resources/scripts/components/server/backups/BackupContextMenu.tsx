@@ -138,7 +138,7 @@ export default ({ backup }: Props) => {
                     Your server will be stopped. You will not be able to control the power state, access the file
                     manager, or create additional backups until completed.
                 </p>
-                <p css={tw`mt-4 -mb-2 rounded-lg border border-white/10 bg-black/30 p-3`}>
+                <p css={tw`mt-4 -mb-2 rounded-lg border border-rule bg-paper-3 p-3`}>
                     <label htmlFor={'restore_truncate'} css={tw`text-base flex items-center cursor-pointer`}>
                         <Input
                             type={'checkbox'}
@@ -168,7 +168,7 @@ export default ({ backup }: Props) => {
                         <button
                             onClick={onClick}
                             aria-label={'Backup actions'}
-                            css={tw`text-white/50 transition-colors duration-150 hover:text-cs2-accent p-2`}
+                            css={tw`text-muted transition-colors duration-150 hover:text-cs2-accent p-2`}
                         >
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </button>
@@ -211,7 +211,7 @@ export default ({ backup }: Props) => {
                 <button
                     onClick={() => setModal('delete')}
                     aria-label={'Delete backup'}
-                    css={tw`text-white/50 transition-colors duration-150 hover:text-cs2-danger p-2`}
+                    css={tw`text-muted transition-colors duration-150 hover:text-cs2-danger p-2`}
                 >
                     <FontAwesomeIcon icon={faTrashAlt} />
                 </button>

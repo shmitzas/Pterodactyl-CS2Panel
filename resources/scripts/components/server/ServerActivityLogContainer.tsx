@@ -54,11 +54,11 @@ export default () => {
             {!data && isValidating ? (
                 <Spinner centered />
             ) : !data?.items.length ? (
-                <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                <div className={'cs2-card cs2-empty'}>
                     No activity logs available for this server.
                 </div>
             ) : (
-                <div className={'glass-panel px-2'}>
+                <div className={'cs2-card px-2'}>
                     {data?.items.map((activity) => (
                         <ActivityLogEntry key={activity.id} activity={activity}>
                             <span />

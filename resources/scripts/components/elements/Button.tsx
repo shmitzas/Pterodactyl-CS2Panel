@@ -10,57 +10,99 @@ interface Props {
     isSecondary?: boolean;
 }
 
-// Legacy button, restyled to match the tinted outline buttons in elements/button.
-const tones: Record<NonNullable<Props['color']>, string> = {
-    primary: '13, 202, 240',
-    green: '25, 238, 25',
-    red: '255, 19, 19',
-    grey: '255, 255, 255',
+// Legacy button, drawn like elements/button: primary is solid accent, green and red are soft tones.
+const tones: Record<NonNullable<Props['color']>, string | undefined> = {
+    primary: 'var(--color-accent-text)',
+    green: 'var(--color-ok)',
+    red: 'var(--color-bad)',
+    grey: undefined,
 };
 
 const ButtonStyle = styled.button<Omit<Props, 'isLoading'>>`
-    --tone: ${(props) => tones[props.color || 'primary']};
-    ${tw`relative inline-flex items-center justify-center rounded-lg p-2 font-semibold tracking-wide text-sm transition-all duration-150 border`};
-    border-color: rgba(var(--tone), 0.5);
-    background-color: rgba(var(--tone), 0.1);
-    color: rgb(var(--tone));
+    ${(props) => tones[props.color || 'primary'] && `--tone: ${tones[props.color || 'primary']};`}
+    ${tw`relative inline-flex items-center justify-center gap-2 font-bold text-sm whitespace-nowrap`};
+    min-height: var(--control);
+    padding: 0 var(--space-md);
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-control);
+    background: transparent;
+    color: var(--color-ink);
+    line-height: 1;
+    transition: background-color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out),
+        color var(--dur-short) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 
     &:hover:not(:disabled) {
-        border-color: rgb(var(--tone));
-        background-color: rgba(var(--tone), 0.2);
-        color: #fff;
+        border-color: var(--color-muted);
+        background: var(--color-raise);
     }
 
     &:active:not(:disabled) {
-        transform: scale(0.97);
+        transform: translateY(1px);
     }
 
     &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(var(--tone), 0.25);
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
     }
 
-    ${(props) => props.size === 'xsmall' && tw`px-2 py-1 text-xs`};
-    ${(props) => (!props.size || props.size === 'small') && tw`px-4 py-2`};
-    ${(props) => props.size === 'large' && tw`p-4 text-sm`};
-    ${(props) => props.size === 'xlarge' && tw`p-4 w-full`};
+    ${(props) =>
+        !props.isSecondary &&
+        (props.color || 'primary') === 'primary' &&
+        css`
+            border-color: var(--color-accent);
+            background: var(--color-accent);
+            color: var(--color-accent-ink);
+
+            &:hover:not(:disabled) {
+                border-color: var(--color-accent-hover);
+                background: var(--color-accent-hover);
+            }
+        `};
+
+    ${(props) =>
+        !props.isSecondary &&
+        (props.color === 'green' || props.color === 'red') &&
+        css`
+            border-color: color-mix(in oklab, var(--tone) 32%, var(--color-paper-2));
+            background: color-mix(in oklab, var(--tone) 14%, var(--color-paper-2));
+            color: var(--tone);
+
+            &:hover:not(:disabled) {
+                border-color: color-mix(in oklab, var(--tone) 55%, var(--color-paper-2));
+                background: color-mix(in oklab, var(--tone) 22%, var(--color-paper-2));
+            }
+        `};
 
     ${(props) =>
         props.isSecondary &&
         css`
-            border-color: rgba(255, 255, 255, 0.15);
-            background-color: transparent;
-            color: rgba(255, 255, 255, 0.8);
+            border-color: transparent;
+            color: var(--tone, var(--color-ink-2));
 
             &:hover:not(:disabled) {
-                border-color: rgba(var(--tone), 0.6);
-                background-color: rgba(var(--tone), 0.12);
-                color: rgb(var(--tone));
+                border-color: color-mix(in oklab, var(--tone, var(--color-rule-2)) 32%, var(--color-paper-2));
+                background: color-mix(in oklab, var(--tone, var(--color-ink)) 10%, var(--color-paper-2));
+                color: var(--tone, var(--color-ink));
             }
         `};
 
+    ${(props) =>
+        props.size === 'xsmall' &&
+        css`
+            min-height: 28px;
+            padding: 0 var(--space-xs);
+            font-size: var(--text-xs);
+        `};
+    ${(props) =>
+        (props.size === 'large' || props.size === 'xlarge') &&
+        css`
+            min-height: 44px;
+            padding: 0 var(--space-lg);
+        `};
+    ${(props) => props.size === 'xlarge' && tw`w-full`};
+
     &:disabled {
-        opacity: 0.45;
+        opacity: 0.5;
         cursor: not-allowed;
     }
 `;

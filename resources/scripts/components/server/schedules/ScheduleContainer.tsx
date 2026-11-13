@@ -59,7 +59,7 @@ export default () => {
             ) : (
                 <>
                     {schedules.length === 0 ? (
-                        <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                        <div className={'cs2-card cs2-empty'}>
                             There are no schedules configured for this server.
                         </div>
                     ) : (

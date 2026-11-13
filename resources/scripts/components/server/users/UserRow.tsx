@@ -36,13 +36,13 @@ export default ({ subuser }: Props) => {
                     />
                     &nbsp;
                 </p>
-                <p css={tw`text-2xs text-white/40 uppercase tracking-wider hidden md:block`}>2FA Enabled</p>
+                <p css={tw`text-2xs text-muted uppercase tracking-wider hidden md:block`}>2FA Enabled</p>
             </div>
             <div css={tw`ml-4 hidden md:block`}>
                 <p css={tw`font-medium text-center text-white`}>
                     {subuser.permissions.filter((permission) => permission !== 'websocket.connect').length}
                 </p>
-                <p css={tw`text-2xs text-white/40 uppercase tracking-wider`}>Permissions</p>
+                <p css={tw`text-2xs text-muted uppercase tracking-wider`}>Permissions</p>
             </div>
             {subuser.uuid !== uuid && (
                 <>
@@ -50,7 +50,7 @@ export default ({ subuser }: Props) => {
                         <button
                             type={'button'}
                             aria-label={'Edit subuser'}
-                            css={tw`block text-sm p-1 md:p-2 text-white/50 hover:text-cs2-accent transition-colors duration-150 mx-4`}
+                            css={tw`block text-sm p-1 md:p-2 text-muted hover:text-cs2-accent transition-colors duration-150 mx-4`}
                             onClick={() => setVisible(true)}
                         >
                             <FontAwesomeIcon icon={faPencilAlt} />

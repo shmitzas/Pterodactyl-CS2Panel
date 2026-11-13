@@ -70,7 +70,7 @@ export default () => {
                                 />
                             ))
                         ) : (
-                            <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                            <div className={'cs2-card cs2-empty'}>
                                 {databaseLimit > 0
                                     ? 'It looks like you have no databases.'
                                     : 'Databases cannot be created for this server.'}

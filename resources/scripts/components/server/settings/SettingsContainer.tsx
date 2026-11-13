@@ -51,7 +51,7 @@ export default () => {
                             <div css={tw`mt-6 flex items-center`}>
                                 <div css={tw`flex-1`}>
                                     <div css={tw`rounded-xl border border-cs2-info/30 bg-cs2-info/10 p-3`}>
-                                        <p css={tw`text-xs text-white/80`}>
+                                        <p css={tw`text-xs text-ink-2`}>
                                             Your SFTP password is the same as the password you use to access this panel.
                                         </p>
                                     </div>
@@ -66,18 +66,18 @@ export default () => {
                     </Can>
                     <TitledGreyBox title={'Debug Information'} css={tw`mb-6 md:mb-10`}>
                         <div css={tw`flex items-center justify-between text-sm`}>
-                            <p css={tw`text-white/60`}>Node</p>
+                            <p css={tw`text-muted`}>Node</p>
                             <code
-                                css={tw`font-mono rounded-md border border-white/10 bg-black/40 py-1 px-2 text-white/90`}
+                                css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-ink-2`}
                             >
                                 {node}
                             </code>
                         </div>
                         <CopyOnClick text={uuid}>
                             <div css={tw`flex items-center justify-between mt-2 text-sm`}>
-                                <p css={tw`text-white/60`}>Server ID</p>
+                                <p css={tw`text-muted`}>Server ID</p>
                                 <code
-                                    css={tw`font-mono rounded-md border border-white/10 bg-black/40 py-1 px-2 text-white/90`}
+                                    css={tw`font-mono rounded-md border border-rule bg-paper-3 py-1 px-2 text-ink-2`}
                                 >
                                     {uuid}
                                 </code>

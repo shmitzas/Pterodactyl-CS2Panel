@@ -114,7 +114,7 @@ export default () => {
                     {error === 'connecting' ? (
                         <>
                             <Spinner size={'small'} />
-                            <p css={tw`ml-2 text-sm text-white/90`}>
+                            <p css={tw`ml-2 text-sm text-ink-2`}>
                                 We&apos;re having some trouble connecting to your server, please wait...
                             </p>
                         </>

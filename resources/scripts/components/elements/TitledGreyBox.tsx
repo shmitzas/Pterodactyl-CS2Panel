@@ -12,7 +12,7 @@ interface Props {
 }
 
 const TitledGreyBox = ({ icon, title, children, className }: Props) => (
-    <div className={classNames('glass-panel', className)}>
+    <div className={classNames('cs2-card', className)}>
         <div className={'border-b border-white/10 px-5 py-3.5'}>
             {typeof title === 'string' ? (
                 <h2 className={'flex items-center gap-2.5 text-sm font-semibold uppercase tracking-wider text-white'}>

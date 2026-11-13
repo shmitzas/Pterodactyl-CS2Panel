@@ -56,7 +56,7 @@ const PermissionRow = ({ permission, disabled }: Props) => {
                     {pkey}
                 </Label>
                 {permissions[key].keys[pkey].length > 0 && (
-                    <p css={tw`text-xs text-white/50 mt-1`}>{permissions[key].keys[pkey]}</p>
+                    <p css={tw`text-xs text-muted mt-1`}>{permissions[key].keys[pkey]}</p>
                 )}
             </div>
         </Container>

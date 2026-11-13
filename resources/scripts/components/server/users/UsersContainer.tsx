@@ -62,7 +62,7 @@ export default () => {
             </PageHeader>
             <FlashMessageRender byKey={'users'} css={tw`mb-4`} />
             {!subusers.length ? (
-                <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                <div className={'cs2-card cs2-empty'}>
                     It looks like you don&apos;t have any subusers.
                 </div>
             ) : (

@@ -96,7 +96,7 @@ export default () => {
             ) : (
                 <>
                     {!files.length ? (
-                        <div className={'glass-panel px-6 py-10 text-center text-sm text-white/50'}>
+                        <div className={'cs2-card cs2-empty'}>
                             This directory seems to be empty.
                         </div>
                     ) : (

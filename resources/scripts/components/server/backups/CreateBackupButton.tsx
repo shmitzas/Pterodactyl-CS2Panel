@@ -49,7 +49,7 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
                     </FormikFieldWrapper>
                 </div>
                 <Can action={'backup.delete'}>
-                    <div css={tw`mt-6 rounded-xl border border-white/10 bg-black/20 p-4`}>
+                    <div css={tw`mt-6 rounded-xl border border-rule bg-paper-3 p-4`}>
                         <FormikSwitch
                             name={'isLocked'}
                             label={'Locked'}

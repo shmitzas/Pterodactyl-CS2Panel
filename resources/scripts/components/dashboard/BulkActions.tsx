@@ -100,7 +100,7 @@ interface PanelProps {
 const defaultChip = (server: Server) => <span className={classNames(styles.chip, 'text-xs')}>{server.name}</span>;
 
 const Panel = ({ icon, tone, title, summary, busy, selected, onEdit, renderChip, children }: PanelProps) => (
-    <div className={classNames('glass-card', styles.panel)}>
+    <div className={classNames('cs2-card', styles.panel)}>
         <div className={'flex items-center gap-3'}>
             <span className={classNames(styles.tile, styles[`tone_${tone}`])}>
                 <FontAwesomeIcon icon={icon} />

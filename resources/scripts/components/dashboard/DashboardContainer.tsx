@@ -214,7 +214,7 @@ export default () => {
                                 </div>
                             </>
                         ) : (
-                            <div className={'glass-card flex flex-col items-center gap-3 px-6 py-10 text-center'}>
+                            <div className={'cs2-card flex flex-col items-center gap-3 px-6 py-10 text-center'}>
                                 <span className={styles.tile}>
                                     <FontAwesomeIcon icon={faServer} />
                                 </span>

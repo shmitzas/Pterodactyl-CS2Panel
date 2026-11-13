@@ -16,12 +16,12 @@ export default ({ schedule }: { schedule: Schedule }) => (
         </div>
         <div css={tw`flex-1 md:ml-4`}>
             <p css={tw`font-semibold text-white`}>{schedule.name}</p>
-            <p css={tw`text-xs text-white/50`}>
+            <p css={tw`text-xs text-muted`}>
                 Last run at: {schedule.lastRunAt ? format(schedule.lastRunAt, "MMM do 'at' h:mma") : 'never'}
             </p>
         </div>
         <div className={'sm:hidden'}>
-            <p className={classNames('cs2-badge', schedule.isActive ? 'cs2-tone-success' : 'cs2-tone-muted')}>
+            <p className={classNames('cs2-pill', schedule.isActive ? 'cs2-tone-ok' : 'cs2-tone-off')}>
                 {schedule.isActive ? 'Active' : 'Inactive'}
             </p>
         </div>
@@ -29,8 +29,8 @@ export default ({ schedule }: { schedule: Schedule }) => (
         <div className={'hidden sm:block'}>
             <p
                 className={classNames(
-                    'cs2-badge',
-                    schedule.isActive && !schedule.isProcessing ? 'cs2-tone-success' : 'cs2-tone-muted'
+                    'cs2-pill',
+                    schedule.isActive && !schedule.isProcessing ? 'cs2-tone-ok' : 'cs2-tone-off'
                 )}
             >
                 {schedule.isProcessing ? 'Processing' : schedule.isActive ? 'Active' : 'Inactive'}

@@ -7,7 +7,7 @@ interface ChartBlockProps {
 }
 
 export default ({ title, legend, children }: ChartBlockProps) => (
-    <div className={'glass-panel group overflow-hidden pt-2'}>
+    <div className={'cs2-card group overflow-hidden pt-2'}>
         <div className={'flex items-center justify-between px-4 py-2'}>
             <h3
                 className={

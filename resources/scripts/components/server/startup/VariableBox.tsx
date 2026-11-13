@@ -61,7 +61,7 @@ const VariableBox = ({ variable }: Props) => {
         <TitledGreyBox
             title={
                 <h2 className={'flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white'}>
-                    {!variable.isEditable && <span className={'cs2-badge cs2-tone-muted'}>Read Only</span>}
+                    {!variable.isEditable && <span className={'cs2-pill cs2-tone-off'}>Read Only</span>}
                     {variable.name}
                 </h2>
             }

@@ -43,7 +43,7 @@ const ActionButton = styled(Button)`
 const ScreenBlock = ({ title, image, message, onBack, onRetry }: ScreenBlockProps) => (
     <PageContentBlock>
         <div css={tw`flex justify-center`}>
-            <div className={'glass-panel w-full p-12 text-center sm:w-3/4 md:w-1/2 md:p-20'}>
+            <div className={'cs2-card w-full p-12 text-center sm:w-3/4 md:w-1/2 md:p-20'}>
                 {(typeof onBack === 'function' || typeof onRetry === 'function') && (
                     <div css={tw`absolute left-0 top-0 ml-4 mt-4`}>
                         <ActionButton
@@ -56,7 +56,7 @@ const ScreenBlock = ({ title, image, message, onBack, onRetry }: ScreenBlockProp
                 )}
                 <img src={image} css={tw`w-2/3 h-auto select-none mx-auto`} />
                 <h2 css={tw`mt-10 text-white font-bold text-4xl`}>{title}</h2>
-                <p css={tw`text-sm text-white/60 mt-2`}>{message}</p>
+                <p css={tw`text-sm text-muted mt-2`}>{message}</p>
             </div>
         </div>
     </PageContentBlock>

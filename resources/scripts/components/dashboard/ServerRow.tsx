@@ -172,7 +172,7 @@ export default ({ server, className, handle, onUsage }: Props) => {
     }, [server.uuid, live, running]);
 
     return (
-        <div className={classNames('glass-card', styles.row, className)}>
+        <div className={classNames('cs2-card', styles.row, className)}>
             {handle}
             <Link to={`/server/${server.id}`} className={classNames(styles.link, rowGrid)}>
                 <div className={'flex min-w-0 items-center gap-3'}>
