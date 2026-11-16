@@ -6,38 +6,47 @@ the [wiki](https://github.com/shmitzas/Pterodactyl-CS2Panel/wiki); building from
 
 ## Theme
 
-Colours come from the RGB-triplet variables in `resources/scripts/assets/css/cs2.css` (`rgba(var(--cs2-accent), 0.2)`)
-or the Tailwind `cs2-*` colours. The panel runs Tailwind 3.0, whose opacity modifiers only accept the default scale:
-`bg-cs2-accent/20` works, `bg-cs2-accent/15` silently generates nothing.
+Colours, fonts, radii, spacing and motion are custom properties in `public/themes/pterodactyl/css/cs2-tokens.css`.
+`cs2.css` imports it into the client build, and the admin layout links it before `cs2-admin.css`. `tailwind.config.js`
+mirrors the colours in hex (`bg-paper-2`, `text-accent-text`, `border-rule`) so opacity modifiers work in twin.macro;
+change the two together. The panel runs Tailwind 3.0, whose opacity modifiers only accept the default scale:
+`bg-accent/20` works, `bg-accent/15` silently generates nothing.
 
 | Token | Use |
 |-------|-----|
-| `--cs2-accent` / `cs2-accent` | Orange. **Every interactive affordance** — links, focus rings, hover borders, active nav, progress, icon highlights |
-| `--cs2-info` / `cs2-info` | Cyan. Informational notices only, never ordinary chrome |
-| `--cs2-success`, `--cs2-warning`, `--cs2-danger` | Green / gold / red, semantic only |
+| `paper`, `paper-2`, `paper-3`, `raise` | Page, card, sunken well (console, inputs, meter tracks) and raised surfaces |
+| `ink`, `ink-2`, `muted` | Text, strongest to weakest |
+| `rule`, `rule-2` | Borders |
+| `accent` | **Every interactive affordance** — primary buttons, links (`accent-text`), focus rings, active nav |
+| `cpu`, `mem`, `disk`, `net` | One hue per metric, used by its tile, label, meter and chart on every screen |
+| `ok`, `warn`, `bad` | Semantic only — status, usage bands, and the start and destructive actions |
 
-Accent and info are a deliberate split, so an element can be marked as *merely informational*. Reach for `cs2-accent`
-unless the element is telling the user something.
-
-`cs2.css` also holds the shared surfaces: `glass-panel` (static section), `glass-row` (list row, no blur), `cs2-tile`
-(icon tile) and `cs2-badge` (status pill), coloured with a `cs2-tone-info|success|warning|danger|muted` class. Two rules
-apply when using them:
+`cs2.css` also holds the shared surfaces: `cs2-card` (with `cs2-card-head`, `-title`, `-sub` and `-body`),
+`cs2-page-head`, `cs2-tile` (icon tile), `cs2-pill` (status), `cs2-tag`, `cs2-seg` (segmented toggle), `cs2-skel`
+(loading placeholder) and `cs2-meter` (fill from `--v`, 0–1; `usageBand` in `lib/usage.ts` adds the amber and red
+bands). A `cs2-tone-accent|ok|warn|bad|off|cpu|mem|disk|net` class sets their `--tone`, and `cs2-tone-text` colours
+text with it. Two rules apply when using them:
 
 - Never put `backdrop-filter` on an element that contains a `Tooltip`: tooltips are `position: fixed` and would be
-  placed relative to that element. `glass-panel` keeps its blur on `::before` for this reason.
-- Don't put Tailwind display utilities (`hidden`, `sm:inline-flex`, ...) on `cs2-tile` / `cs2-badge` elements;
-  `cs2.css` loads after Tailwind and its `display` wins. Toggle visibility on a wrapper instead.
+  placed relative to that element. `ModalMask` has one, so a `Modal` can't hold a tooltip; `Dialog` keeps its blur on
+  a sibling layer.
+- Don't put Tailwind display utilities (`hidden`, `sm:inline-flex`, ...) on `cs2-tile`, `cs2-pill`, `cs2-tag` or
+  `cs2-meter` elements; `cs2.css` loads after Tailwind and its `display` wins. Toggle visibility on a wrapper instead.
+
+Fonts are linked from `resources/views/partials/fonts.blade.php`, not bundled: Clash Grotesk from Fontshare, its only
+host, and Manrope and JetBrains Mono from Google Fonts.
 
 ### Admin theme
 
 `public/themes/pterodactyl/css/cs2-admin.css` is plain CSS over AdminLTE / Bootstrap 3, not part of the webpack build.
 
-- It must stay the last stylesheet in `resources/views/layouts/admin.blade.php`, and its rules are scoped to
-  `body.cs2-admin` so they outrank the AdminLTE and Bootstrap selectors they replace.
+- It and `cs2-tokens.css` must stay the last stylesheets in `resources/views/layouts/admin.blade.php`, tokens first.
+  Its rules are scoped to `body.cs2-admin` so they outrank the AdminLTE and Bootstrap selectors they replace.
 - Admin boxes get no `backdrop-filter`: it would make each box a stacking context and hide its tooltips and dropdowns
   under the next box.
-- Two values are shared with the client and must change together: the base font size (`html` at 106.25%, also in
-  `cs2.css`) and the darkening overlay on the background image (also in `GlobalStylesheet.ts`).
+- Three things are shared with the client and must change together: the base font size (`html` at 100%, over
+  Bootstrap's 10px), the header height and sidebar width (`--cs2-header` and `--cs2-sidebar`, the tokens' `--topbar`
+  and `--sidebar`), and the background image rule (`.cs2-admin::before`, `body::before` in `GlobalStylesheet.ts`).
 
 ## Releasing
 

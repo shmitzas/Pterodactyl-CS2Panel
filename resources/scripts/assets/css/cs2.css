@@ -191,7 +191,7 @@
     transition: transform var(--dur-short) var(--ease-out);
 }
 
-/* Usage bands shared by every meter: orange from 75%, red from 90%. */
+/* Usage bands shared by every meter: amber from 75%, red from 90%. */
 .cs2-meter.is-warn {
     --tone: var(--color-warn);
 }

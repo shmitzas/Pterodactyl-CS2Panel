@@ -12,7 +12,7 @@
 
 > [!NOTE]
 > Built around **[CS2-Ptero-Egg](https://github.com/shmitzas/CS2-Ptero-Egg)**: the **SwiftlyS2 Pre-release** group needs
-> its `PRERELEASE` variable, and the CS2 shortcuts its directory layout.
+> its `PRERELEASE` variable, and the sidebar shortcuts its `/game/csgo` layout.
 
 ---
 
@@ -20,13 +20,13 @@
 
 Everything stock Pterodactyl 1.15.2 does, plus:
 
-- 🎨 **CS2 theme** — a dark glass design on every client page and the admin area
-- 📂 **CS2 file shortcuts** — server configs, SwiftlyS2 configs and plugins one click from the sidebar
+- 🎨 **CS2 theme** — floating panels on dark navy, one colour per metric, on every client page and the admin area
+- 📂 **CS2 file shortcuts** — CS2 configs, and the configs and plugins of each installed framework, one click from the sidebar
 - 🔒 **Directory restrictions** — a subuser's file manager limited to the directories you choose
 - ↕️ **Your own server order** — drag servers into place; the order follows your account
 - ⚡ **Power Actions** — start, restart, stop or kill a saved group of servers at once
 - 🧪 **SwiftlyS2 Pre-release** — pre-release updates on or off for a group of CS2 servers
-- 📊 **All servers** — combined CPU, memory and disk above the server list
+- 📊 **Server totals** — running servers and combined CPU, memory and disk above the server list
 - 🔗 **Auto Mount** — a mount attached to every new server whose egg and node it lists
 - 📦 **Release zip** — extract and migrate; no Node, Yarn or Composer on the server
 - 🦖 **Pterodactyl 1.15.2** — upstream's panel and its security fixes, with Wings 1.13.x
@@ -46,8 +46,8 @@ Everything stock Pterodactyl 1.15.2 does, plus:
 |-------|-------------|
 | **[Dashboard](../../wiki/Dashboard)** | Server order, totals, Power Actions, pre-release |
 | **[Directory Restrictions](../../wiki/Directory-Restrictions)** | Keeping a subuser to chosen directories |
-| **[Server Sidebar](../../wiki/Server-Sidebar)** | Link groups and the CS2 shortcuts |
-| **[Theme](../../wiki/Theme)** | Background, panel name, admin area |
+| **[Server Sidebar](../../wiki/Server-Sidebar)** | Sections and the CS2 file shortcuts |
+| **[Theme](../../wiki/Theme)** | Background, panel name, fonts, admin area |
 | **[Mounts](../../wiki/Mounts)** | Auto Mount for new servers |
 
 ---
