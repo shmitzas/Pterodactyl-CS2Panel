@@ -43,7 +43,15 @@ You should have received a copy of the GNU General Public License along with Noo
     padding: var(--space-sm);
     border: 1px solid var(--color-rule);
     border-radius: var(--radius-card);
-    background: var(--color-paper-2);
+    /* Scroll shadows: the two local layers scroll with the links and cover an edge's shade until more list lies past it. */
+    background:
+        linear-gradient(var(--color-paper-2) 30%, transparent) center top / 100% 40px no-repeat local,
+        linear-gradient(transparent, var(--color-paper-2) 70%) center bottom / 100% 40px no-repeat local,
+        radial-gradient(farthest-side at 50% 0, oklch(4% 0.02 268 / 0.85), transparent) center top / 100% 16px
+            no-repeat scroll,
+        radial-gradient(farthest-side at 50% 100%, oklch(4% 0.02 268 / 0.85), transparent) center bottom / 100% 16px
+            no-repeat scroll,
+        var(--color-paper-2);
     box-shadow: var(--shadow-card);
     scrollbar-width: thin;
 }

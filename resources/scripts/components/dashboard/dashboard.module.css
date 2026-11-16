@@ -321,6 +321,10 @@
         padding: var(--space-sm) var(--space-md) var(--space-md);
     }
 
+    .stat_label span {
+        white-space: normal;
+    }
+
     .stat :global(.cs2-tile) {
         width: 32px;
         height: 32px;

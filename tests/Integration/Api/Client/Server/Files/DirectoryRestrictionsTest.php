@@ -63,9 +63,9 @@ class DirectoryRestrictionsTest extends ClientApiIntegrationTestCase
     }
 
     /**
-     * Test that the server endpoint tells a restricted subuser its own restrictions, and the owner none.
+     * Test that the server endpoint tells a restricted subuser its own restrictions.
      */
-    public function testServerMetaListsTheCallersRestrictions(): void
+    public function testServerMetaListsTheSubusersRestrictions(): void
     {
         [$user, $server] = $this->generateRestrictedAccount();
 
@@ -73,6 +73,14 @@ class DirectoryRestrictionsTest extends ClientApiIntegrationTestCase
             ->getJson('/api/client/servers/' . $server->uuid)
             ->assertOk()
             ->assertJsonPath('meta.file_rules', ['/plugins']);
+    }
+
+    /**
+     * Test that the server endpoint reports no restrictions to the owner of a server that has them for a subuser.
+     */
+    public function testServerMetaListsNoRestrictionsForTheOwner(): void
+    {
+        [, $server] = $this->generateRestrictedAccount();
 
         $this->actingAs($server->user)
             ->getJson('/api/client/servers/' . $server->uuid)
