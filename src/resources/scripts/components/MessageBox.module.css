@@ -1,0 +1,36 @@
+/* Flash banner, one tone per flash type. */
+.box {
+    --tone: var(--color-accent-text);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid color-mix(in oklab, var(--tone) 45%, var(--color-paper-2));
+    border-radius: var(--radius-card);
+    background: color-mix(in oklab, var(--tone) 14%, var(--color-paper-2));
+    box-shadow: var(--shadow-card);
+}
+
+.success {
+    --tone: var(--color-ok);
+}
+
+.warning {
+    --tone: var(--color-warn);
+}
+
+.error {
+    --tone: var(--color-bad);
+}
+
+.icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-chip);
+    background: color-mix(in oklab, var(--tone) 22%, var(--color-paper-2));
+    color: var(--tone);
+}
