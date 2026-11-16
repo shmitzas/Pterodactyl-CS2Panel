@@ -24,7 +24,8 @@ const TitledGreyBox = ({ icon, title, children, className }: Props) => (
                     <h2 className={'cs2-card-title'}>{title}</h2>
                 </>
             ) : (
-                title
+                // The head is a flex row; a custom title takes all of it so its own layout can spread out.
+                <div className={'min-w-0 flex-1'}>{title}</div>
             )}
         </div>
         <div className={'cs2-card-body'}>{children}</div>
