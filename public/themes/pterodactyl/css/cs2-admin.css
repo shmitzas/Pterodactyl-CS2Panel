@@ -15,7 +15,7 @@
 
 /* Same base size as the client; Bootstrap 3 sets 10px here but sizes everything else in px. */
 html {
-    font-size: 106.25%;
+    font-size: 100%;
     background-color: var(--color-paper);
 }
 
@@ -780,7 +780,7 @@ html {
 
 /* ---------------------------------------------------------------- Buttons */
 
-/* Tinted outline buttons; --tone is an "r, g, b" triplet. */
+/* Tinted outline buttons; --tone is the colour each variant sets. */
 .cs2-admin .btn {
     --tone: var(--color-accent-text);
     display: inline-flex;
@@ -893,6 +893,17 @@ html {
 
 .cs2-admin .btn-group > .btn {
     padding: 0 0.75rem;
+}
+
+/* The overview's link buttons sit two to a row on phones, and Bootstrap never wraps a label. */
+@media (max-width: 767px) {
+    .cs2-admin .col-xs-6 > a > .btn {
+        height: auto;
+        min-height: 2.5rem;
+        padding: 0.5rem 0.75rem;
+        line-height: 1.3;
+        white-space: normal;
+    }
 }
 
 /* ---------------------------------------------------------------- Forms */
