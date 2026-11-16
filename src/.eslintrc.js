@@ -7,7 +7,7 @@ module.exports = {
             jsx: true,
         },
         project: './tsconfig.json',
-        tsconfigRootDir: './',
+        tsconfigRootDir: __dirname,
     },
     settings: {
         react: {

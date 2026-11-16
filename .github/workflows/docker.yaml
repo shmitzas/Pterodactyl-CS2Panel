@@ -51,13 +51,13 @@ jobs:
         env:
           REF: ${{ github.event.release.tag_name }}
         run: |
-          sed -i "s/    'version' => 'canary',/    'version' => '${REF:1}',/" config/app.php
+          sed -i "s/    'version' => 'canary',/    'version' => '${REF:1}',/" src/config/app.php
 
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./Dockerfile
+          context: src
+          file: src/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64
           labels: ${{ steps.docker_meta.outputs.labels }}

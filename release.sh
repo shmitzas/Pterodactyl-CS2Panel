@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds the drop-in archive release/cs2-panel-<version>.zip (extract over /var/www/pterodactyl).
-# Needs git, Node 22 + Yarn 1, PHP 8.2+ with Composer 2, and zip. Packs the committed HEAD, not local edits.
+# Needs git, Node 22 + Yarn 1, PHP 8.2+ with Composer 2, and zip. Packs src/ and the licences from the
+# committed HEAD, not local edits.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -17,9 +18,11 @@ rm -rf "$out"
 mkdir -p "$stage"
 
 # Tracked files only, so a local .env, logs or caches can never end up in the archive.
-git archive --format=tar HEAD | tar -x -C "$stage"
+git archive --format=tar HEAD src | tar -x --strip-components=1 -C "$stage"
+# The licences sit at the repository root for GitHub, but every copy of the panel must carry them.
+git archive --format=tar HEAD LICENSE LICENSE.md NookLicense.md | tar -x -C "$stage"
 cd "$stage"
-rm -rf .github tests phpunit.xml .php-cs-fixer.dist.php .env.ci .editorconfig .gitignore release.sh README.md CHANGELOG.md
+rm -rf .github tests phpunit.xml .php-cs-fixer.dist.php .env.ci .gitignore CHANGELOG.md
 
 yarn install --frozen-lockfile --non-interactive
 yarn build:production
