@@ -4,6 +4,9 @@ Contributor notes: the theme's rules, the release workflow and keeping up with u
 the [wiki](https://github.com/shmitzas/Pterodactyl-CS2Panel/wiki); building from source is on its
 [Building](https://github.com/shmitzas/Pterodactyl-CS2Panel/wiki/Building) page.
 
+The panel lives in `src/`, laid out as upstream's repository root, and the panel paths below are relative to it.
+`.github/`, `docs/`, the licences and `release.sh` stay at the repository root.
+
 ## Theme
 
 Colours, fonts, radii, spacing and motion are custom properties in `public/themes/pterodactyl/css/cs2-tokens.css`.
@@ -67,12 +70,23 @@ Pterodactyl release.
 | `.github/workflows/build.yaml` | Push or PR to `main` | Builds the zip and keeps it as an Actions artifact for 3 days |
 | `.github/workflows/release.yaml` | `v*` tag or manual run | Builds the zip and publishes it as a GitHub release |
 
-Both call `release.sh`. `tests/` holds upstream's PHPUnit suite, which CI does not run.
+Both call `release.sh`, which packs `src/` and the licences. `tests/` holds upstream's PHPUnit suite, which CI does not
+run.
 
 ## Upstream
 
 Upstream fixes are not picked up automatically. Watch the
-[Pterodactyl advisories](https://github.com/pterodactyl/panel/security/advisories) and rebase when a new release lands.
+[Pterodactyl advisories](https://github.com/pterodactyl/panel/security/advisories) and merge each new release into
+`src/`:
+
+```bash
+git remote add upstream https://github.com/pterodactyl/panel.git
+git fetch upstream --tags
+git merge -X subtree=src <tag>
+```
+
+`-X subtree=src` maps upstream's repository root onto `src/`. A plain merge leaves upstream's new files at the
+repository root, or in conflict.
 
 The fork's migrations add columns only: `mounts.mount_on_install` and `mounts.auto_mount`, `subusers.file_rules` and
 `users.dashboard_preferences`. Nothing upstream is altered, so a stock panel of the same version switches to this build

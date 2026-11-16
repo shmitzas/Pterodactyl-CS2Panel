@@ -31,6 +31,16 @@ Everything stock Pterodactyl 1.15.2 does, plus:
 - 📦 **Release zip** — extract and migrate; no Node, Yarn or Composer on the server
 - 🦖 **Pterodactyl 1.15.2** — upstream's panel and its security fixes, with Wings 1.13.x
 
+## 📸 Screenshots
+
+![Dashboard with the Power Actions and SwiftlyS2 Pre-release groups, the totals cards and eight servers in a custom order](../../wiki/showcase-dashboard.webp)
+
+| Server console | CS2 file shortcuts |
+|:---:|:---:|
+| ![CS2 server console with the sidebar in labelled sections, live usage cards and usage graphs](../../wiki/showcase-console.webp) | ![File manager in the SwiftlyS2 plugins folder, with Plugins highlighted under SwiftlyS2 files](../../wiki/showcase-files.webp) |
+
+More in the **[Showcase](../../wiki/Showcase)**.
+
 ## 🚀 Getting Started
 
 | Guide | Description |
